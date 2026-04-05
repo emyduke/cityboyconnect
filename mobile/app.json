@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "City Boy Connect",
+    "slug": "cityboy-connect",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1a472a"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.cityboyconnect.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Camera is used to take profile photos and scan QR codes",
+        "NSPhotoLibraryUsageDescription": "Photo library is used to select profile photos and voter card images",
+        "NSFaceIDUsageDescription": "Face ID is used for quick login"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1a472a"
+      },
+      "package": "com.cityboyconnect.app",
+      "permissions": ["CAMERA", "READ_EXTERNAL_STORAGE"],
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-secure-store",
+      "expo-font",
+      "expo-local-authentication",
+      ["expo-image-picker", { "photosPermission": "Photo access is needed for profile and voter card uploads" }]
+    ]
+  }
+}
