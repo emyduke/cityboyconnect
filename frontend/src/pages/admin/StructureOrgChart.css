@@ -1,0 +1,47 @@
+.admin-structure h1 { font-size: 1.5rem; font-weight: 800; }
+.admin-structure__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg); }
+.admin-structure__selector { max-width: 360px; margin-bottom: var(--space-xl); }
+.admin-structure__tree { display: flex; flex-direction: column; gap: var(--space-md); }
+.admin-structure__leaders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-md); }
+.admin-structure__node-content { display: flex; align-items: center; gap: var(--space-md); position: relative; }
+.admin-structure__node-info { flex: 1; }
+.admin-structure__node-name { font-weight: 700; font-size: 0.95rem; }
+.admin-structure__node-title { font-size: 0.8rem; color: var(--color-forest); }
+.admin-structure__node-meta { font-size: 0.75rem; color: var(--color-gray-400); }
+.admin-structure__remove-btn {
+  background: none; border: none; color: var(--color-gray-300); cursor: pointer;
+  font-size: 1rem; padding: var(--space-xs); transition: color var(--transition-fast);
+}
+.admin-structure__remove-btn:hover { color: var(--color-danger); }
+.admin-structure__section-title { font-size: 1rem; font-weight: 700; margin: var(--space-lg) 0 var(--space-sm); color: var(--color-gray-700); }
+.admin-structure__lga-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--space-sm);
+}
+.admin-structure__lga-name { font-weight: 600; font-size: 0.85rem; }
+.admin-structure__lga-meta { font-size: 0.75rem; color: var(--color-gray-400); }
+.admin-structure__lga-leader { font-size: 0.7rem; color: var(--color-forest); margin-top: 2px; }
+.admin-structure__empty {
+  text-align: center; color: var(--color-gray-400); padding: var(--space-2xl);
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-sm);
+}
+.admin-structure__empty-icon { font-size: 2.5rem; }
+.admin-structure__empty-sub { font-size: 0.8rem; }
+.admin-structure__modal-overlay {
+  position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+}
+.admin-structure__modal {
+  background: white; border-radius: var(--radius-lg); padding: var(--space-xl);
+  width: 90%; max-width: 420px; box-shadow: var(--shadow-lg);
+}
+.admin-structure__modal h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: var(--space-xs); }
+.admin-structure__modal-sub { font-size: 0.85rem; color: var(--color-gray-500); margin-bottom: var(--space-md); }
+.admin-structure__appoint-form { display: flex; flex-direction: column; gap: var(--space-md); }
+.admin-structure__field { display: flex; flex-direction: column; gap: 4px; }
+.admin-structure__field label { font-size: 0.8rem; font-weight: 600; color: var(--color-gray-700); }
+.admin-structure__field input, .admin-structure__field select {
+  padding: var(--space-sm) var(--space-md); border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md); font-size: 0.85rem;
+}
+.admin-structure__modal-actions { display: flex; gap: var(--space-sm); justify-content: flex-end; margin-top: var(--space-sm); }

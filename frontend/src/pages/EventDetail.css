@@ -1,0 +1,23 @@
+.event-detail { display: flex; flex-direction: column; gap: var(--space-lg); }
+.event-detail__back {
+  background: none;
+  border: none;
+  color: var(--color-forest);
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-weight: 500;
+  align-self: flex-start;
+}
+.event-detail__back:hover { text-decoration: underline; }
+.event-detail__header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-md); }
+.event-detail__title { font-size: 1.5rem; font-weight: 800; margin-top: var(--space-sm); }
+.event-detail__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+  margin: var(--space-md) 0;
+  font-size: 0.9rem;
+  color: var(--color-gray-500);
+}
+.event-detail__desc { font-size: 0.95rem; color: var(--color-gray-700); line-height: 1.7; }
+.event-detail__attendance h3 { font-size: 1rem; font-weight: 700; margin-bottom: var(--space-md); }

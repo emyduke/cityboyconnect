@@ -1,0 +1,19 @@
+.admin-analytics h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: var(--space-lg); }
+.admin-analytics__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+.admin-analytics__charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+.admin-analytics__card-title { font-size: 1rem; font-weight: 700; margin-bottom: var(--space-md); }
+.admin-analytics__empty { color: var(--color-gray-400); text-align: center; padding: var(--space-xl) 0; }
+
+@media (max-width: 768px) {
+  .admin-analytics__charts { grid-template-columns: 1fr; }
+}

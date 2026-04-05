@@ -1,0 +1,18 @@
+.member-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: box-shadow var(--transition-base);
+}
+.member-card:hover { box-shadow: var(--shadow-md); }
+.member-card__info { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.member-card__name { font-size: 0.95rem; font-weight: 600; color: var(--color-gray-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.member-card__phone { font-size: 0.8rem; color: var(--color-gray-500); font-family: var(--font-mono); }
+.member-card__location { font-size: 0.8rem; color: var(--color-gray-400); }
+.member-card__meta { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-xs); flex-shrink: 0; }
+.member-card__id { font-size: 0.7rem; color: var(--color-gray-400); font-family: var(--font-mono); }

@@ -1,0 +1,78 @@
+.admin-layout { display: flex; min-height: 100vh; }
+
+.admin-sidebar {
+  width: 240px;
+  background: var(--color-forest-dark);
+  color: var(--color-white);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  z-index: 100;
+  transition: transform var(--transition-base);
+}
+.admin-sidebar__header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--space-lg);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.admin-sidebar__brand { font-family: var(--font-display); font-weight: 800; font-size: 1rem; color: var(--color-gold); }
+.admin-sidebar__close { display: none; background: none; border: none; color: var(--color-white); font-size: 1.25rem; cursor: pointer; }
+.admin-sidebar__nav { flex: 1; padding: var(--space-md) 0; overflow-y: auto; }
+.admin-sidebar__link {
+  display: flex; align-items: center; gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
+  color: rgba(255,255,255,0.7); font-size: 0.85rem; font-weight: 500;
+  transition: all var(--transition-fast); text-decoration: none;
+}
+.admin-sidebar__link:hover { color: var(--color-white); background: rgba(255,255,255,0.05); }
+.admin-sidebar__link--active { color: var(--color-gold); background: rgba(255,255,255,0.08); border-right: 3px solid var(--color-gold); }
+.admin-sidebar__icon { font-size: 1rem; width: 22px; text-align: center; }
+.admin-sidebar__divider { height: 1px; background: rgba(255,255,255,0.1); margin: var(--space-md) var(--space-lg); }
+.admin-sidebar__footer { padding: var(--space-md) var(--space-lg); border-top: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: var(--space-sm); }
+.admin-sidebar__profile { display: flex; align-items: center; gap: var(--space-sm); }
+.admin-sidebar__user-info { display: flex; flex-direction: column; }
+.admin-sidebar__user-name { font-size: 0.8rem; font-weight: 600; color: white; }
+.admin-sidebar__user-role { font-size: 0.65rem; color: rgba(255,255,255,0.5); }
+.admin-sidebar__logout {
+  background: none; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.7);
+  padding: var(--space-xs) var(--space-md); border-radius: var(--radius-sm); font-size: 0.8rem; cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.admin-sidebar__logout:hover { color: white; border-color: rgba(255,255,255,0.4); }
+.admin-overlay { display: none; }
+.admin-main { flex: 1; margin-left: 240px; display: flex; flex-direction: column; min-height: 100vh; background: var(--color-gray-50); }
+.admin-topbar {
+  display: flex; align-items: center;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-white); border-bottom: 1px solid var(--color-gray-200);
+  height: 56px; position: sticky; top: 0; z-index: 50;
+}
+.admin-topbar__menu { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+.admin-topbar__spacer { flex: 1; }
+.admin-topbar__member-view {
+  display: none; background: none; border: 1px solid var(--color-gray-300);
+  color: var(--color-forest); padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 600; cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.admin-topbar__member-view:hover { background: var(--color-gray-100); }
+.admin-sidebar__section-label {
+  display: block; padding: var(--space-xs) var(--space-lg);
+  font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.4); font-weight: 700;
+}
+.admin-sidebar__back-btn {
+  background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit;
+}
+.admin-content { flex: 1; padding: var(--space-lg); }
+
+@media (max-width: 768px) {
+  .admin-sidebar { transform: translateX(-100%); }
+  .admin-sidebar--open { transform: translateX(0); }
+  .admin-sidebar__close { display: block; }
+  .admin-overlay { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 99; }
+  .admin-main { margin-left: 0; }
+  .admin-topbar__menu { display: block; }
+  .admin-topbar__member-view { display: inline-flex; }
+}

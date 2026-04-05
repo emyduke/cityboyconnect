@@ -1,0 +1,9 @@
+.ann-detail { display: flex; flex-direction: column; gap: var(--space-lg); }
+.ann-detail__back { background: none; border: none; color: var(--color-forest); font-size: 0.9rem; cursor: pointer; font-weight: 500; align-self: flex-start; }
+.ann-detail__back:hover { text-decoration: underline; }
+.ann-detail__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-md); }
+.ann-detail__date { font-size: 0.85rem; color: var(--color-gray-400); }
+.ann-detail__title { font-size: 1.5rem; font-weight: 800; margin-bottom: var(--space-xs); }
+.ann-detail__scope { font-size: 0.8rem; color: var(--color-gray-400); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-lg); }
+.ann-detail__body { font-size: 0.95rem; color: var(--color-gray-700); line-height: 1.8; white-space: pre-wrap; }
+.ann-detail__author { font-size: 0.9rem; color: var(--color-forest); font-weight: 600; margin-top: var(--space-lg); }

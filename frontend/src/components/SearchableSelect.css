@@ -1,0 +1,44 @@
+.ss { position: relative; display: flex; flex-direction: column; gap: var(--space-xs); }
+.ss__label { font-size: 0.875rem; font-weight: 600; color: var(--color-gray-700); }
+.ss__control {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  border: 1.5px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+.ss__control:hover { border-color: var(--color-gray-400); }
+.ss__search { flex: 1; border: none; outline: none; font-size: 0.9375rem; background: transparent; }
+.ss__value { flex: 1; font-size: 0.9375rem; }
+.ss__value--placeholder { color: var(--color-gray-400); }
+.ss__arrow { font-size: 0.625rem; color: var(--color-gray-400); margin-left: var(--space-sm); }
+.ss__dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--color-white);
+  border: 1.5px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+  list-style: none;
+  margin-top: var(--space-xs);
+}
+.ss__option {
+  padding: 8px 14px;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+.ss__option:hover { background: var(--color-gray-50); }
+.ss__option--active { background: var(--color-forest); color: var(--color-white); }
+.ss__option--active:hover { background: var(--color-forest-light); }
+.ss__option--empty { color: var(--color-gray-400); cursor: default; }
+.ss--error .ss__control { border-color: var(--color-danger); }
+.ss__error { font-size: 0.8125rem; color: var(--color-danger); }

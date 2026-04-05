@@ -1,0 +1,8 @@
+.reports-page__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-lg); }
+.reports-page__header h1 { font-size: 1.5rem; font-weight: 800; }
+.reports-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: var(--space-md); }
+.report-item__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-sm); }
+.report-item__period { font-size: 0.8rem; color: var(--color-gray-400); font-family: var(--font-mono); }
+.report-item__level { font-size: 1rem; font-weight: 700; margin-bottom: var(--space-xs); }
+.report-item__summary { font-size: 0.85rem; color: var(--color-gray-500); line-height: 1.5; margin-bottom: var(--space-sm); }
+.report-item__stats { display: flex; gap: var(--space-md); font-size: 0.8rem; color: var(--color-gray-400); }

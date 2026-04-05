@@ -1,0 +1,9 @@
+from django.apps import AppConfig
+
+
+class ScoringConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'apps.scoring'
+
+    def ready(self):
+        import apps.scoring.signals  # noqa: F401

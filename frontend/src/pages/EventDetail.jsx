@@ -1,0 +1,84 @@
+import './EventDetail.css';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { getEvent, attendEvent, getEventAttendance } from '../api/client';
+import Card from '../components/Card';
+import Badge from '../components/Badge';
+import Button from '../components/Button';
+import Skeleton from '../components/Skeleton';
+import DataTable from '../components/DataTable';
+import { useToastStore } from '../store/toastStore';
+
+export default function EventDetail() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const addToast = useToastStore(s => s.addToast);
+  const [event, setEvent] = useState(null);
+  const [attendance, setAttendance] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [attending, setAttending] = useState(false);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const [evRes, atRes] = await Promise.all([getEvent(id), getEventAttendance(id).catch(() => ({ data: { data: [] } }))]);
+        setEvent(evRes.data.data || evRes.data);
+        setAttendance(atRes.data.data || atRes.data.results || atRes.data || []);
+      } catch { navigate('/events'); }
+      setLoading(false);
+    };
+    load();
+  }, [id, navigate]);
+
+  const handleAttend = async () => {
+    setAttending(true);
+    try {
+      await attendEvent(id);
+      addToast({ type: 'success', message: 'You are now attending this event!' });
+      const atRes = await getEventAttendance(id);
+      setAttendance(atRes.data.data || atRes.data.results || atRes.data || []);
+    } catch (err) {
+      addToast({ type: 'error', message: err.response?.data?.error?.message || 'Failed to RSVP' });
+    }
+    setAttending(false);
+  };
+
+  if (loading) return <div className="event-detail"><Skeleton variant="card" /></div>;
+  if (!event) return null;
+
+  const typeColors = { RALLY: 'danger', TRAINING: 'info', MEETING: 'default', TOWN_HALL: 'warning', OUTREACH: 'success' };
+
+  return (
+    <div className="event-detail">
+      <button className="event-detail__back" onClick={() => navigate('/events')}>← Back to Events</button>
+      <Card padding="lg">
+        <div className="event-detail__header">
+          <div>
+            <Badge variant={typeColors[event.event_type] || 'default'}>{event.event_type?.replace('_', ' ')}</Badge>
+            <h1 className="event-detail__title">{event.title}</h1>
+          </div>
+          <Button loading={attending} onClick={handleAttend}>Attend</Button>
+        </div>
+        <div className="event-detail__meta">
+          <span>📍 {event.venue_name}</span>
+          <span>📅 {new Date(event.start_datetime).toLocaleDateString('en-NG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+          <span>🕐 {new Date(event.start_datetime).toLocaleTimeString('en-NG', { hour: '2-digit', minute: '2-digit' })}</span>
+        </div>
+        <p className="event-detail__desc">{event.description}</p>
+      </Card>
+
+      <Card padding="md" className="event-detail__attendance">
+        <h3>Attendance ({attendance.length})</h3>
+        <DataTable
+          columns={[
+            { key: 'member_name', label: 'Name' },
+            { key: 'checked_in_at', label: 'Checked In', render: (v) => v ? new Date(v).toLocaleTimeString('en-NG') : '—' },
+            { key: 'check_in_method', label: 'Method' },
+          ]}
+          data={attendance}
+          searchable
+        />
+      </Card>
+    </div>
+  );
+}
