@@ -32,11 +32,12 @@ export default function MyQRCode() {
   }, []);
 
   const qrUrl = data?.qr_url;
+  const shareUrl = data?.share_url || qrUrl;
 
   const copyLink = async () => {
-    if (!qrUrl) return;
+    if (!shareUrl) return;
     try {
-      await navigator.clipboard.writeText(qrUrl);
+      await navigator.clipboard.writeText(shareUrl);
       toast('Link copied to clipboard!', 'success');
     } catch {
       toast('Could not copy link', 'error');
@@ -53,9 +54,9 @@ export default function MyQRCode() {
   };
 
   const shareQR = async () => {
-    if (navigator.share && qrUrl) {
+    if (navigator.share && shareUrl) {
       try {
-        await navigator.share({ title: 'Join City Boy Connect', text: `Join the movement under ${user?.full_name}`, url: qrUrl });
+        await navigator.share({ title: 'Join City Boy Connect', text: `Join the movement under ${user?.full_name}`, url: shareUrl });
       } catch { /* user cancelled */ }
     } else {
       await copyLink();

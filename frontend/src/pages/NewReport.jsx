@@ -5,6 +5,7 @@ import CardFlow from '../components/CardFlow/CardFlow';
 import Button from '../components/Button';
 import { createReport, submitReport } from '../api/client';
 import { useToastStore } from '../store/toastStore';
+import { getFriendlyError } from '../lib/errors';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -60,7 +61,7 @@ export default function NewReport() {
         navigate('/reports');
       }
     } catch (err) {
-      setError(err.response?.data?.error?.message || 'Failed to submit report');
+      setError(getFriendlyError(err));
     }
     setLoading(false);
   };

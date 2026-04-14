@@ -66,6 +66,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='MEMBER')
+    has_password = models.BooleanField(default=False)
 
     objects = UserManager()
 
@@ -90,8 +91,17 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class OTPVerification(models.Model):
+    SMS = 'SMS'
+    EMAIL = 'EMAIL'
+    CHANNEL_CHOICES = [
+        (SMS, 'SMS'),
+        (EMAIL, 'Email'),
+    ]
+
     phone_number = models.CharField(max_length=15)
+    email = models.EmailField(blank=True, default='')
     otp_code = models.CharField(max_length=6)
+    channel = models.CharField(max_length=10, choices=CHANNEL_CHOICES, default=SMS)
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField()
     is_used = models.BooleanField(default=False)
@@ -99,6 +109,10 @@ class OTPVerification(models.Model):
 
     class Meta:
         app_label = 'accounts'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['phone_number', 'is_used', 'expires_at']),
+        ]
 
     def __str__(self):
         return f'OTP for {self.phone_number}'

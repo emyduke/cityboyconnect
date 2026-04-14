@@ -3,10 +3,14 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from apps.members.share_views import ReferralShareView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('r/<str:token>/', ReferralShareView.as_view(), name='referral-share'),
     path('api/v1/auth/', include('apps.accounts.urls')),
     path('api/v1/structure/', include('apps.structure.urls')),
+    path('api/v1/bubbles/', include('apps.bubbles.urls')),
     path('api/v1/', include('apps.members.urls')),
     path('api/v1/events/', include('apps.events.urls')),
     path('api/v1/announcements/', include('apps.announcements.urls')),

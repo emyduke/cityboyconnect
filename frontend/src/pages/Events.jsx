@@ -6,12 +6,16 @@ import EventCard from '../components/EventCard';
 import Button from '../components/Button';
 import Skeleton from '../components/Skeleton';
 import EmptyState from '../components/EmptyState';
+import { useAuthStore } from '../store/authStore';
+import { canCreateEvents } from '../lib/permissions';
 
 export default function Events() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('upcoming');
   const navigate = useNavigate();
+  const user = useAuthStore(s => s.user);
+  const showCreate = canCreateEvents(user?.role);
 
   useEffect(() => {
     const load = async () => {
@@ -29,7 +33,7 @@ export default function Events() {
     <div className="events-page">
       <div className="events-page__header">
         <h1>Events</h1>
-        <Button size="sm" onClick={() => navigate('/events/create')}>+ Create Event</Button>
+        {showCreate && <Button size="sm" onClick={() => navigate('/events/create')}>+ Create Event</Button>}
       </div>
       <div className="events-page__filters">
         <button className={`events-tab ${filter === 'upcoming' ? 'events-tab--active' : ''}`} onClick={() => setFilter('upcoming')}>Upcoming</button>
@@ -38,7 +42,7 @@ export default function Events() {
       {loading ? (
         <div className="events-page__grid"><Skeleton variant="card" /><Skeleton variant="card" /><Skeleton variant="card" /></div>
       ) : events.length === 0 ? (
-        <EmptyState title="No events found" description={`No ${filter} events at this time`} icon="📅" action={<Button size="sm" onClick={() => navigate('/events/create')}>Create Event</Button>} />
+        <EmptyState title="No events found" description={`No ${filter} events at this time`} icon="📅" action={showCreate ? <Button size="sm" onClick={() => navigate('/events/create')}>Create Event</Button> : null} />
       ) : (
         <div className="events-page__grid">
           {events.map(e => <EventCard key={e.id} event={e} onClick={() => navigate(`/events/${e.id}`)} />)}

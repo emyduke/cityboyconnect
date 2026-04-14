@@ -57,6 +57,7 @@ export default function AdminDashboardScreen() {
     { label: 'Events', screen: 'AdminEvents', icon: '📅' },
     { label: 'Announcements', screen: 'AdminAnnouncements', icon: '📢' },
     { label: 'Reports', screen: 'AdminReports', icon: '📊' },
+    { label: 'Bubbles', screen: 'AdminBubbles', icon: '🫧' },
     { label: 'Audit Log', screen: 'AdminAuditLog', icon: '📋' },
     { label: 'Settings', screen: 'AdminSettings', icon: '⚙️' },
   ];

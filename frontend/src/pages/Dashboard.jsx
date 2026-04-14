@@ -98,6 +98,16 @@ export default function Dashboard() {
         </Card>
       </div>
 
+      <Card padding="md" style={{ marginBottom: 'var(--space-lg)', cursor: 'pointer' }} onClick={() => navigate('/bubbles')}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <h3 className="dashboard__card-title">🫧 City Boys Bubbles</h3>
+            <p style={{ color: '#6b7280', fontSize: '0.9rem' }}>Local support for your community</p>
+          </div>
+          <Button size="sm" variant="secondary" onClick={e => { e.stopPropagation(); navigate('/bubbles'); }}>Browse</Button>
+        </div>
+      </Card>
+
       {user?.role && ['ADMIN', 'SUPER_ADMIN', 'NATIONAL_OFFICER', 'STATE_DIRECTOR'].includes(user.role) && (
         <div className="dashboard__admin-strip">
           <h3 className="dashboard__card-title">Quick Admin Actions</h3>

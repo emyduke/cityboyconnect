@@ -16,6 +16,7 @@ from apps.members.models import MemberProfile, Leadership
 from apps.events.models import Event, EventAttendance
 from apps.announcements.models import Announcement
 from apps.reports.models import GrassrootsReport
+from apps.bubbles.models import Bubble
 from apps.structure.models import State, LocalGovernment, Ward
 from .models import PlatformSettings
 from .permissions import IsSuperAdmin, IsNationalOfficerOrAbove, IsAdminUser, CanManageScope
@@ -102,6 +103,10 @@ class AdminOverviewView(APIView):
                 'reports': {
                     'total_submitted': reports_total,
                     'awaiting_acknowledgement': reports_unread,
+                },
+                'bubbles': {
+                    'pending': Bubble.objects.filter(status='PENDING').count(),
+                    'total': Bubble.objects.count(),
                 },
             })
         except Exception as e:
@@ -1252,12 +1257,15 @@ class AdminSettingsView(APIView):
     def patch(self, request):
         try:
             ALLOWED_KEYS = [
-                'sms_provider', 'sms_api_key', 'sms_sender_id',
+                'sms_provider', 'sms_sender_id',
+                'africastalking_username', 'africastalking_api_key',
                 'otp_expiry_minutes', 'otp_max_attempts', 'otp_cooldown_minutes',
                 'voter_card_required', 'min_age', 'auto_approve_voter_cards',
                 'leaderboard_weight_onboarding', 'leaderboard_weight_attendance',
                 'leaderboard_weight_engagement', 'leaderboard_weight_network_depth',
                 'platform_name', 'platform_tagline', 'maintenance_mode',
+                'auth_sms_otp_enabled', 'auth_email_otp_enabled',
+                'auth_password_login_enabled',
             ]
 
             updated = {}
@@ -1294,11 +1302,18 @@ class AdminTestSMSView(APIView):
         if not phone:
             return _error('PHONE_REQUIRED', 'phone_number is required.')
 
+        from django.conf import settings as django_settings
+        provider = getattr(django_settings, 'SMS_PROVIDER', 'console')
+
         try:
             from apps.accounts.utils import send_otp_sms
-            # In dev mode this just prints to console
             result = send_otp_sms(phone, '000000')
-            return _success({'message': f'Test SMS sent to {phone}.', 'result': result})
+            return _success({
+                'message': f'Test SMS sent to {phone}.',
+                'provider': provider,
+                'delivered': result,
+                'note': 'Check terminal output' if provider == 'console' else 'Real SMS sent via Africa\'s Talking',
+            })
         except Exception as e:
             return _error('SMS_SEND_FAILED', str(e), 500)
 

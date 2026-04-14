@@ -42,8 +42,11 @@ api.interceptors.response.use(
 );
 
 // Auth
-export const requestOTP = (phone_number) => api.post('/auth/request-otp/', { phone_number });
-export const verifyOTP = (phone_number, otp_code) => api.post('/auth/verify-otp/', { phone_number, otp_code });
+export const getAuthMethods = (phone) => api.get('/auth/methods/', { params: phone ? { phone } : {} });
+export const requestOTP = (data) => api.post('/auth/request-otp/', data);
+export const verifyOTP = (data) => api.post('/auth/verify-otp/', data);
+export const loginWithPassword = (data) => api.post('/auth/login/', data);
+export const setPassword = (data) => api.post('/auth/set-password/', data);
 export const getMe = () => api.get('/auth/me/');
 export const logout = (refresh) => api.post('/auth/logout/', { refresh });
 
@@ -91,7 +94,9 @@ export const markAnnouncementRead = (id) => api.post(`/announcements/${id}/read/
 
 // Reports
 export const getReports = (params) => api.get('/reports/', { params });
+export const getReport = (id) => api.get(`/reports/${id}/`);
 export const createReport = (data) => api.post('/reports/create/', data);
+export const updateReport = (id, data) => api.patch(`/reports/${id}/update/`, data);
 export const submitReport = (id) => api.post(`/reports/${id}/submit/`);
 
 // Dashboard
@@ -112,5 +117,24 @@ export const getMyNetwork = () => api.get('/members/my-network/');
 export const getMyNetworkTree = (params) => api.get('/members/my-network/tree/', { params });
 export const getMyNetworkRecent = () => api.get('/members/my-network/recent/');
 export const validateRef = (token) => api.get(`/members/validate-ref/${token}/`);
+
+// Bubbles
+export const getBubbles = (params) => api.get('/bubbles/', { params });
+export const getBubble = (id) => api.get(`/bubbles/${id}/`);
+export const createBubble = (data) => api.post('/bubbles/create/', data, {
+  headers: data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {},
+});
+export const getMyBubbles = (params) => api.get('/bubbles/my/', { params });
+export const addBubbleImage = (id, data) => api.post(`/bubbles/${id}/images/`, data, {
+  headers: { 'Content-Type': 'multipart/form-data' },
+});
+
+// Admin Bubbles
+export const getAdminBubbles = (params) => api.get('/bubbles/admin/', { params });
+export const getAdminBubble = (id) => api.get(`/bubbles/admin/${id}/`);
+export const updateBubbleStatus = (id, data) => api.post(`/bubbles/admin/${id}/status/`, data);
+export const deliverBubble = (id, data) => api.post(`/bubbles/admin/${id}/deliver/`, data, {
+  headers: data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {},
+});
 
 export default api;

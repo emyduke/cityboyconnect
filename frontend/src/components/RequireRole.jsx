@@ -1,7 +1,8 @@
 import { Navigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import AccessDenied from '../pages/AccessDenied';
+import { useToastStore } from '../store/toastStore';
 import Skeleton from '../components/Skeleton';
+import { useEffect } from 'react';
 
 const ROLE_HIERARCHY = {
   MEMBER: 1,
@@ -13,8 +14,19 @@ const ROLE_HIERARCHY = {
   SUPER_ADMIN: 10,
 };
 
-export default function RequireRole({ minRole, children }) {
+export default function RequireRole({ minRole, children, redirectTo = '/dashboard' }) {
   const { user, isAuthenticated } = useAuthStore();
+  const addToast = useToastStore(s => s.addToast);
+
+  const userLevel = ROLE_HIERARCHY[user?.role] || 0;
+  const requiredLevel = ROLE_HIERARCHY[minRole] || 0;
+  const denied = user && userLevel < requiredLevel;
+
+  useEffect(() => {
+    if (denied) {
+      addToast({ type: 'info', message: "You don't have access to that page." });
+    }
+  }, [denied]);
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -33,11 +45,8 @@ export default function RequireRole({ minRole, children }) {
     return <Navigate to="/suspended" replace />;
   }
 
-  const userLevel = ROLE_HIERARCHY[user.role] || 0;
-  const requiredLevel = ROLE_HIERARCHY[minRole] || 0;
-
-  if (userLevel < requiredLevel) {
-    return <AccessDenied requiredRole={minRole} userRole={user.role} />;
+  if (denied) {
+    return <Navigate to={redirectTo} replace />;
   }
 
   return children;

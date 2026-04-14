@@ -48,6 +48,7 @@ class OnboardingPlacementSerializer(serializers.Serializer):
     ward = serializers.IntegerField()
     polling_unit = serializers.IntegerField(required=False)
     residential_address = serializers.CharField()
+    referral_token = serializers.CharField(required=False, allow_blank=True)
 
 
 class OnboardingVoterCardSerializer(serializers.Serializer):
@@ -80,3 +81,24 @@ class AppointLeadershipSerializer(serializers.Serializer):
     lga = serializers.IntegerField(required=False)
     ward = serializers.IntegerField(required=False)
     tenure_ends = serializers.DateField(required=False)
+
+
+class DirectReferralSerializer(serializers.ModelSerializer):
+    """Flat serializer for My Network — puts full_name at top level."""
+    full_name = serializers.CharField(source='user.full_name')
+    state_name = serializers.CharField(source='state.name', read_only=True, default='')
+    lga_name = serializers.CharField(source='lga.name', read_only=True, default='')
+    ward_name = serializers.CharField(source='ward.name', read_only=True, default='')
+    date_joined = serializers.DateTimeField(source='joined_at')
+    direct_count = serializers.SerializerMethodField()
+    status = serializers.CharField(source='voter_verification_status')
+
+    class Meta:
+        model = MemberProfile
+        fields = [
+            'id', 'full_name', 'state_name', 'lga_name', 'ward_name',
+            'date_joined', 'direct_count', 'status',
+        ]
+
+    def get_direct_count(self, obj):
+        return obj.direct_referrals.count()

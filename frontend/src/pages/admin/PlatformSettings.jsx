@@ -109,6 +109,65 @@ export default function PlatformSettings() {
         </Card>
 
         <Card padding="md">
+          <h3>Authentication Methods</h3>
+          <p className="admin-settings__section-desc">
+            Control how members can log in. You can restrict to SMS-only once the SMS provider is stable again.
+          </p>
+
+          {!settings.auth_sms_otp_enabled && !settings.auth_email_otp_enabled && !settings.auth_password_login_enabled && (
+            <div className="admin-settings__warning">⚠ All methods are disabled — members cannot log in.</div>
+          )}
+
+          <div className="admin-settings__field">
+            <label>OTP via SMS</label>
+            <div className="admin-settings__toggle-row">
+              <button
+                className={`admin-settings__toggle ${settings.auth_sms_otp_enabled ? 'admin-settings__toggle--on' : ''}`}
+                onClick={() => updateSetting('auth_sms_otp_enabled', !settings.auth_sms_otp_enabled)}
+                type="button"
+              >
+                <span className="admin-settings__toggle-slider" />
+              </button>
+              <span className="admin-settings__toggle-label">
+                {settings.auth_sms_otp_enabled ? 'Enabled — members receive a 6-digit code via text message' : 'Disabled'}
+              </span>
+            </div>
+          </div>
+
+          <div className="admin-settings__field">
+            <label>OTP via Email</label>
+            <div className="admin-settings__toggle-row">
+              <button
+                className={`admin-settings__toggle ${settings.auth_email_otp_enabled ? 'admin-settings__toggle--on' : ''}`}
+                onClick={() => updateSetting('auth_email_otp_enabled', !settings.auth_email_otp_enabled)}
+                type="button"
+              >
+                <span className="admin-settings__toggle-slider" />
+              </button>
+              <span className="admin-settings__toggle-label">
+                {settings.auth_email_otp_enabled ? 'Enabled — members receive a 6-digit code by email' : 'Disabled'}
+              </span>
+            </div>
+          </div>
+
+          <div className="admin-settings__field">
+            <label>Password Login</label>
+            <div className="admin-settings__toggle-row">
+              <button
+                className={`admin-settings__toggle ${settings.auth_password_login_enabled ? 'admin-settings__toggle--on' : ''}`}
+                onClick={() => updateSetting('auth_password_login_enabled', !settings.auth_password_login_enabled)}
+                type="button"
+              >
+                <span className="admin-settings__toggle-slider" />
+              </button>
+              <span className="admin-settings__toggle-label">
+                {settings.auth_password_login_enabled ? 'Enabled — members can set and use a password' : 'Disabled'}
+              </span>
+            </div>
+          </div>
+        </Card>
+
+        <Card padding="md">
           <h3>OTP / SMS Settings</h3>
           <div className="admin-settings__field">
             <label>OTP Expiry (minutes)</label>

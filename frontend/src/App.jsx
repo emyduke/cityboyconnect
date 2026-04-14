@@ -20,10 +20,16 @@ const Announcements = lazy(() => import('./pages/Announcements'));
 const AnnouncementDetail = lazy(() => import('./pages/AnnouncementDetail'));
 const Reports = lazy(() => import('./pages/Reports'));
 const NewReport = lazy(() => import('./pages/NewReport'));
+const EditReport = lazy(() => import('./pages/EditReport'));
 const Leaderboard = lazy(() => import('./pages/Leaderboard'));
 const MyQRCode = lazy(() => import('./pages/MyQRCode'));
 const MyNetwork = lazy(() => import('./pages/MyNetwork'));
+const SetPassword = lazy(() => import('./pages/SetPassword'));
 const SuspendedAccount = lazy(() => import('./pages/SuspendedAccount'));
+const Bubbles = lazy(() => import('./pages/Bubbles'));
+const BubbleDetail = lazy(() => import('./pages/BubbleDetail'));
+const CreateBubble = lazy(() => import('./pages/CreateBubble'));
+const MyBubbles = lazy(() => import('./pages/MyBubbles'));
 
 // Admin panel
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
@@ -36,6 +42,7 @@ const AdminEvents = lazy(() => import('./pages/admin/AdminEvents'));
 const AdminAnnouncements = lazy(() => import('./pages/admin/AdminAnnouncements'));
 const AdminReports = lazy(() => import('./pages/admin/AdminReports'));
 const AdminAuditLog = lazy(() => import('./pages/admin/AdminAuditLog'));
+const AdminBubbles = lazy(() => import('./pages/admin/AdminBubbles'));
 
 function PageLoader() {
   return (
@@ -66,15 +73,21 @@ export default function App() {
           <Route path="/members" element={<Members />} />
           <Route path="/members/:id" element={<MemberDetail />} />
           <Route path="/events" element={<Events />} />
-          <Route path="/events/create" element={<CreateEvent />} />
+          <Route path="/events/create" element={<RequireRole minRole="WARD_COORDINATOR"><CreateEvent /></RequireRole>} />
           <Route path="/events/:id" element={<EventDetail />} />
           <Route path="/announcements" element={<Announcements />} />
           <Route path="/announcements/:id" element={<AnnouncementDetail />} />
           <Route path="/reports" element={<Reports />} />
-          <Route path="/reports/new" element={<NewReport />} />
+          <Route path="/reports/new" element={<RequireRole minRole="WARD_COORDINATOR"><NewReport /></RequireRole>} />
+          <Route path="/reports/:id/edit" element={<RequireRole minRole="WARD_COORDINATOR"><EditReport /></RequireRole>} />
           <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/bubbles" element={<Bubbles />} />
+          <Route path="/bubbles/create" element={<RequireRole minRole="WARD_COORDINATOR"><CreateBubble /></RequireRole>} />
+          <Route path="/bubbles/:id" element={<BubbleDetail />} />
+          <Route path="/my-bubbles" element={<MyBubbles />} />
           <Route path="/my-qr" element={<MyQRCode />} />
           <Route path="/my-network" element={<MyNetwork />} />
+          <Route path="/security" element={<SetPassword />} />
         </Route>
 
         {/* Admin Panel — requires STATE_DIRECTOR or above */}
@@ -87,6 +100,8 @@ export default function App() {
             <Route path="events" element={<AdminEvents />} />
             <Route path="announcements" element={<AdminAnnouncements />} />
             <Route path="reports" element={<AdminReports />} />
+            <Route path="bubbles" element={<AdminBubbles />} />
+            <Route path="bubbles/:id" element={<AdminBubbles />} />
             <Route path="audit-log" element={<RequireRole minRole="NATIONAL_OFFICER"><AdminAuditLog /></RequireRole>} />
             <Route path="settings" element={<RequireRole minRole="SUPER_ADMIN"><AdminPlatformSettings /></RequireRole>} />
           </Route>

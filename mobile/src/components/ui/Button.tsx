@@ -6,7 +6,7 @@ import { colors, spacing, radius, typography } from '../../theme';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
+type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
 type Size = 'sm' | 'md' | 'lg';
 
 interface ButtonProps {
@@ -57,21 +57,22 @@ export default function Button({ children, onPress, variant = 'primary', size = 
 }
 
 const variantMap: Record<Variant, { container: ViewStyle; textColor: string }> = {
-  primary: { container: { backgroundColor: colors.primary }, textColor: colors.textInverse },
-  secondary: { container: { backgroundColor: 'transparent', borderWidth: 1.5, borderColor: colors.primary }, textColor: colors.primary },
+  primary: { container: { backgroundColor: colors.accent }, textColor: colors.primaryDark },
+  secondary: { container: { backgroundColor: colors.primary }, textColor: colors.textInverse },
+  outline: { container: { backgroundColor: 'transparent', borderWidth: 1.5, borderColor: colors.primary }, textColor: colors.primary },
   ghost: { container: { backgroundColor: 'transparent' }, textColor: colors.primary },
-  danger: { container: { backgroundColor: colors.danger }, textColor: colors.textInverse },
+  danger: { container: { backgroundColor: colors.dangerLight, borderWidth: 1, borderColor: colors.danger }, textColor: colors.danger },
 };
 
 const sizeMap: Record<Size, { container: ViewStyle; text: TextStyle }> = {
-  sm: { container: { height: 36, paddingHorizontal: spacing.md }, text: { fontSize: 13 } },
-  md: { container: { height: 44, paddingHorizontal: spacing.lg }, text: { fontSize: 15 } },
-  lg: { container: { height: 52, paddingHorizontal: spacing.xl }, text: { fontSize: 16 } },
+  sm: { container: { height: 40, paddingHorizontal: spacing.md }, text: { fontSize: 13 } },
+  md: { container: { height: 48, paddingHorizontal: spacing.lg }, text: { fontSize: 15 } },
+  lg: { container: { height: 56, paddingHorizontal: spacing.xl }, text: { fontSize: 16, fontFamily: 'PlusJakartaSans-Bold' } },
 };
 
 const styles = StyleSheet.create({
   base: {
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',

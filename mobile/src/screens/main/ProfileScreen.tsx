@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, Pressable, Alert } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { colors, spacing, typography, radius, shadows } from '../../theme';
 import { useAuthStore } from '../../store/authStore';
 import Avatar from '../../components/ui/Avatar';
@@ -9,70 +10,117 @@ import Avatar from '../../components/ui/Avatar';
 export default function ProfileScreen() {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
-  const navigation = useNavigation<any>();
-
-  const handleLogout = () => {
-    logout();
-  };
 
   const maskPhone = (phone?: string) => {
     if (!phone || phone.length < 6) return phone || '';
     return phone.slice(0, 4) + '****' + phone.slice(-3);
   };
 
-  const infoRows: { label: string; value: string }[] = [
+  const identityRows = [
     { label: 'Phone', value: maskPhone(user?.phone_number) },
     { label: 'Email', value: user?.email || 'Not set' },
-    { label: 'Membership ID', value: user?.membership_id || '-' },
-    { label: 'Referral Code', value: user?.referral_code || '-' },
-    { label: 'Role', value: user?.role || '-' },
+    { label: 'Occupation', value: user?.occupation || '-' },
+  ];
+
+  const locationRows = [
     { label: 'State', value: user?.state_name || '-' },
     { label: 'LGA', value: user?.lga_name || '-' },
     { label: 'Ward', value: user?.ward_name || '-' },
-    { label: 'Occupation', value: user?.occupation || '-' },
+  ];
+
+  const membershipRows = [
+    { label: 'Membership ID', value: user?.membership_id || '-' },
+    { label: 'Referral Code', value: user?.referral_code || '-' },
+    { label: 'Role', value: user?.role?.replace(/_/g, ' ') || '-' },
     { label: 'Voter Card', value: user?.voter_verification_status || '-' },
   ];
 
+  const renderGroup = (title: string, rows: { label: string; value: string }[], delay: number) => (
+    <Animated.View entering={FadeInDown.delay(delay).duration(400)} style={styles.section}>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      <View style={styles.card}>
+        {rows.map((row, i) => (
+          <View key={row.label} style={[styles.row, i < rows.length - 1 && styles.rowBorder]}>
+            <Text style={styles.rowLabel}>{row.label}</Text>
+            <Text style={styles.rowValue}>{row.value}</Text>
+          </View>
+        ))}
+      </View>
+    </Animated.View>
+  );
+
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.header}>
-          <Avatar name={user?.full_name || ''} size="xl" />
-          <Text style={styles.name}>{user?.full_name}</Text>
-          <Text style={styles.sub}>{user?.state_name || ''}</Text>
-        </View>
-
-        <View style={styles.card}>
-          {infoRows.map((row, i) => (
-            <View key={row.label} style={[styles.row, i < infoRows.length - 1 && styles.rowBorder]}>
-              <Text style={styles.label}>{row.label}</Text>
-              <Text style={styles.value}>{row.value}</Text>
+    <View style={styles.safe}>
+      <ScrollView contentContainerStyle={styles.scroll} bounces>
+        {/* Hero Header */}
+        <LinearGradient colors={[colors.primaryDark, colors.primary, colors.primaryLight || '#2d6a4f']} style={styles.hero}>
+          <SafeAreaView edges={['top']}>
+            <View style={styles.heroContent}>
+              <Avatar name={user?.full_name || ''} size="xl" />
+              <Text style={styles.heroName}>{user?.full_name}</Text>
+              {user?.role && (
+                <View style={styles.roleBadge}>
+                  <Text style={styles.roleBadgeText}>{user.role.replace(/_/g, ' ')}</Text>
+                </View>
+              )}
+              <Text style={styles.heroLocation}>{[user?.state_name, user?.lga_name].filter(Boolean).join(' • ')}</Text>
             </View>
-          ))}
+          </SafeAreaView>
+        </LinearGradient>
+
+        <View style={styles.body}>
+          {renderGroup('Identity', identityRows, 100)}
+          {renderGroup('Location', locationRows, 200)}
+          {renderGroup('Membership', membershipRows, 300)}
+
+          <Animated.View entering={FadeInDown.delay(400).duration(400)} style={styles.actionsSection}>
+            <Pressable style={styles.logoutBtn} onPress={logout}>
+              <Text style={styles.logoutText}>Log Out</Text>
+            </Pressable>
+          </Animated.View>
+
+          <Text style={styles.version}>City Boy Connect v1.0.0</Text>
         </View>
-
-        <Pressable style={styles.logoutBtn} onPress={handleLogout}>
-          <Text style={styles.logoutText}>Log Out</Text>
-        </Pressable>
-
-        <Text style={styles.version}>City Boy Connect v1.0.0</Text>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
-  container: { padding: spacing.md, paddingBottom: spacing.xxxl },
-  header: { alignItems: 'center', marginBottom: spacing.lg },
-  name: { ...typography.h3, color: colors.text, marginTop: spacing.sm },
-  sub: { ...typography.bodySm, color: colors.textSecondary },
-  card: { backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.md, ...shadows.sm, marginBottom: spacing.lg },
+  scroll: { paddingBottom: spacing.xxxl },
+  hero: {
+    paddingBottom: spacing.xl + spacing.md,
+    paddingHorizontal: spacing.lg,
+  },
+  heroContent: {
+    alignItems: 'center',
+    paddingTop: spacing.xl,
+  },
+  heroName: { ...typography.h2, color: '#fff', marginTop: spacing.sm },
+  roleBadge: {
+    backgroundColor: colors.accent,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.full,
+    marginTop: spacing.xs,
+  },
+  roleBadgeText: { ...typography.caption, color: colors.primaryDark, fontFamily: 'PlusJakartaSans-Bold', textTransform: 'capitalize' },
+  heroLocation: { ...typography.bodySm, color: 'rgba(255,255,255,0.7)', marginTop: spacing.xs },
+  body: { paddingHorizontal: spacing.lg, marginTop: -spacing.md },
+  section: { marginBottom: spacing.md },
+  sectionTitle: { ...typography.bodySm, color: colors.textSecondary, fontFamily: 'PlusJakartaSans-SemiBold', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: spacing.xs, paddingLeft: spacing.xs },
+  card: { backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.md, ...shadows.sm },
   row: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: spacing.sm },
   rowBorder: { borderBottomWidth: 1, borderBottomColor: colors.divider },
-  label: { ...typography.bodySm, color: colors.textSecondary },
-  value: { ...typography.bodyMedium, color: colors.text, maxWidth: '55%', textAlign: 'right' },
-  logoutBtn: { backgroundColor: colors.dangerLight, borderRadius: radius.md, paddingVertical: spacing.md, alignItems: 'center', marginBottom: spacing.md },
+  rowLabel: { ...typography.bodySm, color: colors.textSecondary },
+  rowValue: { ...typography.bodyMedium, color: colors.text, maxWidth: '55%', textAlign: 'right' },
+  actionsSection: { marginTop: spacing.md },
+  logoutBtn: {
+    backgroundColor: colors.dangerLight, borderRadius: radius.lg,
+    paddingVertical: spacing.md, alignItems: 'center',
+    borderWidth: 1, borderColor: colors.danger + '30',
+  },
   logoutText: { ...typography.button, color: colors.danger },
-  version: { ...typography.caption, color: colors.textTertiary, textAlign: 'center' },
+  version: { ...typography.caption, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.lg },
 });

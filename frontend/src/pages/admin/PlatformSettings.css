@@ -23,6 +23,12 @@
 }
 .admin-settings__toggle--on .admin-settings__toggle-slider { transform: translateX(22px); }
 .admin-settings__toggle-label { font-size: 0.8rem; color: var(--color-gray-700); }
+.admin-settings__section-desc { font-size: 0.8rem; color: var(--color-gray-500); margin-bottom: var(--space-md); line-height: 1.4; }
+.admin-settings__warning {
+  background: #fff3cd; border: 1px solid #ffc107; color: #856404;
+  padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md);
+  font-size: 0.8rem; font-weight: 600; margin-bottom: var(--space-md);
+}
 .admin-settings__weight-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); }
 .admin-settings__weight-header h3 { margin-bottom: 0; }
 .admin-settings__weight-note { font-size: 0.75rem; color: var(--color-gray-400); margin-bottom: var(--space-sm); }

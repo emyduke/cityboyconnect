@@ -103,3 +103,29 @@
 @media (max-width: 480px) {
   .join-card { padding: var(--space-lg); }
 }
+
+/* Auth method cards (shared with Login) */
+.join-form .method-options {
+  display: flex; flex-direction: column; gap: 10px; margin-top: 4px;
+}
+.join-form .method-card {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 18px; border: 1.5px solid var(--color-gray-200);
+  border-radius: 14px; background: white; cursor: pointer; text-align: left;
+  transition: border-color 150ms, background 150ms; width: 100%;
+}
+.join-form .method-card:hover:not(:disabled) {
+  border-color: var(--color-forest); background: var(--color-gray-50);
+}
+.join-form .method-icon { font-size: 1.5rem; }
+.join-form .method-text { flex: 1; }
+.join-form .method-title { font-weight: 600; font-size: 0.95rem; margin: 0; }
+.join-form .method-desc { font-size: 0.8rem; color: var(--color-gray-500); margin: 2px 0 0; }
+
+/* Password field */
+.join-form .password-field { position: relative; }
+.join-form .pwd-toggle {
+  position: absolute; right: 12px; top: 34px;
+  background: none; border: none; color: var(--color-forest);
+  font-size: 0.8rem; cursor: pointer; font-weight: 600;
+}

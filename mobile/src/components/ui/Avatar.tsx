@@ -41,5 +41,5 @@ export default function Avatar({ uri, name, size = 'md' }: AvatarProps) {
 const styles = StyleSheet.create({
   image: { backgroundColor: colors.skeleton },
   fallback: { backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
-  initials: { color: colors.textInverse, fontWeight: '700' },
+  initials: { color: colors.textInverse, fontFamily: 'PlusJakartaSans-Bold' },
 });

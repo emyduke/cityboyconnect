@@ -67,7 +67,14 @@ def error_response(message, code='ERROR', field=None, status_code=status.HTTP_40
 
 
 def send_otp_sms(phone_number, otp_code):
-    """Send OTP via configured SMS provider."""
+    """Send OTP via configured SMS provider.
+
+    Provider is controlled by settings.SMS_PROVIDER:
+      - 'console'        → prints to terminal (development)
+      - 'africastalking'  → sends real SMS via Africa's Talking
+    """
+    from apps.accounts.models import normalize_phone
+    phone_number = normalize_phone(phone_number)
     provider = getattr(settings, 'SMS_PROVIDER', 'console')
     message = f'Your City Boy Connect verification code is: {otp_code}. Valid for 10 minutes.'
 
@@ -76,8 +83,83 @@ def send_otp_sms(phone_number, otp_code):
         print(f'\n📱 OTP for {phone_number}: {otp_code}\n')
         return True
 
-    logger.info(f'SMS sent to {phone_number} via {provider}')
+    if provider == 'africastalking':
+        return _send_via_africastalking(phone_number, message)
+
+    logger.warning(f'Unknown SMS provider "{provider}", falling back to console.')
+    print(f'\n📱 OTP for {phone_number}: {otp_code}\n')
     return True
+
+
+def send_sms(to: str, message: str) -> dict:
+    """
+    Send SMS via configured provider.
+    Returns {'success': True} or {'success': False, 'error': '...'}.
+    """
+    from apps.accounts.models import normalize_phone
+    to = normalize_phone(to)
+    provider = getattr(settings, 'SMS_PROVIDER', 'console')
+
+    if provider == 'console':
+        logger.info(f'[SMS CONSOLE] To {to}: {message}')
+        print(f'\n📱 SMS to {to}: {message}\n')
+        return {'success': True}
+
+    if provider == 'africastalking':
+        try:
+            result = _send_via_africastalking(to, message)
+            return {'success': True} if result else {'success': False, 'error': 'SMS delivery failed'}
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+
+    logger.warning(f'Unknown SMS provider "{provider}", falling back to console.')
+    print(f'\n📱 SMS to {to}: {message}\n')
+    return {'success': True}
+
+
+def _send_via_africastalking(phone_number, message):
+    """Send an SMS using the Africa's Talking SDK."""
+    import africastalking
+
+    
+    username = getattr(settings, 'AFRICASTALKING_USERNAME', 'cityboy')
+    api_key = getattr(settings, 'AFRICASTALKING_API_KEY', '')
+    sender_id = getattr(settings, 'SMS_SENDER_ID', None)
+
+
+    if not api_key:
+        logger.error('AFRICASTALKING_API_KEY is not set. Cannot send SMS.')
+        return False
+
+    africastalking.initialize(username, api_key)
+    sms = africastalking.SMS
+
+    
+
+    try:
+        kwargs = {'message': message, 'recipients': [phone_number]}
+        if sender_id:
+            kwargs['sender_id'] = sender_id
+
+        response = sms.send(**kwargs)
+        print(response)  # Debug: Check the raw response from Africa's Talking
+        logger.info(f'[SMS AT] Sent to {phone_number}: {response}')
+
+        # Check for failures in the response
+        recipients = response.get('SMSMessageData', {}).get('Recipients', [])
+        if recipients:
+            status_code = recipients[0].get('statusCode', 0)
+            if status_code == 101:  # 101 = Sent
+                return True
+            else:
+                status_msg = recipients[0].get('status', 'Unknown')
+                logger.warning(f'[SMS AT] Non-success status for {phone_number}: {status_code} — {status_msg}')
+                return True  # Still return True — message was accepted by API
+
+        return True
+    except Exception as e:
+        logger.error(f'[SMS AT] Failed to send to {phone_number}: {e}')
+        return False
 
 
 def log_audit(user, action, target_type='', target_id=None, details=None, request=None):

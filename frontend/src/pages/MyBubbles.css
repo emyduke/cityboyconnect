@@ -1,0 +1,6 @@
+.my-bubbles__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-lg); }
+.my-bubbles__header h1 { font-size: 1.5rem; font-weight: 800; }
+.my-bubbles__stepper { display: flex; gap: 4px; margin-bottom: var(--space-sm); }
+.my-bubbles__step { height: 4px; flex: 1; border-radius: 2px; background: var(--color-gray-200); }
+.my-bubbles__step--done { background: var(--color-forest); }
+.my-bubbles__step--active { background: var(--color-gold); }

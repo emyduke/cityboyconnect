@@ -35,6 +35,10 @@ export type MoreStackParamList = {
   NewReport: undefined;
   MyQRCode: undefined;
   MyNetwork: undefined;
+  Bubbles: undefined;
+  BubbleDetail: { id: number };
+  CreateBubble: undefined;
+  MyBubbles: undefined;
   AdminDashboard: undefined;
   AdminMembers: undefined;
   AdminMemberDetail: { pk: number };
@@ -43,12 +47,14 @@ export type MoreStackParamList = {
   AdminEvents: undefined;
   AdminAnnouncements: undefined;
   AdminReports: undefined;
+  AdminBubbles: undefined;
   AdminAuditLog: undefined;
   AdminSettings: undefined;
 };
 
 export type RootStackParamList = {
-  Auth: undefined;
+  Onboarding: undefined;
+  Auth: { screen?: string } | undefined;
   Main: undefined;
   Suspended: undefined;
 };

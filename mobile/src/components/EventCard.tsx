@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     marginRight: spacing.sm,
   },
   dateDay: { ...typography.h3, color: colors.textInverse },
-  dateMonth: { ...typography.caption, color: colors.accentLight, fontWeight: '700' },
+  dateMonth: { ...typography.caption, color: colors.accentLight, fontFamily: 'PlusJakartaSans-Bold' },
   info: { flex: 1 },
   title: { ...typography.bodyMedium, color: colors.text },
   venue: { ...typography.caption, color: colors.textSecondary, marginTop: 2 },

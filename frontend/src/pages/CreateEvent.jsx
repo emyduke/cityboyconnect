@@ -9,6 +9,7 @@ import FileUpload from '../components/FileUpload';
 import { createEvent, getStates, getLGAs, getWards } from '../api/client';
 import { useToastStore } from '../store/toastStore';
 import { useAuthStore } from '../store/authStore';
+import { getFriendlyError } from '../lib/errors';
 
 const EVENT_TYPES = [
   { value: 'RALLY', label: 'Rally', icon: '🏟' },
@@ -72,7 +73,7 @@ export default function CreateEvent() {
       addToast({ type: 'success', message: isDraft ? 'Draft saved!' : 'Event created!' });
       navigate('/events');
     } catch (err) {
-      setError(err.response?.data?.error?.message || 'Failed to create event');
+      setError(getFriendlyError(err));
       setLoading(false);
     }
   };
@@ -102,7 +103,7 @@ export default function CreateEvent() {
       const [title, setTitle] = useState(data.title || '');
       return (
         <>
-          <h2>Give it a name</h2>
+          <h2>Give it a name <span style={{ color: 'var(--color-danger)' }}>*</span></h2>
           <p className="subtitle">Make it clear so members know what to expect</p>
           <Input
             placeholder="e.g. Ward 5 Voter Registration Drive"
@@ -115,6 +116,29 @@ export default function CreateEvent() {
             <button className="flow-card__back" onClick={goBack}>← Back</button>
             <Button onClick={() => goNext({ title })} disabled={!title.trim()} size="lg" style={{ flex: 1 }}>Next</Button>
           </div>
+        </>
+      );
+    },
+    // Card 3 — Description (optional)
+    ({ data, goNext, goBack }) => {
+      const [desc, setDesc] = useState(data.description || '');
+      return (
+        <>
+          <h2>Description <span style={{ fontSize: '0.78rem', color: 'var(--color-gray-400)', fontWeight: 400, marginLeft: '4px' }}>(optional)</span></h2>
+          <p className="subtitle">Tell members what this event is about</p>
+          <textarea
+            className="create-event__textarea"
+            placeholder="Tell members what this event is about..."
+            value={desc}
+            onChange={e => setDesc(e.target.value)}
+            rows={5}
+            style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--color-border)', fontSize: '0.9rem', fontFamily: 'inherit', resize: 'vertical' }}
+          />
+          <div className="flow-card__nav">
+            <button className="flow-card__back" onClick={goBack}>← Back</button>
+            <Button onClick={() => goNext({ description: desc })} size="lg" style={{ flex: 1 }}>Next</Button>
+          </div>
+          <button className="flow-card__skip" onClick={() => goNext({ description: '' })}>Skip for now</button>
         </>
       );
     },
@@ -192,7 +216,7 @@ export default function CreateEvent() {
         <button className="flow-card__skip" onClick={() => goNext({})}>Skip for now</button>
       </>
     ),
-    // Card 7 — Review
+    // Card 8 — Review
     ({ data, goBack, goTo }) => {
       const typeLabel = EVENT_TYPES.find(t => t.value === data.event_type)?.label || data.event_type;
       const visLabel = VISIBILITY_OPTIONS.find(v => v.value === data.visibility)?.label || data.visibility;
@@ -214,26 +238,35 @@ export default function CreateEvent() {
               </div>
               <button className="flow-card__review-edit" onClick={() => goTo(1)}>Edit</button>
             </div>
+            {data.description && (
+              <div className="flow-card__review-section">
+                <div>
+                  <div className="flow-card__review-label">Description</div>
+                  <div className="flow-card__review-value">{data.description}</div>
+                </div>
+                <button className="flow-card__review-edit" onClick={() => goTo(2)}>Edit</button>
+              </div>
+            )}
             <div className="flow-card__review-section">
               <div>
                 <div className="flow-card__review-label">When</div>
                 <div className="flow-card__review-value">{data.start_datetime ? new Date(data.start_datetime).toLocaleString() : '—'}</div>
               </div>
-              <button className="flow-card__review-edit" onClick={() => goTo(2)}>Edit</button>
+              <button className="flow-card__review-edit" onClick={() => goTo(3)}>Edit</button>
             </div>
             <div className="flow-card__review-section">
               <div>
                 <div className="flow-card__review-label">Where</div>
                 <div className="flow-card__review-value">{data.venue_name}</div>
               </div>
-              <button className="flow-card__review-edit" onClick={() => goTo(3)}>Edit</button>
+              <button className="flow-card__review-edit" onClick={() => goTo(4)}>Edit</button>
             </div>
             <div className="flow-card__review-section">
               <div>
                 <div className="flow-card__review-label">Visibility</div>
                 <div className="flow-card__review-value">{visLabel}</div>
               </div>
-              <button className="flow-card__review-edit" onClick={() => goTo(4)}>Edit</button>
+              <button className="flow-card__review-edit" onClick={() => goTo(5)}>Edit</button>
             </div>
           </div>
           {error && <p style={{ color: 'var(--color-danger)', fontSize: '0.85rem' }}>{error}</p>}

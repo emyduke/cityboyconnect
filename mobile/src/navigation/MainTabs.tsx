@@ -1,10 +1,10 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Text } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { colors } from '../theme';
 import { MainTabsParamList, HomeStackParamList, MembersStackParamList, EventsStackParamList, MoreStackParamList } from './types';
+import TabBar from '../components/ui/TabBar';
 
 import DashboardScreen from '../screens/main/DashboardScreen';
 import MembersScreen from '../screens/main/MembersScreen';
@@ -21,6 +21,10 @@ import ReportsScreen from '../screens/main/ReportsScreen';
 import NewReportScreen from '../screens/main/NewReportScreen';
 import MyQRCodeScreen from '../screens/main/MyQRCodeScreen';
 import MyNetworkScreen from '../screens/main/MyNetworkScreen';
+import BubblesScreen from '../screens/main/BubblesScreen';
+import BubbleDetailScreen from '../screens/main/BubbleDetailScreen';
+import CreateBubbleScreen from '../screens/main/CreateBubbleScreen';
+import MyBubblesScreen from '../screens/main/MyBubblesScreen';
 
 import AdminDashboardScreen from '../screens/admin/AdminDashboardScreen';
 import AdminMembersScreen from '../screens/admin/AdminMembersScreen';
@@ -32,6 +36,7 @@ import AdminAnnouncementsScreen from '../screens/admin/AdminAnnouncementsScreen'
 import AdminReportsScreen from '../screens/admin/AdminReportsScreen';
 import AdminAuditLogScreen from '../screens/admin/AdminAuditLogScreen';
 import AdminSettingsScreen from '../screens/admin/AdminSettingsScreen';
+import AdminBubblesScreen from '../screens/admin/AdminBubblesScreen';
 
 const Tab = createBottomTabNavigator<MainTabsParamList>();
 
@@ -78,6 +83,10 @@ function MoreStackScreen() {
       <MoreStack.Screen name="NewReport" component={NewReportScreen} options={{ title: 'New Report' }} />
       <MoreStack.Screen name="MyQRCode" component={MyQRCodeScreen} options={{ title: 'My QR Code', headerShown: false }} />
       <MoreStack.Screen name="MyNetwork" component={MyNetworkScreen} options={{ title: 'My Network' }} />
+      <MoreStack.Screen name="Bubbles" component={BubblesScreen} options={{ title: 'Bubbles' }} />
+      <MoreStack.Screen name="BubbleDetail" component={BubbleDetailScreen} options={{ title: 'Bubble' }} />
+      <MoreStack.Screen name="CreateBubble" component={CreateBubbleScreen} options={{ title: 'Create Bubble' }} />
+      <MoreStack.Screen name="MyBubbles" component={MyBubblesScreen} options={{ title: 'My Bubbles' }} />
       <MoreStack.Screen name="AdminDashboard" component={AdminDashboardScreen} options={{ title: 'Admin Dashboard' }} />
       <MoreStack.Screen name="AdminMembers" component={AdminMembersScreen} options={{ title: 'Manage Members' }} />
       <MoreStack.Screen name="AdminMemberDetail" component={AdminMemberDetailScreen} options={{ title: 'Member Detail' }} />
@@ -86,28 +95,20 @@ function MoreStackScreen() {
       <MoreStack.Screen name="AdminEvents" component={AdminEventsScreen} options={{ title: 'Admin Events' }} />
       <MoreStack.Screen name="AdminAnnouncements" component={AdminAnnouncementsScreen} options={{ title: 'Admin Announcements' }} />
       <MoreStack.Screen name="AdminReports" component={AdminReportsScreen} options={{ title: 'Admin Reports' }} />
+      <MoreStack.Screen name="AdminBubbles" component={AdminBubblesScreen} options={{ title: 'Admin Bubbles' }} />
       <MoreStack.Screen name="AdminAuditLog" component={AdminAuditLogScreen} options={{ title: 'Audit Log' }} />
       <MoreStack.Screen name="AdminSettings" component={AdminSettingsScreen} options={{ title: 'Settings' }} />
     </MoreStack.Navigator>
   );
 }
 
-function TabIcon({ label, focused }: { label: string; focused: boolean }) {
-  const icons: Record<string, string> = { Home: '🏠', Members: '👥', Events: '📅', Ranks: '🏆', More: '☰' };
-  return <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.5 }}>{icons[label] || '•'}</Text>;
-}
-
 export default function MainTabs() {
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
+      tabBar={(props) => <TabBar {...props} />}
+      screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textTertiary,
-        tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border, height: 60, paddingBottom: 8 },
-        tabBarIcon: ({ focused }) => <TabIcon label={route.name.replace('Tab', '')} focused={focused} />,
-        tabBarLabel: route.name.replace('Tab', ''),
-      })}
+      }}
       screenListeners={{
         tabPress: () => { Haptics.selectionAsync(); },
       }}
@@ -115,7 +116,7 @@ export default function MainTabs() {
       <Tab.Screen name="HomeTab" component={HomeStackScreen} options={{ tabBarLabel: 'Home' }} />
       <Tab.Screen name="MembersTab" component={MembersStackScreen} options={{ tabBarLabel: 'Members' }} />
       <Tab.Screen name="EventsTab" component={EventsStackScreen} options={{ tabBarLabel: 'Events' }} />
-      <Tab.Screen name="RanksTab" component={LeaderboardScreen} options={{ tabBarLabel: 'Ranks', headerShown: true, headerTitle: 'Leaderboard', headerStyle: { backgroundColor: colors.surface }, headerTintColor: colors.text }} />
+      <Tab.Screen name="RanksTab" component={LeaderboardScreen} options={{ tabBarLabel: 'Ranks' }} />
       <Tab.Screen name="MoreTab" component={MoreStackScreen} options={{ tabBarLabel: 'More' }} />
     </Tab.Navigator>
   );

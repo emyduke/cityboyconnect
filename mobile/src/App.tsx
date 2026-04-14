@@ -5,6 +5,18 @@ import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import * as Font from 'expo-font';
+import {
+  PlusJakartaSans_400Regular,
+  PlusJakartaSans_500Medium,
+  PlusJakartaSans_600SemiBold,
+  PlusJakartaSans_700Bold,
+} from '@expo-google-fonts/plus-jakarta-sans';
+import {
+  BricolageGrotesque_600SemiBold,
+  BricolageGrotesque_700Bold,
+  BricolageGrotesque_800ExtraBold,
+} from '@expo-google-fonts/bricolage-grotesque';
 import RootNavigator from './navigation/RootNavigator';
 import Toast from './components/ui/Toast';
 import { useAuthStore } from './store/authStore';
@@ -17,7 +29,18 @@ export default function App() {
     async function prepare() {
       try {
         await SplashScreen.preventAutoHideAsync();
-        await useAuthStore.persist.rehydrate();
+        await Promise.all([
+          useAuthStore.persist.rehydrate(),
+          Font.loadAsync({
+            'PlusJakartaSans-Regular': PlusJakartaSans_400Regular,
+            'PlusJakartaSans-Medium': PlusJakartaSans_500Medium,
+            'PlusJakartaSans-SemiBold': PlusJakartaSans_600SemiBold,
+            'PlusJakartaSans-Bold': PlusJakartaSans_700Bold,
+            'BricolageGrotesque-SemiBold': BricolageGrotesque_600SemiBold,
+            'BricolageGrotesque-Bold': BricolageGrotesque_700Bold,
+            'BricolageGrotesque-ExtraBold': BricolageGrotesque_800ExtraBold,
+          }),
+        ]);
       } catch (e) {
         // ignore splash screen errors
       } finally {

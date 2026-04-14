@@ -38,18 +38,20 @@ export default function MyQRCodeScreen() {
   useEffect(() => { fetchData(); }, [fetchData]);
 
   const copyLink = async () => {
-    if (!data?.qr_url) return;
-    await Clipboard.setStringAsync(data.qr_url);
+    const shareUrl = data?.share_url || data?.qr_url;
+    if (!shareUrl) return;
+    await Clipboard.setStringAsync(shareUrl);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     toast('Referral link copied!', 'success');
   };
 
   const shareQR = async () => {
-    if (!data?.qr_url) return;
+    const shareUrl = data?.share_url || data?.qr_url;
+    if (!shareUrl) return;
     try {
       await Share.share({
-        message: `Join City Boy Connect under ${user?.full_name || 'me'}: ${data.qr_url}`,
-        url: data.qr_url,
+        message: `Join City Boy Connect under ${user?.full_name || 'me'}: ${shareUrl}`,
+        url: shareUrl,
       });
     } catch { /* user cancelled */ }
   };

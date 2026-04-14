@@ -12,7 +12,7 @@ from .serializers import (
     MemberProfileSerializer, MemberProfileDetailSerializer,
     OnboardingProfileSerializer, OnboardingPlacementSerializer,
     OnboardingVoterCardSerializer, LeadershipSerializer,
-    AppointLeadershipSerializer,
+    AppointLeadershipSerializer, DirectReferralSerializer,
 )
 from .permissions import (
     IsCoordinatorOrAbove, IsStateDirectorOrAbove,
@@ -78,6 +78,17 @@ class OnboardingPlacementView(APIView):
         profile.ward = ward
         profile.polling_unit = polling_unit
         profile.residential_address = data['residential_address']
+
+        # Process referral token
+        referral_token = data.get('referral_token')
+        if referral_token and not profile.referred_by:
+            try:
+                referrer = MemberProfile.objects.get(onboarding_qr_token=referral_token)
+                if referrer.user_id != request.user.id:
+                    profile.referred_by = referrer
+            except MemberProfile.DoesNotExist:
+                pass  # Invalid token — skip silently
+
         profile.onboarding_step = max(profile.onboarding_step, 2)
         profile.save()
 
@@ -283,8 +294,10 @@ class MyQRView(APIView):
         except MemberProfile.DoesNotExist:
             return error_response('Profile not found.', code='NO_PROFILE')
 
-        base_url = request.build_absolute_uri('/join')
-        qr_url = f'{base_url}?ref={profile.onboarding_qr_token}'
+        from django.conf import settings as django_settings
+        frontend_url = getattr(django_settings, 'FRONTEND_URL', 'https://cityboyconnect.com')
+        qr_url = f'{frontend_url}/join?ref={profile.onboarding_qr_token}'
+        share_url = f'{frontend_url}/r/{profile.onboarding_qr_token}/'
         qr_image = generate_qr_image(qr_url)
 
         today_count = MemberProfile.objects.filter(
@@ -295,6 +308,7 @@ class MyQRView(APIView):
         return success_response({
             'qr_token': profile.onboarding_qr_token,
             'qr_url': qr_url,
+            'share_url': share_url,
             'qr_image': qr_image,
             'direct_count': profile.direct_referrals.count(),
             'network_size': profile.total_network_size,
@@ -332,7 +346,7 @@ class MyNetworkView(APIView):
         except MemberProfile.DoesNotExist:
             return success_response({'results': [], 'stats': {}})
 
-        direct = profile.direct_referrals.select_related('user', 'state', 'lga', 'ward')
+        direct = profile.direct_referrals.select_related('user', 'state', 'lga', 'ward').prefetch_related('direct_referrals')
 
         stats = {
             'direct': direct.count(),
@@ -345,7 +359,7 @@ class MyNetworkView(APIView):
         }
 
         return success_response({
-            'results': MemberProfileSerializer(direct, many=True).data,
+            'results': DirectReferralSerializer(direct, many=True).data,
             'stats': stats,
         })
 
@@ -363,12 +377,13 @@ class MyNetworkTreeView(APIView):
         def build_tree(p, current_depth=0):
             node = {
                 'id': p.user_id,
-                'name': p.user.full_name,
+                'full_name': p.user.full_name,
                 'photo': p.profile_photo.url if p.profile_photo else None,
-                'state': p.state.name if p.state else '',
+                'state_name': p.state.name if p.state else '',
+                'ward_name': p.ward.name if p.ward else '',
                 'status': p.voter_verification_status,
-                'joined': p.joined_at.isoformat(),
-                'network_size': p.direct_referrals.count(),
+                'joined': p.joined_at.isoformat() if p.joined_at else '',
+                'direct_count': p.direct_referrals.count(),
                 'children': [],
             }
             if current_depth < depth:
@@ -413,10 +428,11 @@ class MyNetworkRecentView(APIView):
         for m in recent:
             results.append({
                 'id': m.user_id,
-                'name': m.user.full_name,
-                'state': m.state.name if m.state else '',
-                'joined': m.joined_at.isoformat(),
-                'referred_by': m.referred_by.user.full_name if m.referred_by else '',
+                'full_name': m.user.full_name,
+                'state_name': m.state.name if m.state else '',
+                'ward_name': m.ward.name if m.ward else '',
+                'date_joined': m.joined_at.isoformat() if m.joined_at else '',
+                'referred_by_name': m.referred_by.user.full_name if m.referred_by else '',
             })
 
         return success_response({'results': results})

@@ -19,6 +19,7 @@ const adminNav = [
   { to: '/admin/events', label: 'Events', icon: '📅' },
   { to: '/admin/announcements', label: 'Announcements', icon: '📢' },
   { to: '/admin/reports', label: 'Reports', icon: '📋' },
+  { to: '/admin/bubbles', label: 'Bubbles', icon: '🫧' },
 ];
 
 const superAdminNav = [

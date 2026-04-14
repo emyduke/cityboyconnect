@@ -34,7 +34,7 @@ CHECKIN_METHOD_CHOICES = [
 
 class Event(models.Model):
     title = models.CharField(max_length=300)
-    description = models.TextField()
+    description = models.TextField(blank=True, default='')
     event_type = models.CharField(max_length=20, choices=EVENT_TYPE_CHOICES)
     organizer = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='organized_events'

@@ -28,5 +28,5 @@ export default function Badge({ label, variant = 'default' }: BadgeProps) {
 
 const styles = StyleSheet.create({
   badge: { paddingHorizontal: spacing.sm, paddingVertical: 2, borderRadius: radius.full },
-  label: { ...typography.caption, fontWeight: '600' },
+  label: { ...typography.caption, fontFamily: 'PlusJakartaSans-SemiBold' },
 });

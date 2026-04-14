@@ -1,0 +1,20 @@
+.bubble-detail { max-width: 800px; }
+.bubble-detail__back { display: inline-flex; align-items: center; gap: 4px; color: var(--color-forest); font-weight: 500; font-size: 0.9rem; margin-bottom: var(--space-lg); cursor: pointer; background: none; border: none; }
+.bubble-detail__back:hover { text-decoration: underline; }
+.bubble-detail__header { display: flex; align-items: flex-start; gap: var(--space-md); flex-wrap: wrap; margin-bottom: var(--space-lg); }
+.bubble-detail__title { font-size: 1.5rem; font-weight: 800; margin-bottom: 4px; }
+.bubble-detail__badges { display: flex; gap: var(--space-sm); margin-top: var(--space-xs); }
+.bubble-detail__body { background: var(--color-white); border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 24px; margin-bottom: var(--space-lg); }
+.bubble-detail__section { margin-bottom: var(--space-lg); }
+.bubble-detail__section:last-child { margin-bottom: 0; }
+.bubble-detail__section-title { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-gray-400); margin-bottom: var(--space-sm); }
+.bubble-detail__desc { line-height: 1.6; color: var(--color-gray-700); white-space: pre-wrap; }
+.bubble-detail__location { display: flex; gap: var(--space-lg); flex-wrap: wrap; font-size: 0.9rem; color: var(--color-gray-600); }
+.bubble-detail__contact { display: flex; gap: var(--space-lg); flex-wrap: wrap; }
+.bubble-detail__contact a { display: inline-flex; align-items: center; gap: 6px; padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); font-weight: 500; font-size: 0.9rem; text-decoration: none; }
+.bubble-detail__contact a.phone-link { background: var(--color-forest-light, #e8f5e9); color: var(--color-forest); }
+.bubble-detail__contact a.whatsapp-link { background: #dcfce7; color: #15803d; }
+.bubble-detail__images { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--space-sm); }
+.bubble-detail__images img { width: 100%; height: 150px; object-fit: cover; border-radius: var(--radius-md); cursor: pointer; }
+.bubble-detail__delivery { background: #f0fdf4; border-radius: var(--radius-md); padding: var(--space-md); }
+.bubble-detail__delivery-date { font-size: 0.85rem; color: var(--color-gray-500); }

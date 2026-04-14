@@ -13,7 +13,7 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-dev-key-change-in-pro
 
 DEBUG = config('DEBUG', default='True', cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*' if DEBUG else 'localhost,127.0.0.1').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'apps.dashboard',
     'apps.scoring',
     'apps.admin_panel',
+    'apps.bubbles',
 ]
 
 MIDDLEWARE = [
@@ -56,7 +57,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -142,11 +143,29 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 }
 
+# Frontend URL (used for referral links, QR codes, redirects)
+FRONTEND_URL = config('FRONTEND_URL', default='https://cityboyconnect.com')
+
+# Backend/API URL (used for share links that need OG meta tags from Django)
+BACKEND_URL = config('BACKEND_URL', default='https://api.cityboyconnect.com')
+
 # CORS
 CORS_ALLOWED_ORIGINS = [
+	"https://cityboyconnect.com",
+    "https://www.cityboyconnect.com",
+    "http://localhost:5173",    # keep for local dev
+
     'http://localhost:5173',
     'http://127.0.0.1:5173',
 ]
+
+
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://cityboyconnect.com",
+    "https://www.cityboyconnect.com",
+]
+
 _extra_cors = config('CORS_EXTRA_ORIGINS', default='')
 if _extra_cors:
     CORS_ALLOWED_ORIGINS += [o.strip() for o in _extra_cors.split(',') if o.strip()]
@@ -158,9 +177,17 @@ CELERY_BROKER_URL = config('REDIS_URL', default='redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
 # SMS Config
+# SMS_PROVIDER options: 'console' (dev — prints to terminal), 'africastalking' (production — sends real SMS)
 SMS_PROVIDER = config('SMS_PROVIDER', default='console')
-SMS_API_KEY = config('SMS_API_KEY', default='')
-SMS_SENDER_ID = config('SMS_SENDER_ID', default='CITYBOYNG')
+SMS_SENDER_ID = config('SMS_SENDER_ID', default='')
+
+# Africa's Talking credentials (only needed when SMS_PROVIDER='africastalking')
+AFRICASTALKING_USERNAME = config('AFRICASTALKING_USERNAME', default='cityboy')
+AFRICASTALKING_API_KEY = config('AFRICASTALKING_API_KEY', default='')
+
+# OneSignal
+ONESIGNAL_APP_ID = config('ONESIGNAL_APP_ID', default='')
+ONESIGNAL_REST_API_KEY = config('ONESIGNAL_REST_API_KEY', default='')
 
 # OTP Settings
 OTP_LENGTH = 6
@@ -176,3 +203,19 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
+# Email backend
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
+    EMAIL_PORT = int(config('EMAIL_PORT', default='587'))
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+    EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+
+DEFAULT_FROM_EMAIL = config(
+    'DEFAULT_FROM_EMAIL',
+    default='City Boy Connect <noreply@cityboyconnect.ng>',
+)

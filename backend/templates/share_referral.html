@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Join City Boy Connect — Referred by {{ referrer_name }}</title>
+  <meta name="description" content="Join the City Boy Movement under {{ referrer_name }}{% if referrer_state %} from {{ referrer_state }}{% endif %}. Register now and be part of the movement.">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Join City Boy Connect">
+  <meta property="og:description" content="{{ referrer_name }}{% if referrer_state %} from {{ referrer_state }}{% endif %} invites you to join the City Boy Movement. Register now!">
+  <meta property="og:url" content="{{ share_url }}">
+  <meta property="og:site_name" content="City Boy Connect">
+  <meta property="og:image" content="{{ og_image_url }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="City Boy Connect — Join the Movement">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Join City Boy Connect">
+  <meta name="twitter:description" content="{{ referrer_name }} invites you to join the City Boy Movement. Register now!">
+  <meta name="twitter:image" content="{{ og_image_url }}">
+
+  <!-- Theme -->
+  <meta name="theme-color" content="#1a472a">
+  <link rel="icon" type="image/svg+xml" href="{{ frontend_url }}/favicon.svg">
+
+  <!-- Redirect to frontend -->
+  <meta http-equiv="refresh" content="0;url={{ redirect_url }}">
+  <link rel="canonical" href="{{ redirect_url }}">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0d2416;
+      color: #FAFAF8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 24px;
+    }
+    .card {
+      background: #1a472a;
+      border-radius: 20px;
+      padding: 48px 32px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+    .logo {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 16px;
+      background: #d4a017;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 800;
+      color: #1a472a;
+    }
+    h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .subtitle { color: #9ca3af; font-size: 15px; margin-bottom: 24px; }
+    .referrer { color: #d4a017; font-weight: 600; }
+    .btn {
+      display: inline-block;
+      background: #d4a017;
+      color: #1a472a;
+      padding: 14px 32px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 16px;
+      transition: transform 0.2s;
+    }
+    .btn:hover { transform: scale(1.03); }
+    .spinner { margin: 24px auto 0; width: 24px; height: 24px; border: 3px solid rgba(255,255,255,0.2); border-top-color: #d4a017; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">CB</div>
+    <h1>City Boy Connect</h1>
+    <p class="subtitle">
+      <span class="referrer">{{ referrer_name }}</span>{% if referrer_state %} from {{ referrer_state }}{% endif %}
+      invites you to join the movement
+    </p>
+    <a href="{{ redirect_url }}" class="btn">Join Now</a>
+    <div class="spinner"></div>
+    <p style="color: #6b7280; font-size: 13px; margin-top: 12px;">Redirecting you...</p>
+  </div>
+
+  <script>window.location.href = "{{ redirect_url|escapejs }}";</script>
+</body>
+</html>

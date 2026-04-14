@@ -58,7 +58,8 @@ export default function MyNetwork() {
         setDirectData(Array.isArray(d) ? d : d.results || []);
       } else if (tab === 'tree') {
         const res = await getMyNetworkTree();
-        setTreeData(res.data.data || res.data);
+        const d = res.data.data || res.data;
+        setTreeData(d.tree || d);
       } else {
         const res = await getMyNetworkRecent();
         const d = res.data.data || res.data;

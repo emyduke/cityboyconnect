@@ -44,7 +44,7 @@ export default function PhoneInput({ value, onChangeText, error }: PhoneInputPro
 
 const styles = StyleSheet.create({
   wrapper: { marginBottom: spacing.md },
-  label: { ...typography.bodySm, fontWeight: '500', color: colors.text, marginBottom: spacing.xs },
+  label: { ...typography.bodySm, fontFamily: 'PlusJakartaSans-Medium', color: colors.text, marginBottom: spacing.xs },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
