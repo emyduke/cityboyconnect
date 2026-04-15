@@ -1,0 +1,198 @@
+.opportunities {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.opportunities__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.opportunities__tabs {
+  display: flex;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-lg);
+  border-bottom: 2px solid var(--color-border, #e5e7eb);
+  overflow-x: auto;
+}
+
+.opportunities__tab {
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-weight: 600;
+  color: #6b7280;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  white-space: nowrap;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.opportunities__tab--active {
+  color: var(--color-primary, #1a472a);
+  border-bottom-color: var(--color-primary, #1a472a);
+}
+
+.opportunities__filters {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.opportunities__search {
+  flex: 1;
+  min-width: 200px;
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: var(--radius-md, 8px);
+  font-size: 0.95rem;
+}
+
+.opportunities__filter-select {
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: var(--radius-md, 8px);
+  font-size: 0.9rem;
+  min-width: 140px;
+}
+
+.opportunities__chips {
+  display: flex;
+  gap: var(--space-xs);
+  overflow-x: auto;
+  padding-bottom: var(--space-xs);
+  margin-bottom: var(--space-sm);
+}
+
+.opportunities__chip {
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--color-border, #e5e7eb);
+  background: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 0.85rem;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.opportunities__chip--active {
+  background: var(--color-primary, #1a472a);
+  color: #fff;
+  border-color: var(--color-primary, #1a472a);
+}
+
+.opportunities__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-md);
+}
+
+.opportunity-card {
+  background: #fff;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: var(--radius-lg, 12px);
+  padding: var(--space-md);
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+
+.opportunity-card:hover {
+  box-shadow: var(--shadow-md, 0 4px 12px rgba(0,0,0,0.1));
+  transform: translateY(-2px);
+}
+
+.opportunity-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.opportunity-card__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #e5e7eb;
+}
+
+.opportunity-card__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.opportunity-card__name {
+  font-weight: 600;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.opportunity-card__subtitle {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.opportunity-card__badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: var(--space-xs);
+}
+
+.opportunity-card__badge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.opportunity-card__badge--category {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.opportunity-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.opportunity-card__logo {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-md, 8px);
+  object-fit: cover;
+  background: #f3f4f6;
+}
+
+.opportunities__load-more {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-lg);
+}
+
+@media (max-width: 768px) {
+  .opportunities__grid {
+    grid-template-columns: 1fr;
+  }
+  .opportunities__filters {
+    flex-direction: column;
+  }
+  .opportunities__search {
+    min-width: 100%;
+  }
+}

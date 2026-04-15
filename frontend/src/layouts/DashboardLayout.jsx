@@ -9,6 +9,8 @@ import Toast from '../components/Toast';
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: '📊' },
   { to: '/members', label: 'Members', icon: '👥' },
+  { to: '/opportunities', label: 'Opportunities', icon: '💼' },
+  { to: '/jobs', label: 'Jobs', icon: '📋' },
   { to: '/events', label: 'Events', icon: '📅' },
   { to: '/bubbles', label: 'Bubbles', icon: '🫧' },
   { to: '/announcements', label: 'Announcements', icon: '📢' },

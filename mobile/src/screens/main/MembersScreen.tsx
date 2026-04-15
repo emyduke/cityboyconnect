@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { colors, spacing, radius, typography, shadows } from '../../theme';
 import { getMembers } from '../../api/members';
 import { unwrap } from '../../api/client';
+import { useAuthStore } from '../../store/authStore';
 import MemberCard from '../../components/MemberCard';
 import Skeleton from '../../components/ui/Skeleton';
 import EmptyState from '../../components/EmptyState';
@@ -19,6 +20,8 @@ const FILTERS: { key: FilterKey; label: string; icon: string }[] = [
 
 export default function MembersScreen() {
   const navigation = useNavigation<any>();
+  const user = useAuthStore((s) => s.user);
+  const canAdd = user?.role && ['SUPER_ADMIN','NATIONAL_OFFICER','STATE_DIRECTOR','LGA_COORDINATOR','WARD_COORDINATOR'].includes(user.role);
   const [members, setMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -56,6 +59,11 @@ export default function MembersScreen() {
 
   return (
     <View style={styles.container}>
+      {canAdd && (
+        <Pressable style={styles.addBtn} onPress={() => navigation.navigate('MoreTab', { screen: 'AddMember' })}>
+          <Text style={styles.addBtnText}>+ Add Member</Text>
+        </Pressable>
+      )}
       <View style={styles.searchRow}>
         <Text style={styles.searchIcon}>🔍</Text>
         <TextInput
@@ -101,6 +109,8 @@ export default function MembersScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background, padding: spacing.md },
+  addBtn: { backgroundColor: colors.primary, borderRadius: radius.md, paddingVertical: spacing.sm, alignItems: 'center', marginBottom: spacing.sm },
+  addBtnText: { ...typography.button, color: colors.textInverse },
   searchRow: {
     flexDirection: 'row',
     alignItems: 'center',

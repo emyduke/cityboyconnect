@@ -18,6 +18,7 @@ urlpatterns = [
     path('api/v1/dashboard/', include('apps.dashboard.urls')),
     path('api/v1/leaderboard/', include('apps.scoring.urls')),
     path('api/v1/admin/', include('apps.admin_panel.urls')),
+    path('api/v1/opportunities/', include('apps.opportunities.urls')),
 ]
 
 if settings.DEBUG:

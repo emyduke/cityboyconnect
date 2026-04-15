@@ -88,8 +88,12 @@ export default function MyNetworkScreen() {
                 <Text style={styles.rowName}>{item.full_name || 'Member'}</Text>
                 <Text style={styles.rowMeta}>{item.state_name || ''}{item.joined_at ? ` · ${new Date(item.joined_at).toLocaleDateString()}` : ''}</Text>
               </View>
-              {item.referral_count != null && (
+              {item.added_by_leader ? (
+                <Badge label="Added" variant="success" />
+              ) : item.referral_count != null ? (
                 <Badge label={`${item.referral_count} refs`} variant="info" />
+              ) : (
+                <Badge label="Referred" variant="info" />
               )}
             </View>
           )}

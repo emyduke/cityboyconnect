@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { colors, spacing, radius, typography, shadows } from '../../theme';
 import { getAnnouncements } from '../../api/announcements';
 import { unwrap } from '../../api/client';
+import { useAuthStore } from '../../store/authStore';
 import AnnouncementCard from '../../components/AnnouncementCard';
 import Skeleton from '../../components/ui/Skeleton';
 import EmptyState from '../../components/EmptyState';
@@ -19,6 +20,8 @@ const PRIORITY_FILTERS: { key: PriorityFilter; label: string; color: string }[] 
 
 export default function AnnouncementsScreen() {
   const navigation = useNavigation<any>();
+  const user = useAuthStore((s) => s.user);
+  const canCreate = user?.role && ['SUPER_ADMIN','NATIONAL_OFFICER','STATE_DIRECTOR','LGA_COORDINATOR','WARD_COORDINATOR'].includes(user.role);
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -50,6 +53,12 @@ export default function AnnouncementsScreen() {
 
   return (
     <View style={styles.container}>
+      {/* Create button for coordinators */}
+      {canCreate && (
+        <Pressable style={styles.createBtn} onPress={() => navigation.navigate('CreateAnnouncement')}>
+          <Text style={styles.createBtnText}>+ Create Announcement</Text>
+        </Pressable>
+      )}
       {/* Filter tabs */}
       <View style={styles.filterRow}>
         {PRIORITY_FILTERS.map((f) => (
@@ -81,6 +90,8 @@ export default function AnnouncementsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background, padding: spacing.md },
+  createBtn: { backgroundColor: colors.primary, borderRadius: radius.md, paddingVertical: spacing.sm, alignItems: 'center', marginBottom: spacing.sm },
+  createBtnText: { ...typography.button, color: colors.textInverse },
   filterRow: { flexDirection: 'row', gap: spacing.xs, marginBottom: spacing.md },
   filterTab: {
     paddingHorizontal: spacing.sm + 2,

@@ -20,6 +20,13 @@ urlpatterns = [
     path('members/<int:pk>/', views.MemberDetailView.as_view(), name='member-detail'),
     path('members/<int:pk>/update/', views.MemberUpdateView.as_view(), name='member-update'),
 
+    # Leader add member
+    path('members/leader-add/', views.LeaderAddMemberView.as_view(), name='leader-add-member'),
+    path('members/leader-add/bulk/', views.LeaderBulkAddMemberView.as_view(), name='leader-bulk-add-member'),
+
+    # Profile update
+    path('members/me/', views.MemberProfileUpdateView.as_view(), name='member-profile-update'),
+
     # Leadership
     path('leadership/', views.LeadershipListView.as_view(), name='leadership-list'),
     path('leadership/appoint/', views.AppointLeadershipView.as_view(), name='appoint-leadership'),

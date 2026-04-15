@@ -1135,6 +1135,36 @@ class AdminDeleteAnnouncementView(APIView):
         return _success({'message': f'Announcement "{title}" has been permanently deleted.'})
 
 
+class AdminCreateAnnouncementView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def post(self, request):
+        data = request.data
+        title = data.get('title', '').strip()
+        body = data.get('body', '').strip()
+        if not title or not body:
+            return _error('VALIDATION_ERROR', 'Title and body are required.')
+
+        ann = Announcement.objects.create(
+            title=title,
+            body=body,
+            author=request.user,
+            target_scope=data.get('target_scope', 'ALL'),
+            target_zone_id=data.get('target_zone') or None,
+            target_state_id=data.get('target_state') or None,
+            target_lga_id=data.get('target_lga') or None,
+            target_ward_id=data.get('target_ward') or None,
+            priority=data.get('priority', 'NORMAL'),
+            is_published=data.get('is_published', True),
+            published_at=timezone.now() if data.get('is_published', True) else None,
+        )
+
+        log_action(performed_by=request.user, action='ANNOUNCEMENT_CREATED', target=ann,
+                   before_state=None, after_state={'title': title}, request=request)
+
+        return _success(AdminAnnouncementSerializer(ann).data, drf_status.HTTP_201_CREATED)
+
+
 # ── REPORTS ─────────────────────────────────────────────────────────────────
 
 class AdminReportListView(ListAPIView):

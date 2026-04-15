@@ -31,6 +31,23 @@ const BubbleDetail = lazy(() => import('./pages/BubbleDetail'));
 const CreateBubble = lazy(() => import('./pages/CreateBubble'));
 const MyBubbles = lazy(() => import('./pages/MyBubbles'));
 
+// Opportunities & Jobs
+const Opportunities = lazy(() => import('./pages/Opportunities'));
+const TalentDetail = lazy(() => import('./pages/TalentDetail'));
+const ProfessionalDetail = lazy(() => import('./pages/ProfessionalDetail'));
+const BusinessDetail = lazy(() => import('./pages/BusinessDetail'));
+const MyOpportunities = lazy(() => import('./pages/MyOpportunities'));
+const Jobs = lazy(() => import('./pages/Jobs'));
+const JobDetail = lazy(() => import('./pages/JobDetail'));
+const CreateJob = lazy(() => import('./pages/CreateJob'));
+const MyJobListings = lazy(() => import('./pages/MyJobListings'));
+const JobApplications = lazy(() => import('./pages/JobApplications'));
+const MyApplications = lazy(() => import('./pages/MyApplications'));
+const SavedJobs = lazy(() => import('./pages/SavedJobs'));
+const AddMember = lazy(() => import('./pages/AddMember'));
+const CreateAnnouncement = lazy(() => import('./pages/CreateAnnouncement'));
+const EditEvent = lazy(() => import('./pages/EditEvent'));
+
 // Admin panel
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
 const AdminOverview = lazy(() => import('./pages/admin/Overview'));
@@ -88,6 +105,24 @@ export default function App() {
           <Route path="/my-qr" element={<MyQRCode />} />
           <Route path="/my-network" element={<MyNetwork />} />
           <Route path="/security" element={<SetPassword />} />
+
+          {/* Opportunities & Jobs */}
+          <Route path="/opportunities" element={<Opportunities />} />
+          <Route path="/opportunities/talent/:userId" element={<TalentDetail />} />
+          <Route path="/opportunities/professional/:userId" element={<ProfessionalDetail />} />
+          <Route path="/opportunities/business/:id" element={<BusinessDetail />} />
+          <Route path="/opportunities/me" element={<MyOpportunities />} />
+          <Route path="/jobs" element={<Jobs />} />
+          <Route path="/jobs/:id" element={<JobDetail />} />
+          <Route path="/jobs/create" element={<CreateJob />} />
+          <Route path="/jobs/edit/:id" element={<CreateJob />} />
+          <Route path="/jobs/my-listings" element={<MyJobListings />} />
+          <Route path="/jobs/my-listings/:jobId/applications" element={<JobApplications />} />
+          <Route path="/jobs/my-applications" element={<MyApplications />} />
+          <Route path="/jobs/saved" element={<SavedJobs />} />
+          <Route path="/members/add" element={<RequireRole minRole="WARD_COORDINATOR"><AddMember /></RequireRole>} />
+          <Route path="/announcements/create" element={<RequireRole minRole="WARD_COORDINATOR"><CreateAnnouncement /></RequireRole>} />
+          <Route path="/events/:id/edit" element={<RequireRole minRole="WARD_COORDINATOR"><EditEvent /></RequireRole>} />
         </Route>
 
         {/* Admin Panel — requires STATE_DIRECTOR or above */}

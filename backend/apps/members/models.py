@@ -87,6 +87,13 @@ class MemberProfile(models.Model):
         related_name='direct_referrals'
     )
 
+    # Leader onboarding
+    added_by_leader = models.BooleanField(default=False)
+    added_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='members_added'
+    )
+
     # Membership
     membership_id = models.CharField(max_length=20, unique=True, blank=True)
     is_active = models.BooleanField(default=True)

@@ -59,7 +59,9 @@ export default function DashboardScreen() {
   const quickActions = [
     { icon: '📱', label: 'My QR', screen: 'MyQRCode', tab: 'MoreTab' },
     { icon: '🌐', label: 'Network', screen: 'MyNetwork', tab: 'MoreTab' },
-    { icon: '📅', label: 'Events', screen: null, tab: 'EventsTab' },
+    { icon: '�', label: 'Opportunities', screen: 'Opportunities', tab: 'MoreTab' },
+    { icon: '📋', label: 'Jobs', screen: 'Jobs', tab: 'MoreTab' },
+    { icon: '�📅', label: 'Events', screen: null, tab: 'EventsTab' },
     { icon: '📢', label: 'Announce', screen: 'Announcements', tab: 'MoreTab' },
     { icon: '🏆', label: 'Ranks', screen: null, tab: 'RanksTab' },
   ];

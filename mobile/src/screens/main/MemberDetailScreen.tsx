@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { useRoute, RouteProp } from '@react-navigation/native';
+import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
+import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { colors, spacing, typography, radius, shadows } from '../../theme';
 import { getMember } from '../../api/members';
 import { unwrap } from '../../api/client';
@@ -14,6 +14,7 @@ type Route = RouteProp<MembersStackParamList, 'MemberDetail'>;
 
 export default function MemberDetailScreen() {
   const { params } = useRoute<Route>();
+  const navigation = useNavigation<any>();
   const [member, setMember] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -66,6 +67,33 @@ export default function MemberDetailScreen() {
         <InfoRow label="Referral Code" value={member.referral_code} />
         <InfoRow label="Joined" value={member.joined_at ? new Date(member.joined_at).toLocaleDateString() : ''} />
       </Card>
+
+      {(member.has_professional_profile || member.has_talent_profile || member.has_business_listings) && (
+        <View style={styles.profileLinks}>
+          <Text style={styles.profileLinksTitle}>Opportunity Profiles</Text>
+          {member.has_professional_profile && (
+            <Pressable style={styles.profileLink} onPress={() => navigation.navigate('MoreTab', { screen: 'ProfessionalDetail', params: { id: member.id } })}>
+              <Text style={styles.profileLinkIcon}>💼</Text>
+              <Text style={styles.profileLinkText}>Professional Profile</Text>
+              <Text style={styles.chevron}>›</Text>
+            </Pressable>
+          )}
+          {member.has_talent_profile && (
+            <Pressable style={styles.profileLink} onPress={() => navigation.navigate('MoreTab', { screen: 'TalentDetail', params: { id: member.id } })}>
+              <Text style={styles.profileLinkIcon}>⭐</Text>
+              <Text style={styles.profileLinkText}>Talent Profile</Text>
+              <Text style={styles.chevron}>›</Text>
+            </Pressable>
+          )}
+          {member.has_business_listings && (
+            <Pressable style={styles.profileLink} onPress={() => navigation.navigate('MoreTab', { screen: 'BusinessDetail', params: { id: member.id } })}>
+              <Text style={styles.profileLinkIcon}>🏢</Text>
+              <Text style={styles.profileLinkText}>Business Listing</Text>
+              <Text style={styles.chevron}>›</Text>
+            </Pressable>
+          )}
+        </View>
+      )}
     </ScrollView>
   );
 }
@@ -89,5 +117,11 @@ const styles = StyleSheet.create({
   infoRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.divider },
   infoLabel: { ...typography.bodySm, color: colors.textSecondary },
   infoValue: { ...typography.bodyMedium, color: colors.text, textAlign: 'right', flex: 1, marginLeft: spacing.md },
+  profileLinks: { marginTop: spacing.md },
+  profileLinksTitle: { ...typography.h4, color: colors.text, marginBottom: spacing.sm },
+  profileLink: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.md, marginBottom: spacing.xs, ...shadows.sm },
+  profileLinkIcon: { fontSize: 20, marginRight: spacing.sm },
+  profileLinkText: { ...typography.bodyMedium, color: colors.text, flex: 1 },
+  chevron: { fontSize: 20, color: colors.textTertiary },
   error: { ...typography.body, color: colors.danger, textAlign: 'center', marginTop: spacing.xxl },
 });

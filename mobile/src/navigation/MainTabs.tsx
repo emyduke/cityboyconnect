@@ -38,6 +38,23 @@ import AdminAuditLogScreen from '../screens/admin/AdminAuditLogScreen';
 import AdminSettingsScreen from '../screens/admin/AdminSettingsScreen';
 import AdminBubblesScreen from '../screens/admin/AdminBubblesScreen';
 
+import OpportunitiesScreen from '../screens/main/OpportunitiesScreen';
+import TalentDetailScreen from '../screens/main/TalentDetailScreen';
+import ProfessionalDetailScreen from '../screens/main/ProfessionalDetailScreen';
+import BusinessDetailScreen from '../screens/main/BusinessDetailScreen';
+import MyOpportunitiesScreen from '../screens/main/MyOpportunitiesScreen';
+import JobsScreen from '../screens/main/JobsScreen';
+import JobDetailScreen from '../screens/main/JobDetailScreen';
+import CreateJobScreen from '../screens/main/CreateJobScreen';
+import MyJobListingsScreen from '../screens/main/MyJobListingsScreen';
+import JobApplicationsScreen from '../screens/main/JobApplicationsScreen';
+import MyApplicationsScreen from '../screens/main/MyApplicationsScreen';
+import SavedJobsScreen from '../screens/main/SavedJobsScreen';
+import AddMemberScreen from '../screens/main/AddMemberScreen';
+import CreateAnnouncementScreen from '../screens/main/CreateAnnouncementScreen';
+import EditEventScreen from '../screens/main/EditEventScreen';
+import EditProfileScreen from '../screens/main/EditProfileScreen';
+
 const Tab = createBottomTabNavigator<MainTabsParamList>();
 
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
@@ -77,8 +94,10 @@ function MoreStackScreen() {
     <MoreStack.Navigator screenOptions={{ headerStyle: { backgroundColor: colors.surface }, headerTintColor: colors.text }}>
       <MoreStack.Screen name="MoreMenu" component={MoreMenuScreen} options={{ title: 'More' }} />
       <MoreStack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Profile' }} />
+      <MoreStack.Screen name="EditProfile" component={EditProfileScreen} options={{ title: 'Edit Profile' }} />
       <MoreStack.Screen name="Announcements" component={AnnouncementsScreen} options={{ title: 'Announcements' }} />
       <MoreStack.Screen name="AnnouncementDetail" component={AnnouncementDetailScreen} options={{ title: 'Announcement' }} />
+      <MoreStack.Screen name="CreateAnnouncement" component={CreateAnnouncementScreen} options={{ title: 'Create Announcement' }} />
       <MoreStack.Screen name="Reports" component={ReportsScreen} options={{ title: 'Reports' }} />
       <MoreStack.Screen name="NewReport" component={NewReportScreen} options={{ title: 'New Report' }} />
       <MoreStack.Screen name="MyQRCode" component={MyQRCodeScreen} options={{ title: 'My QR Code', headerShown: false }} />
@@ -87,6 +106,20 @@ function MoreStackScreen() {
       <MoreStack.Screen name="BubbleDetail" component={BubbleDetailScreen} options={{ title: 'Bubble' }} />
       <MoreStack.Screen name="CreateBubble" component={CreateBubbleScreen} options={{ title: 'Create Bubble' }} />
       <MoreStack.Screen name="MyBubbles" component={MyBubblesScreen} options={{ title: 'My Bubbles' }} />
+      <MoreStack.Screen name="Opportunities" component={OpportunitiesScreen} options={{ title: 'Opportunities' }} />
+      <MoreStack.Screen name="TalentDetail" component={TalentDetailScreen} options={{ title: 'Talent' }} />
+      <MoreStack.Screen name="ProfessionalDetail" component={ProfessionalDetailScreen} options={{ title: 'Professional' }} />
+      <MoreStack.Screen name="BusinessDetail" component={BusinessDetailScreen} options={{ title: 'Business' }} />
+      <MoreStack.Screen name="MyOpportunities" component={MyOpportunitiesScreen} options={{ title: 'My Profiles' }} />
+      <MoreStack.Screen name="Jobs" component={JobsScreen} options={{ title: 'Jobs' }} />
+      <MoreStack.Screen name="JobDetail" component={JobDetailScreen} options={{ title: 'Job Detail' }} />
+      <MoreStack.Screen name="CreateJob" component={CreateJobScreen} options={{ title: 'Post Job' }} />
+      <MoreStack.Screen name="MyJobListings" component={MyJobListingsScreen} options={{ title: 'My Job Listings' }} />
+      <MoreStack.Screen name="JobApplications" component={JobApplicationsScreen} options={{ title: 'Applications' }} />
+      <MoreStack.Screen name="MyApplications" component={MyApplicationsScreen} options={{ title: 'My Applications' }} />
+      <MoreStack.Screen name="SavedJobs" component={SavedJobsScreen} options={{ title: 'Saved Jobs' }} />
+      <MoreStack.Screen name="AddMember" component={AddMemberScreen} options={{ title: 'Add Member' }} />
+      <MoreStack.Screen name="EditEvent" component={EditEventScreen} options={{ title: 'Edit Event' }} />
       <MoreStack.Screen name="AdminDashboard" component={AdminDashboardScreen} options={{ title: 'Admin Dashboard' }} />
       <MoreStack.Screen name="AdminMembers" component={AdminMembersScreen} options={{ title: 'Manage Members' }} />
       <MoreStack.Screen name="AdminMemberDetail" component={AdminMemberDetailScreen} options={{ title: 'Member Detail' }} />

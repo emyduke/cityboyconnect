@@ -146,6 +146,12 @@ export default function BubbleDetailScreen() {
           </Button>
         )}
 
+        {['SERVICES', 'ENTERTAINMENT', 'EDUCATION', 'TECHNOLOGY'].includes(bubble.category) && (
+          <Pressable style={styles.suggestionCard} onPress={() => navigation.navigate('MoreTab', { screen: 'Opportunities' })}>
+            <Text style={styles.suggestionText}>💡 Looking for a specific talent? <Text style={{ fontWeight: '700' }}>Search our directory →</Text></Text>
+          </Pressable>
+        )}
+
         {bubble.status === 'DELIVERED' && (
           <View style={styles.deliveryBox}>
             <Text style={styles.sectionTitle}>Delivery</Text>
@@ -195,4 +201,6 @@ const styles = StyleSheet.create({
   deliveryBox: { backgroundColor: '#f0fdf4', borderRadius: radius.md, padding: 16, marginBottom: spacing.md },
   deliveryDate: { fontSize: 13, color: colors.textTertiary, marginTop: 4 },
   metaText: { fontSize: 13, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.sm },
+  suggestionCard: { backgroundColor: colors.primary + '10', borderWidth: 1, borderColor: colors.primary, borderRadius: radius.md, padding: spacing.md, marginBottom: spacing.md },
+  suggestionText: { ...typography.bodySm, color: colors.primary },
 });

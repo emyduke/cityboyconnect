@@ -17,6 +17,8 @@ const menuItems: MenuItem[] = [
   { label: 'Profile', icon: '👤', screen: 'Profile' },
   { label: 'My QR Code', icon: '📱', screen: 'MyQRCode' },
   { label: 'My Network', icon: '🌐', screen: 'MyNetwork' },
+  { label: 'Opportunities', icon: '💼', screen: 'Opportunities' },
+  { label: 'Jobs', icon: '📋', screen: 'Jobs' },
   { label: 'Bubbles', icon: '🫧', screen: 'Bubbles' },
   { label: 'My Bubbles', icon: '🫧', screen: 'MyBubbles' },
   { label: 'Announcements', icon: '📢', screen: 'Announcements' },

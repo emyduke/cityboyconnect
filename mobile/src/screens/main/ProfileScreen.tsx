@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { colors, spacing, typography, radius, shadows } from '../../theme';
@@ -8,6 +9,7 @@ import { useAuthStore } from '../../store/authStore';
 import Avatar from '../../components/ui/Avatar';
 
 export default function ProfileScreen() {
+  const navigation = useNavigation<any>();
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
 
@@ -74,6 +76,12 @@ export default function ProfileScreen() {
           {renderGroup('Membership', membershipRows, 300)}
 
           <Animated.View entering={FadeInDown.delay(400).duration(400)} style={styles.actionsSection}>
+            <Pressable style={styles.editBtn} onPress={() => navigation.navigate('EditProfile')}>
+              <Text style={styles.editBtnText}>✏️ Edit Profile</Text>
+            </Pressable>
+            <Pressable style={styles.editBtn} onPress={() => navigation.navigate('MyOpportunities')}>
+              <Text style={styles.editBtnText}>💼 My Opportunity Profiles</Text>
+            </Pressable>
             <Pressable style={styles.logoutBtn} onPress={logout}>
               <Text style={styles.logoutText}>Log Out</Text>
             </Pressable>
@@ -116,6 +124,13 @@ const styles = StyleSheet.create({
   rowLabel: { ...typography.bodySm, color: colors.textSecondary },
   rowValue: { ...typography.bodyMedium, color: colors.text, maxWidth: '55%', textAlign: 'right' },
   actionsSection: { marginTop: spacing.md },
+  editBtn: {
+    backgroundColor: colors.surface, borderRadius: radius.lg,
+    paddingVertical: spacing.md, alignItems: 'center',
+    borderWidth: 1, borderColor: colors.primary + '30',
+    marginBottom: spacing.sm, ...shadows.sm,
+  },
+  editBtnText: { ...typography.button, color: colors.primary },
   logoutBtn: {
     backgroundColor: colors.dangerLight, borderRadius: radius.lg,
     paddingVertical: spacing.md, alignItems: 'center',

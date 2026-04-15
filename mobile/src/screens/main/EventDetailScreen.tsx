@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { useRoute, RouteProp } from '@react-navigation/native';
-import { colors, spacing, typography } from '../../theme';
+import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
+import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
+import { colors, spacing, typography, radius } from '../../theme';
 import { getEvent, attendEvent } from '../../api/events';
 import { unwrap } from '../../api/client';
 import { useToastStore } from '../../store/toastStore';
+import { useAuthStore } from '../../store/authStore';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
 import Card from '../../components/ui/Card';
@@ -15,7 +16,9 @@ type Route = RouteProp<EventsStackParamList, 'EventDetail'>;
 
 export default function EventDetailScreen() {
   const { params } = useRoute<Route>();
+  const navigation = useNavigation<any>();
   const toast = useToastStore((s) => s.show);
+  const user = useAuthStore((s) => s.user);
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [attending, setAttending] = useState(false);
@@ -60,13 +63,18 @@ export default function EventDetailScreen() {
       ) : null}
       {!event.is_attending && (
         <Button onPress={handleAttend} loading={attending} size="lg" style={{ marginTop: spacing.lg }}>
-          I'm Attending
+          Check In
         </Button>
       )}
       {event.is_attending && (
         <View style={styles.attendingBadge}>
-          <Text style={styles.attendingText}>✓ You're Attending</Text>
+          <Text style={styles.attendingText}>✓ Checked In</Text>
         </View>
+      )}
+      {(user?.id === event.created_by || user?.id === event.created_by_id || ['SUPER_ADMIN','NATIONAL_OFFICER','STATE_DIRECTOR','LGA_COORDINATOR','WARD_COORDINATOR'].includes(user?.role || '')) && (
+        <Pressable style={styles.editBtn} onPress={() => navigation.navigate('MoreTab', { screen: 'EditEvent', params: { id: event.id } })}>
+          <Text style={styles.editBtnText}>✏️ Edit Event</Text>
+        </Pressable>
       )}
     </ScrollView>
   );
@@ -91,5 +99,7 @@ const styles = StyleSheet.create({
   infoValue: { ...typography.body, color: colors.text },
   attendingBadge: { backgroundColor: colors.successLight, borderRadius: 12, padding: spacing.md, marginTop: spacing.lg, alignItems: 'center' },
   attendingText: { ...typography.bodyMedium, color: colors.success },
+  editBtn: { backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.md, marginTop: spacing.sm, alignItems: 'center', borderWidth: 1, borderColor: colors.primary + '30' },
+  editBtnText: { ...typography.button, color: colors.primary },
   error: { ...typography.body, color: colors.danger, textAlign: 'center', marginTop: spacing.xxl },
 });

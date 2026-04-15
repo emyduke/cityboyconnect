@@ -137,4 +137,79 @@ export const deliverBubble = (id, data) => api.post(`/bubbles/admin/${id}/delive
   headers: data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {},
 });
 
+// Opportunities - Professional Profile
+export const getMyProfessionalProfile = () => api.get('/opportunities/professional/me/');
+export const createProfessionalProfile = (data) => api.post('/opportunities/professional/me/', data);
+export const updateProfessionalProfile = (data) => api.patch('/opportunities/professional/me/', data);
+export const deleteProfessionalProfile = () => api.delete('/opportunities/professional/me/');
+
+// Opportunities - Talent Profile
+export const getMyTalentProfile = () => api.get('/opportunities/talent/me/');
+export const createTalentProfile = (data) => api.post('/opportunities/talent/me/', data);
+export const updateTalentProfile = (data) => api.patch('/opportunities/talent/me/', data);
+export const deleteTalentProfile = () => api.delete('/opportunities/talent/me/');
+export const addPortfolioItem = (data) => api.post('/opportunities/talent/me/portfolio/', data, {
+  headers: { 'Content-Type': 'multipart/form-data' },
+});
+export const removePortfolioItem = (id) => api.delete(`/opportunities/talent/me/portfolio/${id}/`);
+
+// Opportunities - Business Listings
+export const getMyBusinessListings = () => api.get('/opportunities/businesses/me/');
+export const createBusinessListing = (data) => api.post('/opportunities/businesses/me/', data, {
+  headers: data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {},
+});
+export const updateBusinessListing = (id, data) => api.patch(`/opportunities/businesses/me/${id}/`, data);
+export const deleteBusinessListing = (id) => api.delete(`/opportunities/businesses/me/${id}/`);
+export const addBusinessImage = (id, data) => api.post(`/opportunities/businesses/${id}/images/`, data, {
+  headers: { 'Content-Type': 'multipart/form-data' },
+});
+export const removeBusinessImage = (bizId, imgId) => api.delete(`/opportunities/businesses/${bizId}/images/${imgId}/`);
+
+// Opportunities - Directory / Search
+export const searchProfessionals = (params) => api.get('/opportunities/professionals/', { params });
+export const searchTalents = (params) => api.get('/opportunities/talents/', { params });
+export const searchBusinesses = (params) => api.get('/opportunities/businesses/', { params });
+export const getOpportunityProfile = (userId) => api.get(`/opportunities/profile/${userId}/`);
+export const getBusinessDetail = (id) => api.get(`/opportunities/businesses/${id}/`);
+export const getSkills = () => api.get('/opportunities/skills/');
+export const getTalentCategories = () => api.get('/opportunities/categories/');
+export const getBusinessCategories = () => api.get('/opportunities/business-categories/');
+
+// Jobs
+export const getJobs = (params) => api.get('/opportunities/jobs/', { params });
+export const getJobDetail = (id) => api.get(`/opportunities/jobs/${id}/`);
+export const getMyJobListings = () => api.get('/opportunities/jobs/my-listings/');
+export const createJobListing = (data) => api.post('/opportunities/jobs/my-listings/', data);
+export const updateJobListing = (id, data) => api.patch(`/opportunities/jobs/my-listings/${id}/`, data);
+export const deleteJobListing = (id) => api.delete(`/opportunities/jobs/my-listings/${id}/`);
+export const changeJobStatus = (id, data) => api.post(`/opportunities/jobs/${id}/status/`, data);
+export const applyToJob = (id, data) => api.post(`/opportunities/jobs/${id}/apply/`, data, {
+  headers: { 'Content-Type': 'multipart/form-data' },
+});
+export const getMyApplications = (params) => api.get('/opportunities/jobs/my-applications/', { params });
+export const getMyApplicationDetail = (id) => api.get(`/opportunities/jobs/my-applications/${id}/`);
+export const withdrawApplication = (id) => api.post(`/opportunities/jobs/my-applications/${id}/withdraw/`);
+export const getJobApplications = (jobId, params) => api.get(`/opportunities/jobs/${jobId}/applications/`, { params });
+export const getJobApplicationDetail = (jobId, appId) => api.get(`/opportunities/jobs/${jobId}/applications/${appId}/`);
+export const updateApplicationStatus = (jobId, appId, data) => api.patch(`/opportunities/jobs/${jobId}/applications/${appId}/`, data);
+export const saveJob = (id) => api.post(`/opportunities/jobs/${id}/save/`);
+export const getSavedJobs = () => api.get('/opportunities/jobs/saved/');
+
+// Leader Add Member
+export const leaderAddMember = (data) => api.post('/members/leader-add/', data);
+export const leaderBulkAddMembers = (data) => api.post('/members/leader-add/bulk/', data);
+
+// Member Profile Update
+export const updateMyProfile = (data) => api.patch('/members/me/', data, {
+  headers: data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {},
+});
+
+// Admin Announcements Create
+export const adminCreateAnnouncement = (data) => api.post('/admin/announcements/create/', data);
+
+// Events Update
+export const updateEvent = (id, data) => api.patch(`/events/${id}/`, data, {
+  headers: data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {},
+});
+
 export default api;

@@ -2,15 +2,19 @@ import './Members.css';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getMemberDirectory } from '../api/client';
+import { useAuthStore } from '../store/authStore';
+import { canAddMembers } from '../lib/permissions';
 import MemberCard from '../components/MemberCard';
 import Skeleton from '../components/Skeleton';
 import EmptyState from '../components/EmptyState';
+import Button from '../components/Button';
 
 export default function Members() {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
+  const user = useAuthStore(s => s.user);
 
   useEffect(() => {
     const load = async () => {
@@ -27,7 +31,12 @@ export default function Members() {
 
   return (
     <div className="members-page">
-      <h1>Member Directory</h1>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1rem' }}>
+        <h1>Member Directory</h1>
+        {canAddMembers(user?.role) && (
+          <Button size="sm" onClick={() => navigate('/members/add')}>➕ Add Member</Button>
+        )}
+      </div>
       <div className="members-page__search">
         <input
           type="text"

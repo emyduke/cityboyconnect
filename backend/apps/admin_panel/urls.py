@@ -50,6 +50,7 @@ urlpatterns = [
 
     # ── ANNOUNCEMENTS ─────────────────────────────────────────────
     path('announcements/', views.AdminAnnouncementListView.as_view(), name='admin-announcement-list'),
+    path('announcements/create/', views.AdminCreateAnnouncementView.as_view(), name='admin-announcement-create'),
     path('announcements/<int:pk>/', views.AdminAnnouncementDetailView.as_view(), name='admin-announcement-detail'),
     path('announcements/<int:pk>/publish/', views.AdminPublishAnnouncementView.as_view(), name='admin-publish-announcement'),
     path('announcements/<int:pk>/unpublish/', views.AdminUnpublishAnnouncementView.as_view(), name='admin-unpublish-announcement'),

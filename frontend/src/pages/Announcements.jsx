@@ -2,14 +2,18 @@ import './Announcements.css';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAnnouncements } from '../api/client';
+import { useAuthStore } from '../store/authStore';
+import { canCreateAnnouncements } from '../lib/permissions';
 import AnnouncementCard from '../components/AnnouncementCard';
 import Skeleton from '../components/Skeleton';
 import EmptyState from '../components/EmptyState';
+import Button from '../components/Button';
 
 export default function Announcements() {
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const user = useAuthStore(s => s.user);
 
   useEffect(() => {
     const load = async () => {
@@ -24,7 +28,12 @@ export default function Announcements() {
 
   return (
     <div className="announcements-page">
-      <h1>Announcements</h1>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1rem' }}>
+        <h1>Announcements</h1>
+        {canCreateAnnouncements(user?.role) && (
+          <Button size="sm" onClick={() => navigate('/announcements/create')}>📢 Create Announcement</Button>
+        )}
+      </div>
       {loading ? (
         <div className="announcements-grid"><Skeleton variant="card" /><Skeleton variant="card" /><Skeleton variant="card" /></div>
       ) : announcements.length === 0 ? (

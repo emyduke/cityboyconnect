@@ -29,8 +29,10 @@ export type EventsStackParamList = {
 export type MoreStackParamList = {
   MoreMenu: undefined;
   Profile: undefined;
+  EditProfile: undefined;
   Announcements: undefined;
   AnnouncementDetail: { id: number };
+  CreateAnnouncement: undefined;
   Reports: undefined;
   NewReport: undefined;
   MyQRCode: undefined;
@@ -39,6 +41,20 @@ export type MoreStackParamList = {
   BubbleDetail: { id: number };
   CreateBubble: undefined;
   MyBubbles: undefined;
+  Opportunities: undefined;
+  TalentDetail: { id: number };
+  ProfessionalDetail: { id: number };
+  BusinessDetail: { id: number };
+  MyOpportunities: undefined;
+  Jobs: undefined;
+  JobDetail: { id: number };
+  CreateJob: { id?: number } | undefined;
+  MyJobListings: undefined;
+  JobApplications: { jobId: number };
+  MyApplications: undefined;
+  SavedJobs: undefined;
+  AddMember: undefined;
+  EditEvent: { id: number };
   AdminDashboard: undefined;
   AdminMembers: undefined;
   AdminMemberDetail: { pk: number };

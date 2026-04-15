@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, RefreshControl, StyleSheet, Pressable, Animated, Modal } from 'react-native';
+import { View, Text, FlatList, RefreshControl, StyleSheet, Pressable, Animated, Modal, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { colors, spacing, typography, radius, shadows } from '../../theme';
@@ -126,6 +126,12 @@ export default function AdminVerificationsScreen() {
                     <Text style={styles.cardMeta}>{item.phone_number} · {item.state_name || ''}</Text>
                   </View>
                 </View>
+                {item.voter_card_image && (
+                  <Image source={{ uri: item.voter_card_image }} style={styles.voterCardImage} resizeMode="contain" />
+                )}
+                {!item.voter_card_image && (
+                  <Text style={styles.noCardText}>No voter card image</Text>
+                )}
                 <View style={styles.cardActions}>
                   <Button
                     size="sm"
@@ -185,6 +191,8 @@ const styles = StyleSheet.create({
   cardInfo: { flex: 1 },
   cardName: { ...typography.bodyMedium, color: colors.text },
   cardMeta: { ...typography.caption, color: colors.textSecondary },
+  voterCardImage: { width: '100%', height: 150, borderRadius: radius.sm, backgroundColor: colors.background, marginBottom: spacing.sm },
+  noCardText: { ...typography.caption, color: colors.textTertiary, fontStyle: 'italic', marginBottom: spacing.sm },
   cardActions: { flexDirection: 'row', gap: spacing.sm },
   modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: colors.overlay },
   modalContent: { backgroundColor: colors.surface, borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, padding: spacing.lg },

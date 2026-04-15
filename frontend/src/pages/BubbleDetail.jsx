@@ -110,6 +110,12 @@ export default function BubbleDetail() {
           </div>
         )}
 
+        {['SERVICES', 'ENTERTAINMENT', 'EDUCATION', 'TECHNOLOGY'].includes(bubble.category) && (
+          <div className="bubble-detail__suggestion" onClick={() => navigate(`/opportunities?tab=talents&search=${encodeURIComponent(bubble.category_display || bubble.category)}`)}>
+            <span>💡 Looking for a specific talent? <strong>Search our directory →</strong></span>
+          </div>
+        )}
+
         {bubble.status === 'DELIVERED' && (
           <div className="bubble-detail__section">
             <h3 className="bubble-detail__section-title">Delivery</h3>

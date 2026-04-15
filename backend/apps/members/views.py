@@ -436,3 +436,152 @@ class MyNetworkRecentView(APIView):
             })
 
         return success_response({'results': results})
+
+
+# ── Leader Add Member views ──
+
+class LeaderAddMemberView(APIView):
+    """Allow coordinators to pre-register a new member directly."""
+    permission_classes = [IsAuthenticated, IsCoordinatorOrAbove]
+
+    def post(self, request):
+        from .serializers import LeaderAddMemberSerializer
+        serializer = LeaderAddMemberSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        result = self._add_single_member(request.user, data)
+        if result.get('status') == 'failed':
+            return error_response(result['reason'], code='ADD_FAILED')
+
+        return success_response(result, status_code=status.HTTP_201_CREATED)
+
+    def _add_single_member(self, leader, data):
+        from apps.accounts.models import User, normalize_phone
+
+        phone = data['phone_number']
+
+        # Check if phone already registered
+        if User.objects.filter(phone_number=phone).exists():
+            return {'phone_number': phone, 'status': 'failed', 'reason': 'Phone number already registered'}
+
+        # Validate structure references
+        try:
+            state = State.objects.get(id=data['state_id'])
+            lga = LocalGovernment.objects.get(id=data['lga_id'], state=state)
+            ward = Ward.objects.get(id=data['ward_id'], lga=lga)
+        except (State.DoesNotExist, LocalGovernment.DoesNotExist, Ward.DoesNotExist):
+            return {'phone_number': phone, 'status': 'failed', 'reason': 'Invalid state/LGA/ward selection'}
+
+        # Validate leader geographic scope
+        try:
+            leader_profile = leader.profile
+        except MemberProfile.DoesNotExist:
+            return {'phone_number': phone, 'status': 'failed', 'reason': 'Leader has no profile'}
+
+        if not self._validate_scope(leader, leader_profile, state, lga, ward):
+            return {'phone_number': phone, 'status': 'failed', 'reason': 'Member placement is outside your geographic scope'}
+
+        # Create user
+        from apps.accounts.models import User
+        user = User.objects.create_user(phone_number=phone, full_name=data['full_name'])
+        user.is_active = True
+        user.save(update_fields=['is_active'])
+
+        # Create profile
+        profile = MemberProfile.objects.create(
+            user=user,
+            state=state,
+            lga=lga,
+            ward=ward,
+            date_of_birth=data.get('date_of_birth'),
+            gender=data.get('gender', ''),
+            occupation=data.get('occupation', ''),
+            residential_address=data.get('address', ''),
+            referred_by=leader_profile,
+            added_by_leader=True,
+            added_by=leader,
+            voter_verification_status='PENDING',
+            onboarding_step=2,
+        )
+
+        log_audit(leader, 'LEADER_ADD_MEMBER', 'MemberProfile', profile.id,
+                  {'phone': phone, 'full_name': data['full_name']}, None)
+
+        return {
+            'phone_number': phone,
+            'status': 'created',
+            'membership_id': profile.membership_id,
+            'full_name': data['full_name'],
+        }
+
+    def _validate_scope(self, leader, leader_profile, state, lga, ward):
+        role = leader.role
+        if ROLE_HIERARCHY.get(role, 0) >= ROLE_HIERARCHY.get('NATIONAL_OFFICER', 8):
+            return True
+        if role == 'STATE_DIRECTOR' and leader_profile.state_id == state.id:
+            return True
+        if role == 'LGA_COORDINATOR' and leader_profile.lga_id == lga.id:
+            return True
+        if role in ('WARD_COORDINATOR', 'ZONAL_COORDINATOR') and leader_profile.ward_id == ward.id:
+            return True
+        return False
+
+
+class LeaderBulkAddMemberView(APIView):
+    """Allow coordinators to bulk pre-register members."""
+    permission_classes = [IsAuthenticated, IsCoordinatorOrAbove]
+
+    def post(self, request):
+        from .serializers import BulkLeaderAddMemberSerializer
+        serializer = BulkLeaderAddMemberSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        members_data = serializer.validated_data['members']
+
+        leader_view = LeaderAddMemberView()
+        results = []
+        successful = 0
+        failed = 0
+
+        for member_data in members_data:
+            result = leader_view._add_single_member(request.user, member_data)
+            results.append(result)
+            if result.get('status') == 'created':
+                successful += 1
+            else:
+                failed += 1
+
+        return success_response({
+            'total': len(members_data),
+            'successful': successful,
+            'failed': failed,
+            'results': results,
+        })
+
+
+class MemberProfileUpdateView(APIView):
+    """Allow members to update their own profile (for Profile editing)."""
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def patch(self, request):
+        try:
+            profile = request.user.profile
+        except MemberProfile.DoesNotExist:
+            return error_response('Profile not found.', code='NOT_FOUND',
+                                  status_code=status.HTTP_404_NOT_FOUND)
+
+        allowed_fields = {
+            'occupation', 'residential_address', 'profile_photo',
+            'date_of_birth', 'gender',
+        }
+        for field in allowed_fields:
+            if field in request.data:
+                setattr(profile, field, request.data[field])
+
+        if 'full_name' in request.data:
+            request.user.full_name = request.data['full_name']
+            request.user.save(update_fields=['full_name'])
+
+        profile.save()
+        return success_response(MemberProfileSerializer(profile).data)

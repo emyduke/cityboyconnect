@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { adminApi } from '../../api/admin';
 import Button from '../../components/Button';
 import Badge from '../../components/Badge';
@@ -9,6 +10,7 @@ import './AdminAnnouncements.css';
 const STATUS_COLORS = { published: 'success', draft: 'warning', unpublished: 'default' };
 
 export default function AdminAnnouncements() {
+  const navigate = useNavigate();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -66,7 +68,10 @@ export default function AdminAnnouncements() {
 
   return (
     <div className="admin-announcements">
-      <h1>Announcements Management</h1>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+        <h1>Announcements Management</h1>
+        <Button size="sm" onClick={() => navigate('/announcements/create')}>📢 Create Announcement</Button>
+      </div>
 
       <div className="admin-announcements__filters">
         <form onSubmit={e => { e.preventDefault(); setPage(1); load(); }} className="admin-announcements__search">

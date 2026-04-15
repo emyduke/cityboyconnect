@@ -126,6 +126,12 @@ export default function MyNetwork() {
                         <span className="network-item__meta">{m.ward_name || m.state_name || ''}</span>
                       </div>
                       <div className="network-item__right">
+                        {m.added_by_leader && (
+                          <span style={{ fontSize: '0.7rem', background: 'var(--color-primary)', color: '#fff', padding: '0.15rem 0.4rem', borderRadius: '0.25rem' }}>Added by you</span>
+                        )}
+                        {!m.added_by_leader && (
+                          <span style={{ fontSize: '0.7rem', background: '#e0e7ff', color: '#4338ca', padding: '0.15rem 0.4rem', borderRadius: '0.25rem' }}>Referred</span>
+                        )}
                         <span className="network-item__date">
                           {m.date_joined ? new Date(m.date_joined).toLocaleDateString() : ''}
                         </span>

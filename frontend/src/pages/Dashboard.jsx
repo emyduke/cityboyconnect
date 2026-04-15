@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getDashboardOverview, getMembershipGrowth, getLeaderboard } from '../api/client';
 import { useAuthStore } from '../store/authStore';
+import { canAddMembers } from '../lib/permissions';
 import StatCard from '../components/StatCard';
 import Card from '../components/Card';
 import Skeleton from '../components/Skeleton';
@@ -107,6 +108,38 @@ export default function Dashboard() {
           <Button size="sm" variant="secondary" onClick={e => { e.stopPropagation(); navigate('/bubbles'); }}>Browse</Button>
         </div>
       </Card>
+
+      <div className="dashboard__grid" style={{ marginBottom: 'var(--space-lg)' }}>
+        <Card padding="md" style={{ cursor: 'pointer' }} onClick={() => navigate('/opportunities')}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <span style={{ fontSize: '1.5rem' }}>💼</span>
+            <div>
+              <h3 className="dashboard__card-title">Find Talents</h3>
+              <p style={{ color: '#6b7280', fontSize: '0.85rem' }}>Browse professionals, talents & businesses</p>
+            </div>
+          </div>
+        </Card>
+        <Card padding="md" style={{ cursor: 'pointer' }} onClick={() => navigate('/jobs')}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <span style={{ fontSize: '1.5rem' }}>📋</span>
+            <div>
+              <h3 className="dashboard__card-title">Job Board</h3>
+              <p style={{ color: '#6b7280', fontSize: '0.85rem' }}>Find opportunities & post jobs</p>
+            </div>
+          </div>
+        </Card>
+        {canAddMembers(user?.role) && (
+          <Card padding="md" style={{ cursor: 'pointer' }} onClick={() => navigate('/members/add')}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <span style={{ fontSize: '1.5rem' }}>➕</span>
+              <div>
+                <h3 className="dashboard__card-title">Add Member</h3>
+                <p style={{ color: '#6b7280', fontSize: '0.85rem' }}>Register members in your scope</p>
+              </div>
+            </div>
+          </Card>
+        )}
+      </div>
 
       {user?.role && ['ADMIN', 'SUPER_ADMIN', 'NATIONAL_OFFICER', 'STATE_DIRECTOR'].includes(user.role) && (
         <div className="dashboard__admin-strip">

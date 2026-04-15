@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'apps.scoring',
     'apps.admin_panel',
     'apps.bubbles',
+    'apps.opportunities',
 ]
 
 MIDDLEWARE = [

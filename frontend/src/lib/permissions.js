@@ -19,3 +19,9 @@ export const isAdminLevel = (role) =>
 
 export const isSuperAdmin = (role) =>
   role === 'SUPER_ADMIN';
+
+export const canCreateAnnouncements = (role) =>
+  (ROLE_HIERARCHY[role] ?? 0) >= ROLE_HIERARCHY.WARD_COORDINATOR;
+
+export const canAddMembers = (role) =>
+  (ROLE_HIERARCHY[role] ?? 0) >= ROLE_HIERARCHY.WARD_COORDINATOR;

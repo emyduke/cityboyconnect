@@ -2,6 +2,8 @@ import './EventDetail.css';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getEvent, attendEvent, getEventAttendance } from '../api/client';
+import { useAuthStore } from '../store/authStore';
+import { isAdminLevel } from '../lib/permissions';
 import Card from '../components/Card';
 import Badge from '../components/Badge';
 import Button from '../components/Button';
@@ -13,6 +15,7 @@ export default function EventDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const addToast = useToastStore(s => s.addToast);
+  const user = useAuthStore(s => s.user);
   const [event, setEvent] = useState(null);
   const [attendance, setAttendance] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -57,7 +60,10 @@ export default function EventDetail() {
             <Badge variant={typeColors[event.event_type] || 'default'}>{event.event_type?.replace('_', ' ')}</Badge>
             <h1 className="event-detail__title">{event.title}</h1>
           </div>
-          <Button loading={attending} onClick={handleAttend}>Attend</Button>
+          <Button loading={attending} onClick={handleAttend}>Check In</Button>
+          {(user?.id === (event.created_by?.id || event.created_by) || isAdminLevel(user?.role)) && (
+            <Button variant="secondary" onClick={() => navigate(`/events/${id}/edit`)}>Edit</Button>
+          )}
         </div>
         <div className="event-detail__meta">
           <span>📍 {event.venue_name}</span>

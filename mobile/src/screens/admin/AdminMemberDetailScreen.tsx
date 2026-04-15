@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, RefreshControl, StyleSheet, Modal, TextInput, Pressable } from 'react-native';
+import { View, Text, ScrollView, RefreshControl, StyleSheet, Modal, TextInput, Pressable, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { colors, spacing, typography, radius, shadows } from '../../theme';
@@ -134,6 +134,14 @@ export default function AdminMemberDetailScreen() {
           ))}
         </Card>
 
+        {/* Voter Card Image */}
+        {member.voter_card_image && (
+          <View style={styles.voterCardSection}>
+            <Text style={styles.sectionTitle}>Voter Card</Text>
+            <Image source={{ uri: member.voter_card_image }} style={styles.voterCardImage} resizeMode="contain" />
+          </View>
+        )}
+
         {/* Actions */}
         <Text style={styles.sectionTitle}>Actions</Text>
         <View style={styles.actions}>
@@ -224,6 +232,8 @@ const styles = StyleSheet.create({
   infoLabel: { ...typography.bodySm, color: colors.textSecondary },
   infoValue: { ...typography.bodyMedium, color: colors.text, maxWidth: '55%', textAlign: 'right' },
   sectionTitle: { ...typography.h4, color: colors.text, marginBottom: spacing.sm },
+  voterCardSection: { marginBottom: spacing.md },
+  voterCardImage: { width: '100%', height: 200, borderRadius: radius.md, backgroundColor: colors.background },
   actions: { flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.sm },
   modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: colors.overlay },
   modalContent: { backgroundColor: colors.surface, borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, padding: spacing.lg },

@@ -102,3 +102,28 @@ class DirectReferralSerializer(serializers.ModelSerializer):
 
     def get_direct_count(self, obj):
         return obj.direct_referrals.count()
+
+
+class LeaderAddMemberSerializer(serializers.Serializer):
+    phone_number = serializers.CharField(max_length=20)
+    full_name = serializers.CharField(max_length=200)
+    gender = serializers.ChoiceField(choices=[('M', 'Male'), ('F', 'Female'), ('O', 'Other')], required=False)
+    date_of_birth = serializers.DateField(required=False)
+    occupation = serializers.CharField(max_length=200, required=False, allow_blank=True)
+    state_id = serializers.IntegerField()
+    lga_id = serializers.IntegerField()
+    ward_id = serializers.IntegerField()
+    address = serializers.CharField(required=False, allow_blank=True)
+
+    def validate_phone_number(self, value):
+        from apps.accounts.models import normalize_phone
+        return normalize_phone(value)
+
+
+class BulkLeaderAddMemberSerializer(serializers.Serializer):
+    members = LeaderAddMemberSerializer(many=True)
+
+    def validate_members(self, value):
+        if len(value) > 20:
+            raise serializers.ValidationError("Maximum 20 members per request.")
+        return value
