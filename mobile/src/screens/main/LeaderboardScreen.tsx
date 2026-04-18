@@ -45,7 +45,7 @@ export default function LeaderboardScreen() {
   const podiumHeights = [100, 80, 65];
 
   const renderPodium = () => {
-    const top3 = entries.slice(0, 3);
+    const top3 = Array.isArray(entries) ? entries.slice(0, 3) : [];
     if (top3.length === 0) return null;
     // Display order: 2nd, 1st, 3rd
     const order = top3.length >= 3 ? [top3[1], top3[0], top3[2]] : top3;
@@ -115,7 +115,11 @@ export default function LeaderboardScreen() {
         )}
 
         <FlatList
-          data={entries.slice(3)}
+        // entries.slice is not a function (it is undefined) when API response is empty or malformed, so we default to empty array to avoid crash
+        // [TypeError: (entries || []).slice is not a function (it is undefined)]
+        // check if entries is an array before slicing, otherwise default to empty array
+
+          data={[...(Array.isArray(entries) ? entries : []).slice(3)]} // skip top 3 for main list
           keyExtractor={(item, idx) => String(item.id || idx)}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
           ListHeaderComponent={renderPodium}
