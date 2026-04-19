@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
+import { View, Text, ScrollView, Pressable } from 'react-native';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
-import { colors, spacing, typography, radius } from '../../theme';
 import { getEvent, attendEvent } from '../../api/events';
 import { unwrap } from '../../api/client';
 import { useToastStore } from '../../store/toastStore';
@@ -41,39 +40,39 @@ export default function EventDetailScreen() {
     } finally { setAttending(false); }
   };
 
-  if (loading) return <View style={styles.container}><Skeleton variant="card" /><Skeleton variant="text" style={{ marginTop: spacing.md }} /></View>;
-  if (!event) return <View style={styles.container}><Text style={styles.error}>Event not found</Text></View>;
+  if (loading) return <View className="flex-1 bg-background p-4"><Skeleton variant="card" /><Skeleton variant="text" className="mt-4" /></View>;
+  if (!event) return <View className="flex-1 bg-background p-4"><Text className="text-base font-body text-danger text-center mt-12">Event not found</Text></View>;
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: spacing.xxl }}>
-      <Text style={styles.title}>{event.title}</Text>
-      <View style={styles.row}>
+    <ScrollView className="flex-1 bg-background p-4" contentContainerStyle={{ paddingBottom: 48 }}>
+      <Text className="text-2xl font-display-bold text-gray-900">{event.title}</Text>
+      <View className="flex-row gap-1 mt-1">
         <Badge label={event.event_type || 'Event'} />
         <Badge label={event.status || 'UPCOMING'} variant={event.status === 'COMPLETED' ? 'default' : 'success'} />
       </View>
-      <Card style={{ marginTop: spacing.md }}>
+      <Card className="mt-4">
         <InfoRow icon="📍" value={event.venue_name} />
         <InfoRow icon="📅" value={event.start_datetime ? new Date(event.start_datetime).toLocaleString() : ''} />
         <InfoRow icon="👥" value={`${event.attendance_count ?? 0} attending`} />
       </Card>
       {event.description ? (
-        <Card style={{ marginTop: spacing.md }}>
-          <Text style={styles.desc}>{event.description}</Text>
+        <Card className="mt-4">
+          <Text className="text-base font-body text-gray-900">{event.description}</Text>
         </Card>
       ) : null}
       {!event.is_attending && (
-        <Button onPress={handleAttend} loading={attending} size="lg" style={{ marginTop: spacing.lg }}>
+        <Button onPress={handleAttend} loading={attending} size="lg" className="mt-6">
           Check In
         </Button>
       )}
       {event.is_attending && (
-        <View style={styles.attendingBadge}>
-          <Text style={styles.attendingText}>✓ Checked In</Text>
+        <View className="bg-success/10 rounded-xl p-4 mt-6 items-center">
+          <Text className="text-base font-body-medium text-success">✓ Checked In</Text>
         </View>
       )}
       {(user?.id === event.created_by || user?.id === event.created_by_id || ['SUPER_ADMIN','NATIONAL_OFFICER','STATE_DIRECTOR','LGA_COORDINATOR','WARD_COORDINATOR'].includes(user?.role || '')) && (
-        <Pressable style={styles.editBtn} onPress={() => navigation.navigate('MoreTab', { screen: 'EditEvent', params: { id: event.id } })}>
-          <Text style={styles.editBtnText}>✏️ Edit Event</Text>
+        <Pressable className="bg-surface rounded-lg p-4 mt-2 items-center border border-forest/20" onPress={() => navigation.navigate('MoreTab', { screen: 'EditEvent', params: { id: event.id } })}>
+          <Text className="text-base font-body-semibold text-forest">✏️ Edit Event</Text>
         </Pressable>
       )}
     </ScrollView>
@@ -83,23 +82,9 @@ export default function EventDetailScreen() {
 function InfoRow({ icon, value }: { icon: string; value?: string }) {
   if (!value) return null;
   return (
-    <View style={styles.infoRow}>
+    <View className="flex-row items-center gap-2 py-1">
       <Text>{icon}</Text>
-      <Text style={styles.infoValue}>{value}</Text>
+      <Text className="text-base font-body text-gray-900">{value}</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background, padding: spacing.md },
-  title: { ...typography.h2, color: colors.text },
-  row: { flexDirection: 'row', gap: spacing.xs, marginTop: spacing.xs },
-  desc: { ...typography.body, color: colors.text },
-  infoRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.xs },
-  infoValue: { ...typography.body, color: colors.text },
-  attendingBadge: { backgroundColor: colors.successLight, borderRadius: 12, padding: spacing.md, marginTop: spacing.lg, alignItems: 'center' },
-  attendingText: { ...typography.bodyMedium, color: colors.success },
-  editBtn: { backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.md, marginTop: spacing.sm, alignItems: 'center', borderWidth: 1, borderColor: colors.primary + '30' },
-  editBtnText: { ...typography.button, color: colors.primary },
-  error: { ...typography.body, color: colors.danger, textAlign: 'center', marginTop: spacing.xxl },
-});

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
+import { View, Text, ScrollView, Pressable } from 'react-native';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
-import { colors, spacing, typography, radius, shadows } from '../../theme';
 import { getMember } from '../../api/members';
 import { unwrap } from '../../api/client';
 import Avatar from '../../components/ui/Avatar';
@@ -30,33 +29,33 @@ export default function MemberDetailScreen() {
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <Skeleton variant="avatar" width={80} height={80} style={{ alignSelf: 'center' }} />
-        <Skeleton variant="text" width="50%" style={{ alignSelf: 'center', marginTop: spacing.md }} />
-        <Skeleton variant="card" style={{ marginTop: spacing.lg }} />
+      <View className="flex-1 bg-background p-4">
+        <Skeleton variant="avatar" width={80} height={80} className="self-center" />
+        <Skeleton variant="text" width="50%" className="self-center mt-4" />
+        <Skeleton variant="card" className="mt-6" />
       </View>
     );
   }
 
   if (!member) {
-    return <View style={styles.container}><Text style={styles.error}>Member not found</Text></View>;
+    return <View className="flex-1 bg-background p-4"><Text className="text-base font-body text-danger text-center mt-12">Member not found</Text></View>;
   }
 
   const statusVariant = member.voter_verification_status === 'VERIFIED' ? 'success'
     : member.voter_verification_status === 'REJECTED' ? 'danger' : 'warning';
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: spacing.xxl }}>
-      <View style={styles.header}>
+    <ScrollView className="flex-1 bg-background p-4" contentContainerStyle={{ paddingBottom: 48 }}>
+      <View className="items-center mb-6">
         <Avatar uri={member.profile_photo} name={member.full_name} size="xl" />
-        <Text style={styles.name}>{member.full_name}</Text>
-        <View style={styles.badges}>
+        <Text className="text-2xl font-display-bold text-gray-900 mt-2">{member.full_name}</Text>
+        <View className="flex-row gap-1 mt-1">
           {member.role && <Badge label={member.role.replace(/_/g, ' ')} variant="info" />}
           <Badge label={member.voter_verification_status || 'PENDING'} variant={statusVariant} />
         </View>
       </View>
 
-      <Card style={styles.infoCard}>
+      <Card className="mt-2">
         <InfoRow label="Phone" value={member.phone_number_masked || '***'} />
         <InfoRow label="State" value={member.state_name} />
         <InfoRow label="LGA" value={member.lga_name} />
@@ -69,27 +68,27 @@ export default function MemberDetailScreen() {
       </Card>
 
       {(member.has_professional_profile || member.has_talent_profile || member.has_business_listings) && (
-        <View style={styles.profileLinks}>
-          <Text style={styles.profileLinksTitle}>Opportunity Profiles</Text>
+        <View className="mt-4">
+          <Text className="text-lg font-display-semibold text-gray-900 mb-2">Opportunity Profiles</Text>
           {member.has_professional_profile && (
-            <Pressable style={styles.profileLink} onPress={() => navigation.navigate('MoreTab', { screen: 'ProfessionalDetail', params: { id: member.id } })}>
-              <Text style={styles.profileLinkIcon}>💼</Text>
-              <Text style={styles.profileLinkText}>Professional Profile</Text>
-              <Text style={styles.chevron}>›</Text>
+            <Pressable className="flex-row items-center bg-surface rounded-lg p-4 mb-1 shadow-sm" onPress={() => navigation.navigate('MoreTab', { screen: 'ProfessionalDetail', params: { id: member.id } })}>
+              <Text className="text-xl mr-2">💼</Text>
+              <Text className="text-base font-body-medium text-gray-900 flex-1">Professional Profile</Text>
+              <Text className="text-xl text-gray-400">›</Text>
             </Pressable>
           )}
           {member.has_talent_profile && (
-            <Pressable style={styles.profileLink} onPress={() => navigation.navigate('MoreTab', { screen: 'TalentDetail', params: { id: member.id } })}>
-              <Text style={styles.profileLinkIcon}>⭐</Text>
-              <Text style={styles.profileLinkText}>Talent Profile</Text>
-              <Text style={styles.chevron}>›</Text>
+            <Pressable className="flex-row items-center bg-surface rounded-lg p-4 mb-1 shadow-sm" onPress={() => navigation.navigate('MoreTab', { screen: 'TalentDetail', params: { id: member.id } })}>
+              <Text className="text-xl mr-2">⭐</Text>
+              <Text className="text-base font-body-medium text-gray-900 flex-1">Talent Profile</Text>
+              <Text className="text-xl text-gray-400">›</Text>
             </Pressable>
           )}
           {member.has_business_listings && (
-            <Pressable style={styles.profileLink} onPress={() => navigation.navigate('MoreTab', { screen: 'BusinessDetail', params: { id: member.id } })}>
-              <Text style={styles.profileLinkIcon}>🏢</Text>
-              <Text style={styles.profileLinkText}>Business Listing</Text>
-              <Text style={styles.chevron}>›</Text>
+            <Pressable className="flex-row items-center bg-surface rounded-lg p-4 mb-1 shadow-sm" onPress={() => navigation.navigate('MoreTab', { screen: 'BusinessDetail', params: { id: member.id } })}>
+              <Text className="text-xl mr-2">🏢</Text>
+              <Text className="text-base font-body-medium text-gray-900 flex-1">Business Listing</Text>
+              <Text className="text-xl text-gray-400">›</Text>
             </Pressable>
           )}
         </View>
@@ -101,27 +100,9 @@ export default function MemberDetailScreen() {
 function InfoRow({ label, value }: { label: string; value?: string }) {
   if (!value) return null;
   return (
-    <View style={styles.infoRow}>
-      <Text style={styles.infoLabel}>{label}</Text>
-      <Text style={styles.infoValue}>{value}</Text>
+    <View className="flex-row justify-between py-2 border-b border-gray-100">
+      <Text className="text-sm font-body text-gray-500">{label}</Text>
+      <Text className="text-base font-body-medium text-gray-900 text-right flex-1 ml-4">{value}</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background, padding: spacing.md },
-  header: { alignItems: 'center', marginBottom: spacing.lg },
-  name: { ...typography.h2, color: colors.text, marginTop: spacing.sm },
-  badges: { flexDirection: 'row', gap: spacing.xs, marginTop: spacing.xs },
-  infoCard: { marginTop: spacing.sm },
-  infoRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.divider },
-  infoLabel: { ...typography.bodySm, color: colors.textSecondary },
-  infoValue: { ...typography.bodyMedium, color: colors.text, textAlign: 'right', flex: 1, marginLeft: spacing.md },
-  profileLinks: { marginTop: spacing.md },
-  profileLinksTitle: { ...typography.h4, color: colors.text, marginBottom: spacing.sm },
-  profileLink: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.md, marginBottom: spacing.xs, ...shadows.sm },
-  profileLinkIcon: { fontSize: 20, marginRight: spacing.sm },
-  profileLinkText: { ...typography.bodyMedium, color: colors.text, flex: 1 },
-  chevron: { fontSize: 20, color: colors.textTertiary },
-  error: { ...typography.body, color: colors.danger, textAlign: 'center', marginTop: spacing.xxl },
-});

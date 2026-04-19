@@ -1,4 +1,3 @@
-import './Login.css';
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import PhoneInput from '../components/PhoneInput';
@@ -150,67 +149,67 @@ export default function Login() {
   };
 
   return (
-    <div className="login-page">
-      <div className="login-hero">
-        <img src="/assets/logos/04_icon_dark.png" alt="City Boy Connect" className="login-logo" />
-        <h1 className="login-title">Welcome back</h1>
-        <p className="login-sub">Sign in to City Boy Connect</p>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-off-white p-6">
+      <div className="text-center mb-8">
+        <img src="/assets/logos/04_icon_dark.png" alt="City Boy Connect" className="w-20 h-20 object-contain mb-4 mx-auto" />
+        <h1 className="font-display text-[1.75rem] font-bold text-forest-dark mb-1.5">Welcome back</h1>
+        <p className="text-[0.95rem] text-gray-500">Sign in to City Boy Connect</p>
       </div>
 
-      <div className="login-card">
+      <div className="w-full max-w-[420px] bg-white rounded-3xl p-8 border border-gray-100 shadow-[0_4px_24px_rgba(26,71,42,0.08)]">
 
         {/* PHONE */}
         {stage === 'phone' && (
-          <div className="login-stage">
-            <h2 className="stage-heading">Enter your phone number</h2>
+          <div className="flex flex-col">
+            <h2 className="font-display text-xl font-bold text-gray-900 mb-1.5">Enter your phone number</h2>
             <form onSubmit={handlePhoneSubmit}>
               <PhoneInput value={phone} onChange={setPhone} label="Phone Number" error={error} />
-              <Button type="submit" loading={loading} size="lg" className="login-btn mt-6">
+              <Button type="submit" loading={loading} size="lg" className="w-full mt-6">
                 Continue
               </Button>
             </form>
-            <p className="login-footer-text">
-              New member? <Link to="/join" className="login-link">Join the movement &rarr;</Link>
+            <p className="text-center text-sm text-gray-500 mt-6">
+              New member? <Link to="/join" className="text-forest font-semibold no-underline hover:underline">Join the movement &rarr;</Link>
             </p>
           </div>
         )}
 
         {/* METHOD CHOICE */}
         {stage === 'method' && (
-          <div className="login-stage">
-            <button className="back-link" onClick={() => { setStage('phone'); setError(''); }}>&larr; Back</button>
-            <h2 className="stage-heading">How would you like to sign in?</h2>
-            <p className="stage-sub">Choose a verification method</p>
-            {error && <p className="login-error">{error}</p>}
-            <div className="method-options">
+          <div className="flex flex-col">
+            <button className="bg-transparent border-none text-forest text-sm font-medium cursor-pointer p-0 mb-4 inline-flex items-center gap-1 text-left" onClick={() => { setStage('phone'); setError(''); }}>&larr; Back</button>
+            <h2 className="font-display text-xl font-bold text-gray-900 mb-1.5">How would you like to sign in?</h2>
+            <p className="text-sm text-gray-500 mb-6">Choose a verification method</p>
+            {error && <p className="text-danger text-[0.85rem] text-center my-2">{error}</p>}
+            <div className="flex flex-col gap-2.5 mt-1">
               {methods.includes('sms') && (
-                <button className="method-card" onClick={() => handleMethodSelect('sms')} disabled={loading}>
-                  <span className="method-icon">💬</span>
-                  <div className="method-text">
-                    <p className="method-title">Text message (SMS)</p>
-                    <p className="method-desc">Get a 6-digit code sent to your phone</p>
+                <button className="flex items-center gap-3.5 px-[18px] py-4 border-[1.5px] border-gray-200 rounded-[14px] bg-white cursor-pointer text-left transition-all duration-150 w-full hover:border-forest hover:bg-[#e8f0eb] hover:shadow-[0_2px_12px_rgba(26,71,42,0.08)]" onClick={() => handleMethodSelect('sms')} disabled={loading}>
+                  <span className="text-[1.4rem] shrink-0 leading-none">💬</span>
+                  <div className="flex-1">
+                    <p className="font-semibold text-[0.95rem] text-gray-900 mb-0.5">Text message (SMS)</p>
+                    <p className="text-[0.82rem] text-gray-500 m-0">Get a 6-digit code sent to your phone</p>
                   </div>
-                  <span className="method-arrow">&rarr;</span>
+                  <span className="text-base text-gray-400 shrink-0">&rarr;</span>
                 </button>
               )}
               {methods.includes('email') && (
-                <button className="method-card" onClick={() => handleMethodSelect('email')} disabled={loading}>
-                  <span className="method-icon">✉️</span>
-                  <div className="method-text">
-                    <p className="method-title">Email</p>
-                    <p className="method-desc">Get a code sent to your email address</p>
+                <button className="flex items-center gap-3.5 px-[18px] py-4 border-[1.5px] border-gray-200 rounded-[14px] bg-white cursor-pointer text-left transition-all duration-150 w-full hover:border-forest hover:bg-[#e8f0eb] hover:shadow-[0_2px_12px_rgba(26,71,42,0.08)]" onClick={() => handleMethodSelect('email')} disabled={loading}>
+                  <span className="text-[1.4rem] shrink-0 leading-none">✉️</span>
+                  <div className="flex-1">
+                    <p className="font-semibold text-[0.95rem] text-gray-900 mb-0.5">Email</p>
+                    <p className="text-[0.82rem] text-gray-500 m-0">Get a code sent to your email address</p>
                   </div>
-                  <span className="method-arrow">&rarr;</span>
+                  <span className="text-base text-gray-400 shrink-0">&rarr;</span>
                 </button>
               )}
               {methods.includes('password') && (
-                <button className="method-card" onClick={() => handleMethodSelect('password')} disabled={loading}>
-                  <span className="method-icon">🔑</span>
-                  <div className="method-text">
-                    <p className="method-title">Password</p>
-                    <p className="method-desc">{userHasPwd ? 'Sign in with your password' : 'Set up a password to sign in'}</p>
+                <button className="flex items-center gap-3.5 px-[18px] py-4 border-[1.5px] border-gray-200 rounded-[14px] bg-white cursor-pointer text-left transition-all duration-150 w-full hover:border-forest hover:bg-[#e8f0eb] hover:shadow-[0_2px_12px_rgba(26,71,42,0.08)]" onClick={() => handleMethodSelect('password')} disabled={loading}>
+                  <span className="text-[1.4rem] shrink-0 leading-none">🔑</span>
+                  <div className="flex-1">
+                    <p className="font-semibold text-[0.95rem] text-gray-900 mb-0.5">Password</p>
+                    <p className="text-[0.82rem] text-gray-500 m-0">{userHasPwd ? 'Sign in with your password' : 'Set up a password to sign in'}</p>
                   </div>
-                  <span className="method-arrow">&rarr;</span>
+                  <span className="text-base text-gray-400 shrink-0">&rarr;</span>
                 </button>
               )}
             </div>
@@ -219,10 +218,10 @@ export default function Login() {
 
         {/* ENTER EMAIL */}
         {stage === 'enter-email' && (
-          <div className="login-stage">
-            <button className="back-link" onClick={() => setStage('method')}>&larr; Back</button>
-            <h2 className="stage-heading">Enter your email address</h2>
-            <p className="stage-sub">We'll send your code there</p>
+          <div className="flex flex-col">
+            <button className="bg-transparent border-none text-forest text-sm font-medium cursor-pointer p-0 mb-4 inline-flex items-center gap-1 text-left" onClick={() => setStage('method')}>&larr; Back</button>
+            <h2 className="font-display text-xl font-bold text-gray-900 mb-1.5">Enter your email address</h2>
+            <p className="text-sm text-gray-500 mb-6">We'll send your code there</p>
             <Input
               type="email"
               label="Email address"
@@ -232,7 +231,7 @@ export default function Login() {
               error={error}
               onKeyDown={(e) => e.key === 'Enter' && handleEmailSubmit()}
             />
-            <Button onClick={handleEmailSubmit} loading={loading} size="lg" className="login-btn mt-4">
+            <Button onClick={handleEmailSubmit} loading={loading} size="lg" className="w-full mt-4">
               Send code
             </Button>
           </div>
@@ -240,19 +239,19 @@ export default function Login() {
 
         {/* OTP */}
         {stage === 'otp' && (
-          <div className="login-stage">
-            <button className="back-link" onClick={() => setStage(methods.length > 1 ? 'method' : 'phone')}>
+          <div className="flex flex-col">
+            <button className="bg-transparent border-none text-forest text-sm font-medium cursor-pointer p-0 mb-4 inline-flex items-center gap-1 text-left" onClick={() => setStage(methods.length > 1 ? 'method' : 'phone')}>
               &larr; Back
             </button>
-            <h2 className="stage-heading">Enter your code</h2>
-            <p className="stage-sub">
+            <h2 className="font-display text-xl font-bold text-gray-900 mb-1.5">Enter your code</h2>
+            <p className="text-sm text-gray-500 mb-6">
               {otpChannel === 'sms' ? `Sent via SMS to ${otpSentTo}` : `Sent to ${otpSentTo}`}
             </p>
             <OTPInput onComplete={handleOTPComplete} error={error} disabled={loading} />
-            {loading && <p className="otp-verifying">Verifying...</p>}
+            {loading && <p className="text-center text-sm text-forest mt-3">Verifying...</p>}
             <ResendTimer onResend={() => doRequestOTP(phone, otpChannel, otpChannel === 'email' ? email : undefined)} loading={loading} />
             {methods.length > 1 && (
-              <button className="switch-method-link" onClick={() => setStage('method')}>
+              <button className="block text-center mt-4 bg-transparent border-none text-gray-500 text-[0.85rem] cursor-pointer underline p-0 hover:text-forest" onClick={() => setStage('method')}>
                 Try a different method
               </button>
             )}
@@ -261,15 +260,15 @@ export default function Login() {
 
         {/* PASSWORD */}
         {stage === 'password' && (
-          <div className="login-stage">
-            <button className="back-link" onClick={() => setStage(methods.length > 1 ? 'method' : 'phone')}>
+          <div className="flex flex-col">
+            <button className="bg-transparent border-none text-forest text-sm font-medium cursor-pointer p-0 mb-4 inline-flex items-center gap-1 text-left" onClick={() => setStage(methods.length > 1 ? 'method' : 'phone')}>
               &larr; Back
             </button>
             {userHasPwd ? (
               <>
-                <h2 className="stage-heading">Enter your password</h2>
+                <h2 className="font-display text-xl font-bold text-gray-900 mb-1.5">Enter your password</h2>
                 <form onSubmit={handlePasswordSubmit}>
-                  <div className="password-field">
+                  <div className="relative">
                     <Input
                       type={showPwd ? 'text' : 'password'}
                       label="Password"
@@ -278,32 +277,32 @@ export default function Login() {
                       onChange={(e) => setPassword(e.target.value)}
                       error={error}
                     />
-                    <button type="button" className="pwd-toggle" onClick={() => setShowPwd((v) => !v)}>
+                    <button type="button" className="absolute right-3 top-[38px] bg-transparent border-none text-gray-400 text-[0.8rem] cursor-pointer p-0" onClick={() => setShowPwd((v) => !v)}>
                       {showPwd ? 'Hide' : 'Show'}
                     </button>
                   </div>
-                  <Button type="submit" loading={loading} size="lg" className="login-btn mt-4">
+                  <Button type="submit" loading={loading} size="lg" className="w-full mt-4">
                     Sign in
                   </Button>
                 </form>
                 {(methods.includes('sms') || methods.includes('email')) && (
-                  <button className="switch-method-link" onClick={() => setStage('method')}>
+                  <button className="block text-center mt-4 bg-transparent border-none text-gray-500 text-[0.85rem] cursor-pointer underline p-0 hover:text-forest" onClick={() => setStage('method')}>
                     Sign in with a code instead
                   </button>
                 )}
               </>
             ) : (
               <>
-                <h2 className="stage-heading">No password set yet</h2>
-                <p className="stage-sub">Sign in with SMS or Email first, then set a password from your security settings.</p>
-                {error && <p className="login-error">{error}</p>}
+                <h2 className="font-display text-xl font-bold text-gray-900 mb-1.5">No password set yet</h2>
+                <p className="text-sm text-gray-500 mb-6">Sign in with SMS or Email first, then set a password from your security settings.</p>
+                {error && <p className="text-danger text-[0.85rem] text-center my-2">{error}</p>}
                 {methods.includes('sms') && (
-                  <Button onClick={() => handleMethodSelect('sms')} size="lg" variant="secondary" className="login-btn mt-2">
+                  <Button onClick={() => handleMethodSelect('sms')} size="lg" variant="secondary" className="w-full mt-2">
                     Send SMS code
                   </Button>
                 )}
                 {methods.includes('email') && (
-                  <Button onClick={() => handleMethodSelect('email')} size="lg" variant="secondary" className="login-btn mt-2">
+                  <Button onClick={() => handleMethodSelect('email')} size="lg" variant="secondary" className="w-full mt-2">
                     Send Email code
                   </Button>
                 )}
@@ -326,14 +325,14 @@ function ResendTimer({ onResend, loading }) {
     return () => clearTimeout(t);
   }, [seconds]);
 
-  if (loading) return <p className="resend-text">Sending new code...</p>;
+  if (loading) return <p className="text-center text-sm text-gray-500 mt-4">Sending new code...</p>;
 
   return (
-    <p className="resend-text">
+    <p className="text-center text-sm text-gray-500 mt-4">
       {seconds > 0 ? (
         <>Resend code in <strong>0:{String(seconds).padStart(2, '0')}</strong></>
       ) : (
-        <button className="resend-btn" onClick={() => { onResend(); setSeconds(60); }}>
+        <button className="bg-transparent border-none text-forest font-semibold text-sm cursor-pointer underline p-0" onClick={() => { onResend(); setSeconds(60); }}>
           Resend code
         </button>
       )}

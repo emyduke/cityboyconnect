@@ -1,4 +1,3 @@
-import './Opportunities.css';
 import { useState, useEffect, useCallback } from 'react';
 import {
   getMyProfessionalProfile, createProfessionalProfile, updateProfessionalProfile, deleteProfessionalProfile,
@@ -57,7 +56,7 @@ export default function MyOpportunities() {
   if (loading) return <div style={{ padding: '2rem' }}><Skeleton variant="card" /><Skeleton variant="card" /><Skeleton variant="card" /></div>;
 
   return (
-    <div className="opportunities">
+    <div className="max-w-[1200px] mx-auto">
       <h1>My Opportunities</h1>
       <p style={{ color: '#6b7280', marginBottom: 'var(--space-lg)' }}>Manage your professional profiles and business listings</p>
 
@@ -80,7 +79,7 @@ export default function MyOpportunities() {
         {profProfile && editSection !== 'professional' && (
           <div style={{ marginTop: 12 }}>
             <p><strong>{profProfile.headline}</strong></p>
-            {profProfile.skills?.length > 0 && <div className="opportunity-card__badges">{profProfile.skills.map(s => <span key={s.id} className="opportunity-card__badge">{s.name}</span>)}</div>}
+            {profProfile.skills?.length > 0 && <div className="flex gap-1.5 flex-wrap mt-1">{profProfile.skills.map(s => <span key={s.id} className="px-2 py-0.5 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800">{s.name}</span>)}</div>}
             {profProfile.cv_url && <p style={{ color: '#6b7280', fontSize: '0.85rem', marginTop: 8 }}>📄 CV uploaded</p>}
           </div>
         )}
@@ -175,7 +174,7 @@ export default function MyOpportunities() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <strong>{b.name}</strong>
-                <span className="opportunity-card__badge opportunity-card__badge--category" style={{ marginLeft: 8 }}>{b.category_display || b.category}</span>
+                <span className="px-2 py-0.5 rounded-xl text-xs font-medium bg-amber-100 text-amber-800" style={{ marginLeft: 8 }}>{b.category_display || b.category}</span>
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
                 <Button size="sm" onClick={() => setEditSection(editSection === `business-${b.id}` ? null : `business-${b.id}`)}>Edit</Button>
@@ -250,22 +249,22 @@ function ProfessionalForm({ initial, skills, onSave, onCancel }) {
     <div style={{ marginTop: 16 }}>
       <div style={{ marginBottom: 12 }}>
         <label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>Headline</label>
-        <input value={headline} onChange={e => setHeadline(e.target.value)} className="opportunities__search" placeholder="e.g. Full-Stack Developer" />
+        <input value={headline} onChange={e => setHeadline(e.target.value)} className="flex-1 min-w-[200px] px-4 py-2 border border-gray-200 rounded-lg text-[0.95rem]" placeholder="e.g. Full-Stack Developer" />
       </div>
       <div style={{ marginBottom: 12 }}>
         <label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>Bio</label>
-        <textarea value={bio} onChange={e => setBio(e.target.value)} className="opportunities__search" rows={3} placeholder="Tell people about yourself..." />
+        <textarea value={bio} onChange={e => setBio(e.target.value)} className="flex-1 min-w-[200px] px-4 py-2 border border-gray-200 rounded-lg text-[0.95rem]" rows={3} placeholder="Tell people about yourself..." />
       </div>
       <div style={{ marginBottom: 12 }}>
         <label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>Skills</label>
         <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-          <input value={skillInput} onChange={e => setSkillInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addSkill())} className="opportunities__search" list="skill-list" placeholder="Type a skill..." />
+          <input value={skillInput} onChange={e => setSkillInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addSkill())} className="flex-1 min-w-[200px] px-4 py-2 border border-gray-200 rounded-lg text-[0.95rem]" list="skill-list" placeholder="Type a skill..." />
           <Button size="sm" type="button" onClick={addSkill}>Add</Button>
         </div>
         <datalist id="skill-list">{skills.map(s => <option key={s.id} value={s.name} />)}</datalist>
-        <div className="opportunity-card__badges">
+        <div className="flex gap-1.5 flex-wrap mt-1">
           {selectedSkills.map(s => (
-            <span key={s} className="opportunity-card__badge" style={{ cursor: 'pointer' }} onClick={() => setSelectedSkills(selectedSkills.filter(x => x !== s))}>{s} ✕</span>
+            <span key={s} className="px-2 py-0.5 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800 cursor-pointer" onClick={() => setSelectedSkills(selectedSkills.filter(x => x !== s))}>{s} ✕</span>
           ))}
         </div>
       </div>
@@ -273,9 +272,9 @@ function ProfessionalForm({ initial, skills, onSave, onCancel }) {
         <label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>Education</label>
         {education.map((edu, i) => (
           <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
-            <input placeholder="Institution" value={edu.institution || ''} onChange={e => { const arr = [...education]; arr[i] = { ...arr[i], institution: e.target.value }; setEducation(arr); }} className="opportunities__search" style={{ flex: 1, minWidth: 120 }} />
-            <input placeholder="Degree" value={edu.degree || ''} onChange={e => { const arr = [...education]; arr[i] = { ...arr[i], degree: e.target.value }; setEducation(arr); }} className="opportunities__search" style={{ flex: 1, minWidth: 120 }} />
-            <input placeholder="Field" value={edu.field || ''} onChange={e => { const arr = [...education]; arr[i] = { ...arr[i], field: e.target.value }; setEducation(arr); }} className="opportunities__search" style={{ flex: 1, minWidth: 100 }} />
+            <input placeholder="Institution" value={edu.institution || ''} onChange={e => { const arr = [...education]; arr[i] = { ...arr[i], institution: e.target.value }; setEducation(arr); }} className="flex-1 min-w-[200px] px-4 py-2 border border-gray-200 rounded-lg text-[0.95rem]" style={{ flex: 1, minWidth: 120 }} />
+            <input placeholder="Degree" value={edu.degree || ''} onChange={e => { const arr = [...education]; arr[i] = { ...arr[i], degree: e.target.value }; setEducation(arr); }} className="flex-1 min-w-[200px] px-4 py-2 border border-gray-200 rounded-lg text-[0.95rem]" style={{ flex: 1, minWidth: 120 }} />
+            <input placeholder="Field" value={edu.field || ''} onChange={e => { const arr = [...education]; arr[i] = { ...arr[i], field: e.target.value }; setEducation(arr); }} className="flex-1 min-w-[200px] px-4 py-2 border border-gray-200 rounded-lg text-[0.95rem]" style={{ flex: 1, minWidth: 100 }} />
             <button onClick={() => setEducation(education.filter((_, j) => j !== i))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}>✕</button>
           </div>
         ))}
@@ -285,8 +284,8 @@ function ProfessionalForm({ initial, skills, onSave, onCancel }) {
         <label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>Work Experience</label>
         {workExperience.map((exp, i) => (
           <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
-            <input placeholder="Company" value={exp.company || ''} onChange={e => { const arr = [...workExperience]; arr[i] = { ...arr[i], company: e.target.value }; setWorkExperience(arr); }} className="opportunities__search" style={{ flex: 1, minWidth: 120 }} />
-            <input placeholder="Role" value={exp.role || ''} onChange={e => { const arr = [...workExperience]; arr[i] = { ...arr[i], role: e.target.value }; setWorkExperience(arr); }} className="opportunities__search" style={{ flex: 1, minWidth: 120 }} />
+            <input placeholder="Company" value={exp.company || ''} onChange={e => { const arr = [...workExperience]; arr[i] = { ...arr[i], company: e.target.value }; setWorkExperience(arr); }} className="flex-1 min-w-[200px] px-4 py-2 border border-gray-200 rounded-lg text-[0.95rem]" style={{ flex: 1, minWidth: 120 }} />
+            <input placeholder="Role" value={exp.role || ''} onChange={e => { const arr = [...workExperience]; arr[i] = { ...arr[i], role: e.target.value }; setWorkExperience(arr); }} className="flex-1 min-w-[200px] px-4 py-2 border border-gray-200 rounded-lg text-[0.95rem]" style={{ flex: 1, minWidth: 120 }} />
             <button onClick={() => setWorkExperience(workExperience.filter((_, j) => j !== i))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}>✕</button>
           </div>
         ))}
@@ -324,34 +323,34 @@ function TalentForm({ initial, categories, states, onSave, onCancel, onPortfolio
     <div style={{ marginTop: 16 }}>
       <div style={{ marginBottom: 12 }}>
         <label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>Category</label>
-        <select value={category} onChange={e => setCategory(e.target.value)} className="opportunities__filter-select" style={{ width: '100%' }}>
+        <select value={category} onChange={e => setCategory(e.target.value)} className="px-4 py-2 border border-gray-200 rounded-lg text-[0.9rem] min-w-[140px]" style={{ width: '100%' }}>
           <option value="">Select category</option>
           {categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
         </select>
       </div>
       <div style={{ marginBottom: 12 }}>
         <label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>Title</label>
-        <input value={title} onChange={e => setTitle(e.target.value)} className="opportunities__search" placeholder="e.g. Freelance Photographer" />
+        <input value={title} onChange={e => setTitle(e.target.value)} className="flex-1 min-w-[200px] px-4 py-2 border border-gray-200 rounded-lg text-[0.95rem]" placeholder="e.g. Freelance Photographer" />
       </div>
       <div style={{ marginBottom: 12 }}>
         <label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>Bio</label>
-        <textarea value={bio} onChange={e => setBio(e.target.value)} className="opportunities__search" rows={3} />
+        <textarea value={bio} onChange={e => setBio(e.target.value)} className="flex-1 min-w-[200px] px-4 py-2 border border-gray-200 rounded-lg text-[0.95rem]" rows={3} />
       </div>
       <div style={{ marginBottom: 12 }}>
         <label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>Years of Experience</label>
-        <input type="number" min="0" value={years} onChange={e => setYears(parseInt(e.target.value) || 0)} className="opportunities__search" style={{ width: 100 }} />
+        <input type="number" min="0" value={years} onChange={e => setYears(parseInt(e.target.value) || 0)} className="flex-1 min-w-[200px] px-4 py-2 border border-gray-200 rounded-lg text-[0.95rem]" style={{ width: 100 }} />
       </div>
       <div style={{ display: 'flex', gap: 12, marginBottom: 12, flexWrap: 'wrap' }}>
         <div style={{ flex: 1, minWidth: 140 }}>
           <label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>State</label>
-          <select value={stateId} onChange={e => { setStateId(e.target.value); setLgaId(''); }} className="opportunities__filter-select" style={{ width: '100%' }}>
+          <select value={stateId} onChange={e => { setStateId(e.target.value); setLgaId(''); }} className="px-4 py-2 border border-gray-200 rounded-lg text-[0.9rem] min-w-[140px]" style={{ width: '100%' }}>
             <option value="">Select state</option>
             {states.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
           </select>
         </div>
         <div style={{ flex: 1, minWidth: 140 }}>
           <label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>LGA</label>
-          <select value={lgaId} onChange={e => setLgaId(e.target.value)} className="opportunities__filter-select" style={{ width: '100%' }}>
+          <select value={lgaId} onChange={e => setLgaId(e.target.value)} className="px-4 py-2 border border-gray-200 rounded-lg text-[0.9rem] min-w-[140px]" style={{ width: '100%' }}>
             <option value="">All LGAs</option>
             {lgas.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
           </select>
@@ -425,11 +424,11 @@ function BusinessForm({ initial, categories, states, onSave, onCancel, onImageAd
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
         <div>
           <label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>Name</label>
-          <input value={name} onChange={e => setName(e.target.value)} className="opportunities__search" placeholder="Business name" />
+          <input value={name} onChange={e => setName(e.target.value)} className="flex-1 min-w-[200px] px-4 py-2 border border-gray-200 rounded-lg text-[0.95rem]" placeholder="Business name" />
         </div>
         <div>
           <label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>Category</label>
-          <select value={category} onChange={e => setCategory(e.target.value)} className="opportunities__filter-select" style={{ width: '100%' }}>
+          <select value={category} onChange={e => setCategory(e.target.value)} className="px-4 py-2 border border-gray-200 rounded-lg text-[0.9rem] min-w-[140px]" style={{ width: '100%' }}>
             <option value="">Select</option>
             {categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
           </select>
@@ -437,23 +436,23 @@ function BusinessForm({ initial, categories, states, onSave, onCancel, onImageAd
       </div>
       <div style={{ marginTop: 12 }}>
         <label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>Description</label>
-        <textarea value={description} onChange={e => setDescription(e.target.value)} className="opportunities__search" rows={3} />
+        <textarea value={description} onChange={e => setDescription(e.target.value)} className="flex-1 min-w-[200px] px-4 py-2 border border-gray-200 rounded-lg text-[0.95rem]" rows={3} />
       </div>
       <div style={{ marginTop: 12 }}>
         <label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>Address</label>
-        <textarea value={address} onChange={e => setAddress(e.target.value)} className="opportunities__search" rows={2} />
+        <textarea value={address} onChange={e => setAddress(e.target.value)} className="flex-1 min-w-[200px] px-4 py-2 border border-gray-200 rounded-lg text-[0.95rem]" rows={2} />
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 12 }}>
         <div>
           <label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>State</label>
-          <select value={stateId} onChange={e => { setStateId(e.target.value); setLgaId(''); }} className="opportunities__filter-select" style={{ width: '100%' }}>
+          <select value={stateId} onChange={e => { setStateId(e.target.value); setLgaId(''); }} className="px-4 py-2 border border-gray-200 rounded-lg text-[0.9rem] min-w-[140px]" style={{ width: '100%' }}>
             <option value="">Select</option>
             {states.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
           </select>
         </div>
         <div>
           <label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>LGA</label>
-          <select value={lgaId} onChange={e => setLgaId(e.target.value)} className="opportunities__filter-select" style={{ width: '100%' }}>
+          <select value={lgaId} onChange={e => setLgaId(e.target.value)} className="px-4 py-2 border border-gray-200 rounded-lg text-[0.9rem] min-w-[140px]" style={{ width: '100%' }}>
             <option value="">All</option>
             {lgas.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
           </select>
@@ -464,10 +463,10 @@ function BusinessForm({ initial, categories, states, onSave, onCancel, onImageAd
         <span>Operates Nationwide</span>
       </label>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 12 }}>
-        <div><label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>Phone</label><input value={phone} onChange={e => setPhone(e.target.value)} className="opportunities__search" /></div>
-        <div><label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>WhatsApp</label><input value={whatsapp} onChange={e => setWhatsapp(e.target.value)} className="opportunities__search" /></div>
-        <div><label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>Email</label><input value={email} onChange={e => setEmail(e.target.value)} className="opportunities__search" type="email" /></div>
-        <div><label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>Website</label><input value={website} onChange={e => setWebsite(e.target.value)} className="opportunities__search" /></div>
+        <div><label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>Phone</label><input value={phone} onChange={e => setPhone(e.target.value)} className="flex-1 min-w-[200px] px-4 py-2 border border-gray-200 rounded-lg text-[0.95rem]" /></div>
+        <div><label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>WhatsApp</label><input value={whatsapp} onChange={e => setWhatsapp(e.target.value)} className="flex-1 min-w-[200px] px-4 py-2 border border-gray-200 rounded-lg text-[0.95rem]" /></div>
+        <div><label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>Email</label><input value={email} onChange={e => setEmail(e.target.value)} className="flex-1 min-w-[200px] px-4 py-2 border border-gray-200 rounded-lg text-[0.95rem]" type="email" /></div>
+        <div><label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>Website</label><input value={website} onChange={e => setWebsite(e.target.value)} className="flex-1 min-w-[200px] px-4 py-2 border border-gray-200 rounded-lg text-[0.95rem]" /></div>
       </div>
 
       {/* Images */}

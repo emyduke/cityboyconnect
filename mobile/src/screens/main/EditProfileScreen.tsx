@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { colors, spacing, typography } from '../../theme';
 import { updateMemberProfile } from '../../api/opportunities';
 import { useToastStore } from '../../store/toastStore';
 import { useAuthStore } from '../../store/authStore';
@@ -37,33 +36,27 @@ export default function EditProfileScreen() {
   };
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: spacing.xxl }} keyboardShouldPersistTaps="handled">
-        <Text style={styles.heading}>Edit Profile</Text>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
+      <ScrollView className="flex-1 bg-background p-4" contentContainerStyle={{ paddingBottom: 48 }} keyboardShouldPersistTaps="handled">
+        <Text className="text-2xl font-display-bold text-gray-900 mb-4">Edit Profile</Text>
 
         <Input label="Full Name *" value={form.full_name} onChangeText={(v: string) => set('full_name', v)} />
         <Input label="Occupation" value={form.occupation} onChangeText={(v: string) => set('occupation', v)} placeholder="e.g. Engineer, Teacher" />
 
-        <Text style={styles.label}>Gender</Text>
-        <View style={styles.chipRow}>
+        <Text className="text-base font-body-medium text-gray-900 mt-4 mb-1">Gender</Text>
+        <View className="flex-row flex-wrap gap-1">
           {['MALE', 'FEMALE'].map((g) => (
-            <Text key={g} style={[styles.chip, form.gender === g && styles.chipActive]} onPress={() => set('gender', g)}>{g}</Text>
+            <Text
+              key={g}
+              className={`text-xs font-body px-2 py-1 rounded-full border overflow-hidden ${form.gender === g ? 'bg-forest/10 border-forest text-forest' : 'bg-surface border-gray-200 text-gray-500'}`}
+              onPress={() => set('gender', g)}
+            >{g}</Text>
           ))}
         </View>
 
-        {error ? <Text style={styles.error}>{error}</Text> : null}
-        <Button onPress={handleSubmit} loading={loading} size="lg" style={{ marginTop: spacing.lg }}>Save Changes</Button>
+        {error ? <Text className="text-xs font-body text-danger mt-2">{error}</Text> : null}
+        <Button onPress={handleSubmit} loading={loading} size="lg" className="mt-6">Save Changes</Button>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background, padding: spacing.md },
-  heading: { ...typography.h2, color: colors.text, marginBottom: spacing.md },
-  label: { ...typography.bodyMedium, color: colors.text, marginTop: spacing.md, marginBottom: spacing.xs },
-  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
-  chip: { ...typography.caption, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, backgroundColor: colors.surface, borderRadius: 999, borderWidth: 1, borderColor: colors.border, overflow: 'hidden', color: colors.textSecondary },
-  chipActive: { backgroundColor: colors.primary + '15', borderColor: colors.primary, color: colors.primary },
-  error: { ...typography.caption, color: colors.danger, marginTop: spacing.sm },
-});

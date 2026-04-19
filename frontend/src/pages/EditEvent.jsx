@@ -1,4 +1,3 @@
-import './CreateEvent.css';
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Input from '../components/Input';
@@ -135,7 +134,7 @@ export default function EditEvent() {
 
   if (loading) {
     return (
-      <div className="create-event">
+      <div className="flex flex-col gap-6">
         <Skeleton variant="text" style={{ width: '60%', height: '2rem', marginBottom: '1rem' }} />
         <Skeleton variant="card" style={{ height: '400px' }} />
       </div>
@@ -143,9 +142,9 @@ export default function EditEvent() {
   }
 
   return (
-    <div className="create-event">
-      <button className="create-event__back" onClick={() => navigate(`/events/${id}`)}>← Back to Event</button>
-      <h1>Edit Event</h1>
+    <div className="flex flex-col gap-6">
+      <button className="bg-transparent border-none text-forest text-sm cursor-pointer font-medium self-start hover:underline" onClick={() => navigate(`/events/${id}`)}>← Back to Event</button>
+      <h1 className="text-2xl font-extrabold">Edit Event</h1>
 
       <form className="edit-event-form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         {/* Event Type */}
@@ -177,7 +176,7 @@ export default function EditEvent() {
         <div>
           <label style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.25rem', display: 'block' }}>Description</label>
           <textarea
-            className="create-event__textarea"
+            className="w-full p-3 rounded-lg border border-gray-200 text-sm font-body resize-y"
             placeholder="Tell members what this event is about..."
             value={form.description}
             onChange={e => set('description', e.target.value)}

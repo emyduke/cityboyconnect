@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, FlatList, StyleSheet, RefreshControl, Pressable, Text } from 'react-native';
+import { View, FlatList, RefreshControl, Pressable, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { colors, spacing, radius, typography, shadows } from '../../theme';
+import { colors } from '../../theme';
 import { getAnnouncements } from '../../api/announcements';
 import { unwrap } from '../../api/client';
 import { useAuthStore } from '../../store/authStore';
@@ -12,9 +12,9 @@ import EmptyState from '../../components/EmptyState';
 type PriorityFilter = 'ALL' | 'URGENT' | 'IMPORTANT' | 'NORMAL';
 
 const PRIORITY_FILTERS: { key: PriorityFilter; label: string; color: string }[] = [
-  { key: 'ALL', label: 'All', color: colors.primary },
-  { key: 'URGENT', label: '🔴 Urgent', color: colors.danger },
-  { key: 'IMPORTANT', label: '🟡 Important', color: colors.accent },
+  { key: 'ALL', label: 'All', color: '#1a472a' },
+  { key: 'URGENT', label: '🔴 Urgent', color: '#dc2626' },
+  { key: 'IMPORTANT', label: '🟡 Important', color: '#d4a017' },
   { key: 'NORMAL', label: '🟢 Normal', color: '#16a34a' },
 ];
 
@@ -42,32 +42,36 @@ export default function AnnouncementsScreen() {
   useEffect(() => { fetchAnnouncements(); }, [fetchAnnouncements]);
 
   const priorityColors: Record<string, string> = {
-    URGENT: colors.danger,
-    IMPORTANT: colors.accent,
+    URGENT: '#dc2626',
+    IMPORTANT: '#d4a017',
     NORMAL: '#16a34a',
   };
 
   if (loading) {
-    return <View style={styles.container}>{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} variant="card" style={{ marginBottom: spacing.sm }} />)}</View>;
+    return <View className="flex-1 bg-background p-4">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} variant="card" className="mb-2" />)}</View>;
   }
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 bg-background p-4">
       {/* Create button for coordinators */}
       {canCreate && (
-        <Pressable style={styles.createBtn} onPress={() => navigation.navigate('CreateAnnouncement')}>
-          <Text style={styles.createBtnText}>+ Create Announcement</Text>
+        <Pressable className="bg-forest rounded-lg py-2 items-center mb-2" onPress={() => navigation.navigate('CreateAnnouncement')}>
+          <Text className="text-base font-body-semibold text-white">+ Create Announcement</Text>
         </Pressable>
       )}
       {/* Filter tabs */}
-      <View style={styles.filterRow}>
+      <View className="flex-row gap-1 mb-4">
         {PRIORITY_FILTERS.map((f) => (
           <Pressable
             key={f.key}
-            style={[styles.filterTab, filter === f.key && { backgroundColor: f.color + '15', borderColor: f.color }]}
+            className={`px-2.5 py-1.5 rounded-full border ${filter === f.key ? 'border-transparent' : 'border-gray-200 bg-surface'}`}
+            style={filter === f.key ? { backgroundColor: f.color + '15', borderColor: f.color } : undefined}
             onPress={() => { setFilter(f.key); setLoading(true); }}
           >
-            <Text style={[styles.filterLabel, filter === f.key && { color: f.color, fontFamily: 'PlusJakartaSans-SemiBold' }]}>{f.label}</Text>
+            <Text
+              className={`text-xs font-body ${filter === f.key ? 'font-body-semibold' : 'text-gray-500'}`}
+              style={filter === f.key ? { color: f.color } : undefined}
+            >{f.label}</Text>
           </Pressable>
         ))}
       </View>
@@ -76,37 +80,17 @@ export default function AnnouncementsScreen() {
         data={items}
         keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => (
-          <View style={[styles.announcementWrap, { borderLeftColor: priorityColors[item.priority] || colors.border }]}>
+          <View
+            className="rounded-lg mb-2 overflow-hidden"
+            style={{ borderLeftWidth: 3, borderLeftColor: priorityColors[item.priority] || '#e5e7eb' }}
+          >
             <AnnouncementCard announcement={item} onPress={() => navigation.navigate('AnnouncementDetail', { id: item.id })} />
           </View>
         )}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetchAnnouncements(); }} tintColor={colors.primary} />}
         ListEmptyComponent={<EmptyState icon="📢" title="No Announcements" description="Nothing to report yet" />}
-        contentContainerStyle={{ paddingBottom: spacing.xxl }}
+        contentContainerStyle={{ paddingBottom: 48 }}
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background, padding: spacing.md },
-  createBtn: { backgroundColor: colors.primary, borderRadius: radius.md, paddingVertical: spacing.sm, alignItems: 'center', marginBottom: spacing.sm },
-  createBtnText: { ...typography.button, color: colors.textInverse },
-  filterRow: { flexDirection: 'row', gap: spacing.xs, marginBottom: spacing.md },
-  filterTab: {
-    paddingHorizontal: spacing.sm + 2,
-    paddingVertical: spacing.xs + 2,
-    borderRadius: radius.full,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-  },
-  filterLabel: { ...typography.caption, color: colors.textSecondary },
-  announcementWrap: {
-    borderLeftWidth: 3,
-    borderLeftColor: colors.border,
-    borderRadius: radius.md,
-    marginBottom: spacing.sm,
-    overflow: 'hidden',
-  },
-});

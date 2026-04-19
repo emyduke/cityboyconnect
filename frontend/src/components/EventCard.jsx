@@ -1,4 +1,3 @@
-import './EventCard.css';
 import Badge from './Badge';
 
 const typeColors = { RALLY: 'danger', TRAINING: 'info', MEETING: 'default', TOWN_HALL: 'warning', OUTREACH: 'success', OTHER: 'default' };
@@ -9,17 +8,17 @@ export default function EventCard({ event, onClick }) {
   const day = date.getDate();
 
   return (
-    <div className="event-card" onClick={onClick}>
-      <div className="event-card__date">
-        <span className="event-card__month">{month}</span>
-        <span className="event-card__day">{day}</span>
+    <div className="flex gap-4 p-4 bg-white border border-gray-200 rounded-[10px] cursor-pointer transition-shadow hover:shadow-elevated" onClick={onClick}>
+      <div className="flex flex-col items-center justify-center w-14 h-14 bg-forest text-white rounded-[10px] shrink-0">
+        <span className="text-[0.6rem] font-semibold tracking-wider opacity-80">{month}</span>
+        <span className="text-xl font-bold font-display leading-none">{day}</span>
       </div>
-      <div className="event-card__info">
-        <h4 className="event-card__title">{event.title}</h4>
-        <span className="event-card__venue">{event.venue_name}</span>
-        <div className="event-card__footer">
+      <div className="flex-1 flex flex-col gap-1 min-w-0">
+        <h4 className="text-[0.95rem] font-semibold text-gray-900 truncate">{event.title}</h4>
+        <span className="text-[0.8rem] text-gray-500">{event.venue_name}</span>
+        <div className="flex items-center gap-2 mt-1">
           <Badge variant={typeColors[event.event_type] || 'default'}>{event.event_type?.replace('_', ' ')}</Badge>
-          {event.attendance_count != null && <span className="event-card__count">{event.attendance_count} attending</span>}
+          {event.attendance_count != null && <span className="text-xs text-gray-400">{event.attendance_count} attending</span>}
         </div>
       </div>
     </div>

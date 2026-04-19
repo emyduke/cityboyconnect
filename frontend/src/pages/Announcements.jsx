@@ -1,4 +1,3 @@
-import './Announcements.css';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAnnouncements } from '../api/client';
@@ -27,19 +26,19 @@ export default function Announcements() {
   }, []);
 
   return (
-    <div className="announcements-page">
+    <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1rem' }}>
-        <h1>Announcements</h1>
+        <h1 className="text-2xl font-extrabold">Announcements</h1>
         {canCreateAnnouncements(user?.role) && (
           <Button size="sm" onClick={() => navigate('/announcements/create')}>📢 Create Announcement</Button>
         )}
       </div>
       {loading ? (
-        <div className="announcements-grid"><Skeleton variant="card" /><Skeleton variant="card" /><Skeleton variant="card" /></div>
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4"><Skeleton variant="card" /><Skeleton variant="card" /><Skeleton variant="card" /></div>
       ) : announcements.length === 0 ? (
         <EmptyState title="No announcements" description="No announcements for your area yet" icon="📢" />
       ) : (
-        <div className="announcements-grid">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4">
           {announcements.map(a => (
             <AnnouncementCard key={a.id} announcement={a} onClick={() => navigate(`/announcements/${a.id}`)} />
           ))}

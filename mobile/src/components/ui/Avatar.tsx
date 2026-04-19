@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import { Image } from 'expo-image';
-import { colors, radius } from '../../theme';
+import { cssInterop } from 'nativewind';
+
+cssInterop(Image, { className: 'style' });
 
 interface AvatarProps {
   uri?: string | null;
@@ -9,11 +11,10 @@ interface AvatarProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
-const sizeMap = { sm: 32, md: 44, lg: 64, xl: 80 };
-const fontMap = { sm: 13, md: 17, lg: 24, xl: 30 };
+const sizeClasses = { sm: 'w-8 h-8', md: 'w-11 h-11', lg: 'w-16 h-16', xl: 'w-20 h-20' };
+const fontClasses = { sm: 'text-[13px]', md: 'text-[17px]', lg: 'text-[24px]', xl: 'text-[30px]' };
 
 export default function Avatar({ uri, name, size = 'md' }: AvatarProps) {
-  const dim = sizeMap[size];
   const initials = (name || '?')
     .split(' ')
     .slice(0, 2)
@@ -24,7 +25,7 @@ export default function Avatar({ uri, name, size = 'md' }: AvatarProps) {
     return (
       <Image
         source={{ uri }}
-        style={[styles.image, { width: dim, height: dim, borderRadius: dim / 2 }]}
+        className={`${sizeClasses[size]} rounded-full bg-gray-200`}
         contentFit="cover"
         transition={200}
       />
@@ -32,14 +33,8 @@ export default function Avatar({ uri, name, size = 'md' }: AvatarProps) {
   }
 
   return (
-    <View style={[styles.fallback, { width: dim, height: dim, borderRadius: dim / 2 }]}>
-      <Text style={[styles.initials, { fontSize: fontMap[size] }]}>{initials}</Text>
+    <View className={`${sizeClasses[size]} rounded-full bg-forest items-center justify-center`}>
+      <Text className={`${fontClasses[size]} text-white font-body-bold`}>{initials}</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  image: { backgroundColor: colors.skeleton },
-  fallback: { backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
-  initials: { color: colors.textInverse, fontFamily: 'PlusJakartaSans-Bold' },
-});

@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, Pressable } from 'react-native';
+import { View, Text, FlatList, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { colors, spacing, typography, radius, shadows } from '../../theme';
 import { getMyJobListings, deleteJobListing, changeJobStatus } from '../../api/opportunities';
 import { unwrap } from '../../api/client';
 import { useToastStore } from '../../store/toastStore';
@@ -47,39 +46,39 @@ export default function MyJobListingsScreen() {
   };
 
   const statusColor = (s: string) => {
-    const map: Record<string, string> = { ACTIVE: colors.success, DRAFT: colors.warning, PAUSED: colors.info, CLOSED: colors.textSecondary };
-    return map[s] || colors.textSecondary;
+    const map: Record<string, string> = { ACTIVE: '#16a34a', DRAFT: '#d97706', PAUSED: '#2563eb', CLOSED: '#6b7280' };
+    return map[s] || '#6b7280';
   };
 
   const renderItem = ({ item }: { item: any }) => (
-    <Pressable style={styles.card} onPress={() => navigation.navigate('JobDetail', { id: item.id })}>
-      <View style={styles.cardHeader}>
-        <Text style={styles.cardTitle} numberOfLines={1}>{item.title}</Text>
-        <View style={[styles.statusBadge, { backgroundColor: statusColor(item.status) + '20' }]}>
-          <Text style={[styles.statusText, { color: statusColor(item.status) }]}>{item.status}</Text>
+    <Pressable className="bg-surface rounded-md p-4 mb-2 shadow-sm" onPress={() => navigation.navigate('JobDetail', { id: item.id })}>
+      <View className="flex-row justify-between items-center">
+        <Text className="font-body-medium text-base text-gray-900 flex-1 mr-2" numberOfLines={1}>{item.title}</Text>
+        <View className="px-2 py-0.5 rounded-full" style={{ backgroundColor: statusColor(item.status) + '20' }}>
+          <Text className="font-body text-xs" style={{ color: statusColor(item.status) }}>{item.status}</Text>
         </View>
       </View>
-      <Text style={styles.cardSub}>{item.company_name} • {item.application_count ?? 0} applicants</Text>
-      <View style={styles.cardActions}>
-        <Pressable style={styles.actionBtn} onPress={() => navigation.navigate('CreateJob', { id: item.id })}>
-          <Text style={styles.actionText}>Edit</Text>
+      <Text className="font-body text-xs text-gray-500 mt-1">{item.company_name} • {item.application_count ?? 0} applicants</Text>
+      <View className="flex-row gap-2 mt-2 flex-wrap">
+        <Pressable className="py-1 px-2 bg-background rounded-sm" onPress={() => navigation.navigate('CreateJob', { id: item.id })}>
+          <Text className="font-body text-xs text-forest">Edit</Text>
         </Pressable>
-        <Pressable style={styles.actionBtn} onPress={() => navigation.navigate('JobApplications', { jobId: item.id })}>
-          <Text style={styles.actionText}>Applications</Text>
+        <Pressable className="py-1 px-2 bg-background rounded-sm" onPress={() => navigation.navigate('JobApplications', { jobId: item.id })}>
+          <Text className="font-body text-xs text-forest">Applications</Text>
         </Pressable>
         {item.status === 'DRAFT' && (
-          <Pressable style={styles.actionBtn} onPress={() => handleStatusChange(item.id, 'ACTIVE')}>
-            <Text style={[styles.actionText, { color: colors.success }]}>Publish</Text>
+          <Pressable className="py-1 px-2 bg-background rounded-sm" onPress={() => handleStatusChange(item.id, 'ACTIVE')}>
+            <Text className="font-body text-xs text-success">Publish</Text>
           </Pressable>
         )}
         {item.status === 'ACTIVE' && (
-          <Pressable style={styles.actionBtn} onPress={() => handleStatusChange(item.id, 'PAUSED')}>
-            <Text style={[styles.actionText, { color: colors.warning }]}>Pause</Text>
+          <Pressable className="py-1 px-2 bg-background rounded-sm" onPress={() => handleStatusChange(item.id, 'PAUSED')}>
+            <Text className="font-body text-xs text-warning">Pause</Text>
           </Pressable>
         )}
         {item.status === 'PAUSED' && (
-          <Pressable style={styles.actionBtn} onPress={() => handleStatusChange(item.id, 'ACTIVE')}>
-            <Text style={[styles.actionText, { color: colors.success }]}>Resume</Text>
+          <Pressable className="py-1 px-2 bg-background rounded-sm" onPress={() => handleStatusChange(item.id, 'ACTIVE')}>
+            <Text className="font-body text-xs text-success">Resume</Text>
           </Pressable>
         )}
       </View>
@@ -87,44 +86,26 @@ export default function MyJobListingsScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
-      <View style={styles.tabs}>
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+      <View className="flex-row px-2 py-1 bg-surface shadow-sm">
         {STATUS_TABS.map((t) => (
-          <Pressable key={t} style={[styles.tab, tab === t && styles.tabActive]} onPress={() => setTab(t)}>
-            <Text style={[styles.tabText, tab === t && styles.tabTextActive]}>{t}</Text>
+          <Pressable key={t} className={`px-2 py-1 rounded-full mr-1 ${tab === t ? 'bg-forest' : ''}`} onPress={() => setTab(t)}>
+            <Text className={`font-body text-xs ${tab === t ? 'text-white' : 'text-gray-500'}`}>{t}</Text>
           </Pressable>
         ))}
       </View>
       {loading ? (
-        <View style={{ padding: spacing.md }}><Skeleton variant="card" /><Skeleton variant="card" style={{ marginTop: spacing.sm }} /></View>
+        <View className="p-4"><Skeleton variant="card" /><Skeleton variant="card" className="mt-2" /></View>
       ) : (
         <FlatList
           data={filtered}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
-          contentContainerStyle={{ padding: spacing.md, paddingBottom: spacing.xxl }}
-          ListEmptyComponent={<Text style={styles.empty}>No job listings yet</Text>}
+          contentContainerClassName="p-4 pb-12"
+          ListEmptyComponent={<Text className="font-body text-base text-gray-500 text-center mt-12">No job listings yet</Text>}
         />
       )}
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  tabs: { flexDirection: 'row', paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, backgroundColor: colors.surface, ...shadows.sm },
-  tab: { paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, borderRadius: radius.full, marginRight: spacing.xs },
-  tabActive: { backgroundColor: colors.primary },
-  tabText: { ...typography.caption, color: colors.textSecondary },
-  tabTextActive: { color: colors.textInverse },
-  card: { backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.md, marginBottom: spacing.sm, ...shadows.sm },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  cardTitle: { ...typography.bodyMedium, color: colors.text, flex: 1, marginRight: spacing.sm },
-  statusBadge: { paddingHorizontal: spacing.sm, paddingVertical: 2, borderRadius: radius.full },
-  statusText: { ...typography.caption },
-  cardSub: { ...typography.caption, color: colors.textSecondary, marginTop: spacing.xs },
-  cardActions: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.sm, flexWrap: 'wrap' },
-  actionBtn: { paddingVertical: spacing.xs, paddingHorizontal: spacing.sm, backgroundColor: colors.background, borderRadius: radius.sm },
-  actionText: { ...typography.caption, color: colors.primary },
-  empty: { ...typography.body, color: colors.textSecondary, textAlign: 'center', marginTop: spacing.xxl },
-});

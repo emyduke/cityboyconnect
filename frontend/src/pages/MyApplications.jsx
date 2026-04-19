@@ -1,4 +1,4 @@
-import './Jobs.css';
+import { cn } from '../lib/cn';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getMyApplications, withdrawApplication } from '../api/client';
@@ -14,6 +14,17 @@ const TABS = [
   { key: 'Closed', label: 'Closed', statuses: ['REJECTED', 'WITHDRAWN', 'HIRED'] },
 ];
 const WITHDRAWABLE = ['APPLIED', 'REVIEWED', 'SHORTLISTED'];
+
+const JOB_STATUS_COLORS = {
+  applied: 'bg-blue-100 text-blue-700',
+  reviewed: 'bg-indigo-100 text-indigo-700',
+  shortlisted: 'bg-amber-100 text-amber-800',
+  interview: 'bg-emerald-100 text-emerald-800',
+  offered: 'bg-emerald-50 text-emerald-700',
+  hired: 'bg-[#065f46] text-white',
+  rejected: 'bg-red-100 text-red-800',
+  withdrawn: 'bg-gray-100 text-gray-500',
+};
 
 export default function MyApplications() {
   const navigate = useNavigate();
@@ -43,15 +54,15 @@ export default function MyApplications() {
   };
 
   return (
-    <div className="jobs-page">
-      <div className="jobs-page__header">
+    <div className="max-w-[1200px] mx-auto">
+      <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
         <h1>My Applications</h1>
         <Button size="sm" variant="secondary" onClick={() => navigate('/jobs')}>Browse Jobs</Button>
       </div>
 
-      <div className="job-tabs">
+      <div className="flex gap-1 mb-6 border-b-2 border-gray-200 overflow-x-auto">
         {TABS.map(t => (
-          <button key={t.key} className={`job-tabs__tab ${tab === t.key ? 'job-tabs__tab--active' : ''}`} onClick={() => setTab(t.key)}>
+          <button key={t.key} className={cn('py-2 px-4 border-none bg-transparent cursor-pointer font-semibold text-gray-500 border-b-2 border-transparent -mb-[2px] whitespace-nowrap transition-colors', tab === t.key && 'text-forest border-b-forest')} onClick={() => setTab(t.key)}>
             {t.label}
           </button>
         ))}
@@ -70,18 +81,18 @@ export default function MyApplications() {
         filtered.map(app => {
           const job = app.job || {};
           return (
-            <div key={app.id} className="app-card">
+            <div key={app.id} className="bg-white border border-gray-200 rounded-lg p-4 mb-2">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8 }}>
                 <div style={{ flex: 1, cursor: 'pointer' }} onClick={() => navigate(`/jobs/${job.id}`)}>
                   <h3 style={{ margin: 0 }}>{job.title || 'Unknown Job'}</h3>
                   <p style={{ color: '#6b7280', margin: '2px 0' }}>{job.company_name}</p>
-                  <div className="job-card__badges" style={{ marginTop: 4 }}>
-                    {job.job_type && <span className="job-card__badge job-card__badge--type">{(job.job_type || '').replace('_', ' ')}</span>}
+                  <div className="flex gap-1.5 flex-wrap my-2" style={{ marginTop: 4 }}>
+                    {job.job_type && <span className="px-2 py-0.5 rounded-xl text-xs font-medium bg-blue-100 text-blue-700">{(job.job_type || '').replace('_', ' ')}</span>}
                     <span style={{ color: '#9ca3af', fontSize: '0.8rem' }}>Applied {new Date(app.applied_at).toLocaleDateString()}</span>
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span className={`status-badge status-badge--${app.status?.toLowerCase()}`}>{app.status}</span>
+                  <span className={cn('px-2.5 py-0.5 rounded-xl text-xs font-semibold', JOB_STATUS_COLORS[app.status?.toLowerCase()])}>{app.status}</span>
                   {WITHDRAWABLE.includes(app.status) && (
                     <Button size="sm" variant="danger" onClick={() => handleWithdraw(app.id)}>Withdraw</Button>
                   )}

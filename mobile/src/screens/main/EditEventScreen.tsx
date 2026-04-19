@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { colors, spacing, typography } from '../../theme';
 import { updateEvent } from '../../api/opportunities';
 import { getEventDetail } from '../../api/events';
 import { unwrap } from '../../api/client';
@@ -57,52 +56,54 @@ export default function EditEventScreen() {
     setLoading(false);
   };
 
-  if (fetching) return <View style={styles.container}><Text style={styles.heading}>Loading...</Text></View>;
+  if (fetching) return <View className="flex-1 bg-background p-4"><Text className="text-2xl font-display-bold text-gray-900 mb-4">Loading...</Text></View>;
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: spacing.xxl }} keyboardShouldPersistTaps="handled">
-        <Text style={styles.heading}>Edit Event</Text>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
+      <ScrollView className="flex-1 bg-background p-4" contentContainerStyle={{ paddingBottom: 48 }} keyboardShouldPersistTaps="handled">
+        <Text className="text-2xl font-display-bold text-gray-900 mb-4">Edit Event</Text>
 
         <Input label="Title *" value={form.title} onChangeText={(v: string) => set('title', v)} />
         <Input label="Description" value={form.description} onChangeText={(v: string) => set('description', v)} multiline numberOfLines={4} />
         <Input label="Venue" value={form.venue_name} onChangeText={(v: string) => set('venue_name', v)} />
         <Input label="Location" value={form.location} onChangeText={(v: string) => set('location', v)} />
 
-        <Text style={styles.label}>Event Type</Text>
-        <View style={styles.chipRow}>
+        <Text className="text-base font-body-medium text-gray-900 mt-4 mb-1">Event Type</Text>
+        <View className="flex-row flex-wrap gap-1">
           {EVENT_TYPES.map((t) => (
-            <Text key={t} style={[styles.chip, form.event_type === t && styles.chipActive]} onPress={() => set('event_type', t)}>{t}</Text>
+            <Text
+              key={t}
+              className={`text-xs font-body px-2 py-1 rounded-full border overflow-hidden ${form.event_type === t ? 'bg-forest/10 border-forest text-forest' : 'bg-surface border-gray-200 text-gray-500'}`}
+              onPress={() => set('event_type', t)}
+            >{t}</Text>
           ))}
         </View>
 
-        <Text style={styles.label}>Visibility</Text>
-        <View style={styles.chipRow}>
+        <Text className="text-base font-body-medium text-gray-900 mt-4 mb-1">Visibility</Text>
+        <View className="flex-row flex-wrap gap-1">
           {VISIBILITY_OPTIONS.map((v) => (
-            <Text key={v} style={[styles.chip, form.visibility === v && styles.chipActive]} onPress={() => set('visibility', v)}>{v.replace('_', ' ')}</Text>
+            <Text
+              key={v}
+              className={`text-xs font-body px-2 py-1 rounded-full border overflow-hidden ${form.visibility === v ? 'bg-forest/10 border-forest text-forest' : 'bg-surface border-gray-200 text-gray-500'}`}
+              onPress={() => set('visibility', v)}
+            >{v.replace('_', ' ')}</Text>
           ))}
         </View>
 
-        <Text style={styles.label}>Status</Text>
-        <View style={styles.chipRow}>
+        <Text className="text-base font-body-medium text-gray-900 mt-4 mb-1">Status</Text>
+        <View className="flex-row flex-wrap gap-1">
           {['UPCOMING', 'ONGOING', 'COMPLETED', 'CANCELLED'].map((s) => (
-            <Text key={s} style={[styles.chip, form.status === s && styles.chipActive]} onPress={() => set('status', s)}>{s}</Text>
+            <Text
+              key={s}
+              className={`text-xs font-body px-2 py-1 rounded-full border overflow-hidden ${form.status === s ? 'bg-forest/10 border-forest text-forest' : 'bg-surface border-gray-200 text-gray-500'}`}
+              onPress={() => set('status', s)}
+            >{s}</Text>
           ))}
         </View>
 
-        {error ? <Text style={styles.error}>{error}</Text> : null}
-        <Button onPress={handleSubmit} loading={loading} size="lg" style={{ marginTop: spacing.lg }}>Save Changes</Button>
+        {error ? <Text className="text-xs font-body text-danger mt-2">{error}</Text> : null}
+        <Button onPress={handleSubmit} loading={loading} size="lg" className="mt-6">Save Changes</Button>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background, padding: spacing.md },
-  heading: { ...typography.h2, color: colors.text, marginBottom: spacing.md },
-  label: { ...typography.bodyMedium, color: colors.text, marginTop: spacing.md, marginBottom: spacing.xs },
-  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
-  chip: { ...typography.caption, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, backgroundColor: colors.surface, borderRadius: 999, borderWidth: 1, borderColor: colors.border, overflow: 'hidden', color: colors.textSecondary },
-  chipActive: { backgroundColor: colors.primary + '15', borderColor: colors.primary, color: colors.primary },
-  error: { ...typography.caption, color: colors.danger, marginTop: spacing.sm },
-});

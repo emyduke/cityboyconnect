@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, RefreshControl, StyleSheet, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, FlatList, RefreshControl, Pressable } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { colors, spacing, typography, shadows, radius } from '../../theme';
 import { getLeaderboardScores, getMyRank } from '../../api/dashboard';
 import { unwrap } from '../../api/client';
 import Avatar from '../../components/ui/Avatar';
@@ -17,6 +16,7 @@ export default function LeaderboardScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [scope, setScope] = useState<Scope>('national');
+  const insets = useSafeAreaInsets();
 
   const fetchData = useCallback(async () => {
     try {
@@ -51,19 +51,25 @@ export default function LeaderboardScreen() {
     const order = top3.length >= 3 ? [top3[1], top3[0], top3[2]] : top3;
     const indexOrder = top3.length >= 3 ? [1, 0, 2] : top3.map((_, i) => i);
     return (
-      <Animated.View entering={FadeInDown.delay(150).duration(400)} style={styles.podiumRow}>
+      <Animated.View entering={FadeInDown.delay(150).duration(400)} className="flex-row justify-center items-end mb-6 gap-4">
         {order.map((item, displayIdx) => {
           const actualIdx = indexOrder[displayIdx];
           return (
-            <View key={item.id || displayIdx} style={styles.podiumItem}>
-              <View style={[styles.medal, { backgroundColor: medalColors[actualIdx] }]}>
-                <Text style={styles.medalText}>{actualIdx + 1}</Text>
+            <View key={item.id || displayIdx} className="items-center w-[95px]">
+              <View
+                className="w-[30px] h-[30px] rounded-full items-center justify-center mb-1"
+                style={{ backgroundColor: medalColors[actualIdx] }}
+              >
+                <Text className="text-sm font-body-bold text-white">{actualIdx + 1}</Text>
               </View>
               <Avatar name={item.full_name || ''} size={actualIdx === 0 ? 'lg' : 'md'} />
-              <Text style={styles.podiumName} numberOfLines={1}>{item.full_name || 'Member'}</Text>
-              <Text style={styles.podiumScore}>{item.total_score ?? item.score ?? 0} pts</Text>
-              <View style={[styles.podiumBar, { height: podiumHeights[actualIdx], backgroundColor: medalColors[actualIdx] + '30' }]}>
-                <View style={[styles.podiumBarFill, { backgroundColor: medalColors[actualIdx], height: '100%' }]} />
+              <Text className="text-xs font-body text-gray-900 mt-1 text-center" numberOfLines={1}>{item.full_name || 'Member'}</Text>
+              <Text className="text-xs font-body-bold text-forest">{item.total_score ?? item.score ?? 0} pts</Text>
+              <View
+                className="w-full rounded-sm mt-1 overflow-hidden"
+                style={{ height: podiumHeights[actualIdx], backgroundColor: medalColors[actualIdx] + '30' }}
+              >
+                <View className="w-full rounded-sm opacity-30" style={{ backgroundColor: medalColors[actualIdx], height: '100%' }} />
               </View>
             </View>
           );
@@ -74,24 +80,24 @@ export default function LeaderboardScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.safe} edges={['bottom']}>
-        <View style={styles.container}>
+      <SafeAreaView className="flex-1 bg-background" edges={['bottom']} style={{ paddingTop: insets.top }}>
+        <View className="flex-1 p-4">
           <Skeleton variant="card" />
-          <Skeleton variant="card" style={{ marginTop: spacing.sm }} />
-          <Skeleton variant="card" style={{ marginTop: spacing.sm }} />
+          <Skeleton variant="card" className="mt-2" />
+          <Skeleton variant="card" className="mt-2" />
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
-      <View style={styles.container}>
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']} style={{ paddingTop: insets.top }}>
+      <View className="flex-1 p-4">
         {/* Scope tabs */}
-        <View style={styles.tabs}>
+        <View className="flex-row mb-4 bg-gray-100 rounded-lg p-0.5">
           {scopes.map((s) => (
-            <Pressable key={s.key} style={[styles.tab, scope === s.key && styles.tabActive]} onPress={() => setScope(s.key)}>
-              <Text style={[styles.tabLabel, scope === s.key && styles.tabLabelActive]}>{s.label}</Text>
+            <Pressable key={s.key} className={`flex-1 py-2 items-center rounded-md ${scope === s.key ? 'bg-surface shadow-sm' : ''}`} onPress={() => setScope(s.key)}>
+              <Text className={`${scope === s.key ? 'text-base font-body-medium text-forest' : 'text-sm font-body text-gray-500'}`}>{s.label}</Text>
             </Pressable>
           ))}
         </View>
@@ -99,15 +105,15 @@ export default function LeaderboardScreen() {
         {/* My rank */}
         {myRank && (
           <Animated.View entering={FadeInDown.delay(100).duration(400)}>
-            <LinearGradient colors={[colors.primaryDark, colors.primary]} style={styles.myRank}>
-              <View style={styles.myRankInner}>
+            <LinearGradient colors={['#0d2416', '#1a472a']} className="rounded-lg p-4 mb-4 overflow-hidden">
+              <View className="flex-row justify-between items-center">
                 <View>
-                  <Text style={styles.myRankLabel}>Your Rank</Text>
-                  <Text style={styles.myRankPosition}>#{myRank.rank ?? '-'}</Text>
+                  <Text className="text-xs font-body text-white/70">Your Rank</Text>
+                  <Text className="text-3xl font-display-bold text-gold">#{myRank.rank ?? '-'}</Text>
                 </View>
-                <View style={styles.myRankRight}>
-                  <Text style={styles.myRankScoreLabel}>Score</Text>
-                  <Text style={styles.myRankScore}>{myRank.total_score ?? myRank.score ?? 0}</Text>
+                <View className="items-end">
+                  <Text className="text-xs font-body text-white/70">Score</Text>
+                  <Text className="text-xl font-display-bold text-white">{myRank.total_score ?? myRank.score ?? 0}</Text>
                 </View>
               </View>
             </LinearGradient>
@@ -115,71 +121,26 @@ export default function LeaderboardScreen() {
         )}
 
         <FlatList
-        // entries.slice is not a function (it is undefined) when API response is empty or malformed, so we default to empty array to avoid crash
-        // [TypeError: (entries || []).slice is not a function (it is undefined)]
-        // check if entries is an array before slicing, otherwise default to empty array
-
-          data={[...(Array.isArray(entries) ? entries : []).slice(3)]} // skip top 3 for main list
+          data={[...(Array.isArray(entries) ? entries : []).slice(3)]}
           keyExtractor={(item, idx) => String(item.id || idx)}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1a472a" />}
           ListHeaderComponent={renderPodium}
           renderItem={({ item, index }) => (
-            <View style={styles.row}>
-              <View style={styles.rankCircle}>
-                <Text style={styles.rankNum}>{index + 4}</Text>
+            <View className="flex-row items-center py-2.5 px-2 border-b border-gray-200 gap-2">
+              <View className="w-7 h-7 rounded-full bg-gray-100 justify-center items-center">
+                <Text className="text-xs font-body-bold text-gray-500">{index + 4}</Text>
               </View>
               <Avatar name={item.full_name || ''} size="sm" />
-              <View style={styles.rowInfo}>
-                <Text style={styles.rowName} numberOfLines={1}>{item.full_name || 'Member'}</Text>
-                <Text style={styles.rowMeta}>{item.state_name || ''}</Text>
+              <View className="flex-1">
+                <Text className="text-base font-body-medium text-gray-900" numberOfLines={1}>{item.full_name || 'Member'}</Text>
+                <Text className="text-xs font-body text-gray-500">{item.state_name || ''}</Text>
               </View>
-              <Text style={styles.rowScore}>{item.total_score ?? item.score ?? 0}</Text>
+              <Text className="text-base font-body-bold text-forest">{item.total_score ?? item.score ?? 0}</Text>
             </View>
           )}
-          contentContainerStyle={{ paddingBottom: spacing.xxl }}
+          contentContainerClassName="pb-12"
         />
       </View>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  container: { flex: 1, padding: spacing.md },
-  tabs: { flexDirection: 'row', marginBottom: spacing.md, backgroundColor: colors.borderLight, borderRadius: radius.lg, padding: 3 },
-  tab: { flex: 1, paddingVertical: spacing.sm, alignItems: 'center', borderRadius: radius.md },
-  tabActive: { backgroundColor: colors.surface, ...shadows.sm },
-  tabLabel: { ...typography.bodySm, color: colors.textSecondary },
-  tabLabelActive: { ...typography.bodyMedium, color: colors.primary },
-  myRank: { borderRadius: radius.lg, padding: spacing.md, marginBottom: spacing.md, overflow: 'hidden' },
-  myRankInner: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  myRankLabel: { ...typography.caption, color: 'rgba(255,255,255,0.7)' },
-  myRankPosition: { ...typography.h1, color: colors.accent },
-  myRankRight: { alignItems: 'flex-end' },
-  myRankScoreLabel: { ...typography.caption, color: 'rgba(255,255,255,0.7)' },
-  myRankScore: { ...typography.h3, color: '#fff' },
-  podiumRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end', marginBottom: spacing.lg, gap: spacing.md },
-  podiumItem: { alignItems: 'center', width: 95 },
-  medal: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.xs },
-  medalText: { fontSize: 14, fontFamily: 'PlusJakartaSans-Bold', color: '#fff' },
-  podiumName: { ...typography.caption, color: colors.text, marginTop: spacing.xs, textAlign: 'center' },
-  podiumScore: { ...typography.caption, color: colors.primary, fontFamily: 'PlusJakartaSans-Bold' },
-  podiumBar: { width: '100%', borderRadius: radius.sm, marginTop: spacing.xs, overflow: 'hidden' },
-  podiumBarFill: { width: '100%', borderRadius: radius.sm, opacity: 0.3 },
-  row: {
-    flexDirection: 'row', alignItems: 'center',
-    paddingVertical: spacing.sm + 2, paddingHorizontal: spacing.sm,
-    borderBottomWidth: 1, borderBottomColor: colors.divider,
-    gap: spacing.sm,
-  },
-  rankCircle: {
-    width: 28, height: 28, borderRadius: 14,
-    backgroundColor: colors.borderLight,
-    justifyContent: 'center', alignItems: 'center',
-  },
-  rankNum: { ...typography.caption, fontFamily: 'PlusJakartaSans-Bold', color: colors.textSecondary },
-  rowInfo: { flex: 1 },
-  rowName: { ...typography.bodyMedium, color: colors.text },
-  rowMeta: { ...typography.caption, color: colors.textSecondary },
-  rowScore: { ...typography.bodyMedium, color: colors.primary, fontFamily: 'PlusJakartaSans-Bold' },
-});

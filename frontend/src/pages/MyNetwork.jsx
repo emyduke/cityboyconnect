@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { FiSearch, FiChevronRight, FiChevronDown, FiUsers, FiUser, FiClock } from 'react-icons/fi';
 import { getMyNetwork, getMyNetworkTree, getMyNetworkRecent } from '../api/client';
+import { cn } from '../lib/cn';
 import Avatar from '../components/Avatar';
 import Skeleton from '../components/Skeleton';
-import './MyNetwork.css';
 
 function TreeNode({ node, depth = 0 }) {
   const [open, setOpen] = useState(depth < 2);
@@ -17,23 +17,23 @@ function TreeNode({ node, depth = 0 }) {
   }[node.status] || 'var(--color-text-secondary)';
 
   return (
-    <div className="tree-node" style={{ '--depth': depth }}>
-      <div className="tree-node__row" onClick={() => hasChildren && setOpen(!open)}>
-        <span className="tree-node__toggle">
-          {hasChildren ? (open ? <FiChevronDown /> : <FiChevronRight />) : <span className="tree-node__dot" />}
+    <div style={{ paddingLeft: `${depth * 1.5}rem` }}>
+      <div className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors duration-150 hover:bg-gray-50" onClick={() => hasChildren && setOpen(!open)}>
+        <span className="w-5 flex items-center justify-center text-gray-500">
+          {hasChildren ? (open ? <FiChevronDown /> : <FiChevronRight />) : <span className="w-1.5 h-1.5 rounded-full bg-gray-300" />}
         </span>
         <Avatar name={node.full_name || ''} size="sm" />
-        <div className="tree-node__info">
-          <span className="tree-node__name">{node.full_name}</span>
-          <span className="tree-node__meta">{node.ward_name || node.state_name || ''}</span>
+        <div className="flex-1 flex flex-col">
+          <span className="font-semibold text-sm">{node.full_name}</span>
+          <span className="text-xs text-gray-500">{node.ward_name || node.state_name || ''}</span>
         </div>
-        <span className="tree-node__status" style={{ color: statusColor }}>{node.status}</span>
+        <span className="text-[0.7rem] font-semibold uppercase tracking-wide" style={{ color: statusColor }}>{node.status}</span>
         {(node.direct_count ?? children.length) > 0 && (
-          <span className="tree-node__count">{node.direct_count ?? children.length}</span>
+          <span className="text-[0.7rem] bg-forest/10 text-forest px-2 py-0.5 rounded-full font-semibold">{node.direct_count ?? children.length}</span>
         )}
       </div>
       {open && hasChildren && (
-        <div className="tree-node__children">
+        <div className="border-l border-dashed border-gray-300 ml-2.5">
           {children.map(c => <TreeNode key={c.id} node={c} depth={depth + 1} />)}
         </div>
       )}
@@ -82,14 +82,17 @@ export default function MyNetwork() {
   ];
 
   return (
-    <div className="my-network">
-      <h1 className="page-title">My Network</h1>
+    <div className="max-w-[900px] mx-auto">
+      <h1 className="text-2xl font-extrabold mb-4">My Network</h1>
 
-      <div className="network-tabs">
+      <div className="flex gap-2 mb-6 overflow-x-auto max-sm:gap-1">
         {tabs.map(t => (
           <button
             key={t.key}
-            className={`network-tab ${tab === t.key ? 'network-tab--active' : ''}`}
+            className={cn(
+              "flex items-center gap-2 px-5 py-2.5 border rounded-full cursor-pointer text-sm whitespace-nowrap transition-all duration-150 max-sm:text-xs max-sm:px-3 max-sm:py-2",
+              tab === t.key ? "bg-forest text-white border-forest" : "bg-white border-gray-200"
+            )}
             onClick={() => setTab(t.key)}
           >
             {t.icon} {t.label}
@@ -98,45 +101,46 @@ export default function MyNetwork() {
       </div>
 
       {loading ? (
-        <div className="network-loading">
+        <div className="flex flex-col gap-4">
           {[1,2,3].map(i => <Skeleton key={i} variant="card" />)}
         </div>
       ) : (
         <>
           {tab === 'direct' && (
-            <div className="network-direct">
-              <div className="network-search">
+            <div>
+              <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-4 py-2.5 mb-4">
                 <FiSearch />
                 <input
                   type="text"
                   placeholder="Search recruits..."
                   value={search}
                   onChange={e => setSearch(e.target.value)}
+                  className="flex-1 border-none outline-none bg-transparent text-sm"
                 />
               </div>
               {filtered.length === 0 ? (
-                <p className="network-empty">No direct recruits yet. Share your QR code to grow your network!</p>
+                <p className="text-center text-gray-500 py-12 px-4">No direct recruits yet. Share your QR code to grow your network!</p>
               ) : (
-                <div className="network-list">
+                <div className="flex flex-col gap-2">
                   {filtered.map(m => (
-                    <div key={m.id} className="network-item">
+                    <div key={m.id} className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-200">
                       <Avatar name={m.full_name || ''} size="md" />
-                      <div className="network-item__info">
-                        <span className="network-item__name">{m.full_name}</span>
-                        <span className="network-item__meta">{m.ward_name || m.state_name || ''}</span>
+                      <div className="flex-1 flex flex-col">
+                        <span className="font-semibold">{m.full_name}</span>
+                        <span className="text-[0.8rem] text-gray-500">{m.ward_name || m.state_name || ''}</span>
                       </div>
-                      <div className="network-item__right">
+                      <div className="flex flex-col items-end gap-1">
                         {m.added_by_leader && (
-                          <span style={{ fontSize: '0.7rem', background: 'var(--color-primary)', color: '#fff', padding: '0.15rem 0.4rem', borderRadius: '0.25rem' }}>Added by you</span>
+                          <span className="text-[0.7rem] bg-forest text-white px-1.5 py-0.5 rounded">Added by you</span>
                         )}
                         {!m.added_by_leader && (
-                          <span style={{ fontSize: '0.7rem', background: '#e0e7ff', color: '#4338ca', padding: '0.15rem 0.4rem', borderRadius: '0.25rem' }}>Referred</span>
+                          <span className="text-[0.7rem] bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded">Referred</span>
                         )}
-                        <span className="network-item__date">
+                        <span className="text-xs text-gray-500">
                           {m.date_joined ? new Date(m.date_joined).toLocaleDateString() : ''}
                         </span>
                         {m.direct_count > 0 && (
-                          <span className="network-item__badge">{m.direct_count} recruits</span>
+                          <span className="text-[0.7rem] bg-forest/10 text-forest px-2 py-0.5 rounded-full">{m.direct_count} recruits</span>
                         )}
                       </div>
                     </div>
@@ -147,32 +151,32 @@ export default function MyNetwork() {
           )}
 
           {tab === 'tree' && (
-            <div className="network-tree">
+            <div className="bg-white rounded-2xl p-4 border border-gray-200">
               {treeData ? (
                 <TreeNode node={treeData} />
               ) : (
-                <p className="network-empty">No network tree data available.</p>
+                <p className="text-center text-gray-500 py-12 px-4">No network tree data available.</p>
               )}
             </div>
           )}
 
           {tab === 'recent' && (
-            <div className="network-recent">
+            <div>
               {recentData.length === 0 ? (
-                <p className="network-empty">No recent joins in the last 30 days.</p>
+                <p className="text-center text-gray-500 py-12 px-4">No recent joins in the last 30 days.</p>
               ) : (
-                <div className="network-timeline">
+                <div className="relative pl-6 before:content-[''] before:absolute before:left-2 before:top-0 before:bottom-0 before:w-0.5 before:bg-gray-300">
                   {recentData.map(m => (
-                    <div key={m.id} className="timeline-item">
-                      <div className="timeline-dot" />
-                      <div className="timeline-content">
+                    <div key={m.id} className="relative pb-6">
+                      <div className="absolute -left-5 top-3 w-2.5 h-2.5 rounded-full bg-forest border-2 border-white" />
+                      <div className="flex items-center gap-3 px-4 py-3 bg-white rounded-xl border border-gray-200">
                         <Avatar name={m.full_name || ''} size="sm" />
-                        <div className="timeline-info">
-                          <span className="timeline-name">{m.full_name}</span>
-                          <span className="timeline-meta">
+                        <div className="flex flex-col">
+                          <span className="font-semibold text-sm">{m.full_name}</span>
+                          <span className="text-[0.8rem] text-gray-500">
                             {m.ward_name || m.state_name || ''} · Referred by {m.referred_by_name || 'you'}
                           </span>
-                          <span className="timeline-date">
+                          <span className="text-[0.7rem] text-gray-500">
                             {m.date_joined ? new Date(m.date_joined).toLocaleDateString() : ''}
                           </span>
                         </div>

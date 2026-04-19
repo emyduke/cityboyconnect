@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, TextInput, StyleSheet, Keyboard } from 'react-native';
-import Animated, { useSharedValue, useAnimatedStyle, withSequence, withTiming, withSpring } from 'react-native-reanimated';
-import { colors, spacing, radius } from '../theme';
+import { TextInput, Keyboard } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withSequence, withSpring } from 'react-native-reanimated';
 
 interface OTPInputProps {
   length?: number;
@@ -61,12 +60,14 @@ export default function OTPInput({ length = 6, onComplete }: OTPInputProps) {
   };
 
   return (
-    <Animated.View style={[styles.container, pulseStyle]}>
+    <Animated.View className="flex-row justify-center gap-2" style={pulseStyle}>
       {Array.from({ length }).map((_, i) => (
         <TextInput
           key={i}
           ref={(r) => { refs.current[i] = r; }}
-          style={[styles.box, values[i] ? styles.filled : null, allFilled && styles.complete]}
+          className={`w-[52px] h-[60px] rounded-sm text-center text-[28px] font-body-bold text-gray-900 bg-surface ${
+            allFilled ? 'border-2 border-gold' : values[i] ? 'border-2 border-forest' : 'border-[1.5px] border-gray-200'
+          }`}
           value={values[i]}
           onChangeText={(t) => handleChange(t, i)}
           onKeyPress={(e) => handleKeyPress(e, i)}
@@ -80,21 +81,3 @@ export default function OTPInput({ length = 6, onComplete }: OTPInputProps) {
     </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flexDirection: 'row', justifyContent: 'center', gap: spacing.sm },
-  box: {
-    width: 52,
-    height: 60,
-    borderRadius: radius.sm,
-    borderWidth: 1.5,
-    borderColor: colors.border,
-    textAlign: 'center',
-    fontSize: 28,
-    fontFamily: 'PlusJakartaSans-Bold',
-    color: colors.text,
-    backgroundColor: colors.surface,
-  },
-  filled: { borderColor: colors.primary, borderWidth: 2 },
-  complete: { borderColor: colors.accent, borderWidth: 2 },
-});

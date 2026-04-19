@@ -1,4 +1,3 @@
-import './AdminMembers.css';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getMembers } from '../api/client';
@@ -33,8 +32,8 @@ export default function AdminMembers() {
   ];
 
   return (
-    <div className="admin-members">
-      <h1>All Members</h1>
+    <div>
+      <h1 className="text-2xl font-extrabold mb-6">All Members</h1>
       <DataTable columns={columns} data={members} searchable sortable loading={loading} emptyMessage="No members found" />
     </div>
   );

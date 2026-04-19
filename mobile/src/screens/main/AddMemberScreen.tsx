@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { View, Text, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { colors, spacing, typography, radius } from '../../theme';
 import { leaderAddMember } from '../../api/opportunities';
 import { getStates, getLGAs, getWards, getUnits } from '../../api/structure';
 import { unwrap } from '../../api/client';
@@ -95,29 +94,37 @@ export default function AddMemberScreen() {
   };
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: spacing.xxl }} keyboardShouldPersistTaps="handled">
-        <Text style={styles.heading}>Add Member</Text>
-        <Text style={styles.subtitle}>Register a new member to your network</Text>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
+      <ScrollView className="flex-1 bg-background p-4" contentContainerStyle={{ paddingBottom: 48 }} keyboardShouldPersistTaps="handled">
+        <Text className="text-2xl font-display-bold text-gray-900">Add Member</Text>
+        <Text className="text-base font-body text-gray-500 mb-4">Register a new member to your network</Text>
 
         <Input label="Phone Number *" value={form.phone} onChangeText={(v: string) => set('phone', v)} placeholder="08012345678" keyboardType="phone-pad" />
         <Input label="Full Name *" value={form.full_name} onChangeText={(v: string) => set('full_name', v)} placeholder="John Doe" />
         <Input label="Occupation" value={form.occupation} onChangeText={(v: string) => set('occupation', v)} placeholder="e.g. Farmer, Teacher" />
 
-        <Text style={styles.label}>Gender</Text>
-        <View style={styles.chipRow}>
+        <Text className="text-base font-body-medium text-gray-900 mt-4 mb-1">Gender</Text>
+        <View className="flex-row flex-wrap gap-1">
           {['MALE', 'FEMALE'].map((g) => (
-            <Text key={g} style={[styles.chip, form.gender === g && styles.chipActive]} onPress={() => set('gender', g)}>{g}</Text>
+            <Text
+              key={g}
+              className={`text-xs font-body px-2 py-1 rounded-full border overflow-hidden ${form.gender === g ? 'bg-forest/10 border-forest text-forest' : 'bg-surface border-gray-200 text-gray-500'}`}
+              onPress={() => set('gender', g)}
+            >{g}</Text>
           ))}
         </View>
 
         {/* Geographic cascading selects */}
         {states.length > 0 && (
           <>
-            <Text style={styles.label}>State</Text>
-            <View style={styles.chipRow}>
+            <Text className="text-base font-body-medium text-gray-900 mt-4 mb-1">State</Text>
+            <View className="flex-row flex-wrap gap-1">
               {states.slice(0, 20).map((s: any) => (
-                <Text key={s.id} style={[styles.chip, form.state_id === String(s.id) && styles.chipActive]} onPress={() => set('state_id', String(s.id))}>{s.name}</Text>
+                <Text
+                  key={s.id}
+                  className={`text-xs font-body px-2 py-1 rounded-full border overflow-hidden ${form.state_id === String(s.id) ? 'bg-forest/10 border-forest text-forest' : 'bg-surface border-gray-200 text-gray-500'}`}
+                  onPress={() => set('state_id', String(s.id))}
+                >{s.name}</Text>
               ))}
             </View>
           </>
@@ -125,10 +132,14 @@ export default function AddMemberScreen() {
 
         {lgas.length > 0 && (
           <>
-            <Text style={styles.label}>LGA</Text>
-            <View style={styles.chipRow}>
+            <Text className="text-base font-body-medium text-gray-900 mt-4 mb-1">LGA</Text>
+            <View className="flex-row flex-wrap gap-1">
               {lgas.map((l: any) => (
-                <Text key={l.id} style={[styles.chip, form.lga_id === String(l.id) && styles.chipActive]} onPress={() => set('lga_id', String(l.id))}>{l.name}</Text>
+                <Text
+                  key={l.id}
+                  className={`text-xs font-body px-2 py-1 rounded-full border overflow-hidden ${form.lga_id === String(l.id) ? 'bg-forest/10 border-forest text-forest' : 'bg-surface border-gray-200 text-gray-500'}`}
+                  onPress={() => set('lga_id', String(l.id))}
+                >{l.name}</Text>
               ))}
             </View>
           </>
@@ -136,10 +147,14 @@ export default function AddMemberScreen() {
 
         {wards.length > 0 && (
           <>
-            <Text style={styles.label}>Ward</Text>
-            <View style={styles.chipRow}>
+            <Text className="text-base font-body-medium text-gray-900 mt-4 mb-1">Ward</Text>
+            <View className="flex-row flex-wrap gap-1">
               {wards.map((w: any) => (
-                <Text key={w.id} style={[styles.chip, form.ward_id === String(w.id) && styles.chipActive]} onPress={() => set('ward_id', String(w.id))}>{w.name}</Text>
+                <Text
+                  key={w.id}
+                  className={`text-xs font-body px-2 py-1 rounded-full border overflow-hidden ${form.ward_id === String(w.id) ? 'bg-forest/10 border-forest text-forest' : 'bg-surface border-gray-200 text-gray-500'}`}
+                  onPress={() => set('ward_id', String(w.id))}
+                >{w.name}</Text>
               ))}
             </View>
           </>
@@ -147,29 +162,22 @@ export default function AddMemberScreen() {
 
         {units.length > 0 && (
           <>
-            <Text style={styles.label}>Unit</Text>
-            <View style={styles.chipRow}>
+            <Text className="text-base font-body-medium text-gray-900 mt-4 mb-1">Unit</Text>
+            <View className="flex-row flex-wrap gap-1">
               {units.map((u: any) => (
-                <Text key={u.id} style={[styles.chip, form.unit_id === String(u.id) && styles.chipActive]} onPress={() => set('unit_id', String(u.id))}>{u.name}</Text>
+                <Text
+                  key={u.id}
+                  className={`text-xs font-body px-2 py-1 rounded-full border overflow-hidden ${form.unit_id === String(u.id) ? 'bg-forest/10 border-forest text-forest' : 'bg-surface border-gray-200 text-gray-500'}`}
+                  onPress={() => set('unit_id', String(u.id))}
+                >{u.name}</Text>
               ))}
             </View>
           </>
         )}
 
-        {error ? <Text style={styles.error}>{error}</Text> : null}
-        <Button onPress={handleSubmit} loading={loading} size="lg" style={{ marginTop: spacing.lg }}>Add Member</Button>
+        {error ? <Text className="text-xs font-body text-danger mt-2">{error}</Text> : null}
+        <Button onPress={handleSubmit} loading={loading} size="lg" className="mt-6">Add Member</Button>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background, padding: spacing.md },
-  heading: { ...typography.h2, color: colors.text },
-  subtitle: { ...typography.body, color: colors.textSecondary, marginBottom: spacing.md },
-  label: { ...typography.bodyMedium, color: colors.text, marginTop: spacing.md, marginBottom: spacing.xs },
-  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
-  chip: { ...typography.caption, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, backgroundColor: colors.surface, borderRadius: 999, borderWidth: 1, borderColor: colors.border, overflow: 'hidden', color: colors.textSecondary },
-  chipActive: { backgroundColor: colors.primary + '15', borderColor: colors.primary, color: colors.primary },
-  error: { ...typography.caption, color: colors.danger, marginTop: spacing.sm },
-});

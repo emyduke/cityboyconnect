@@ -1,4 +1,4 @@
-import './Jobs.css';
+import { cn } from '../lib/cn';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { leaderAddMember, leaderBulkAddMembers, getStates, getLGAs, getWards } from '../api/client';
@@ -81,89 +81,89 @@ export default function AddMember() {
   };
 
   return (
-    <div className="jobs-page">
-      <h1>Add Member</h1>
+    <div className="max-w-5xl mx-auto">
+      <h1 className="text-2xl font-extrabold mb-6">Add Member</h1>
       <Card padding="md" style={{ marginBottom: 'var(--space-md)', background: '#ecfdf5' }}>
         <p style={{ margin: 0, color: '#065f46' }}>Members you add will be linked to your referral network and can complete their verification by logging in with their phone number.</p>
       </Card>
 
-      <div className="job-tabs">
-        <button className={`job-tabs__tab ${tab === 'single' ? 'job-tabs__tab--active' : ''}`} onClick={() => setTab('single')}>Single Add</button>
-        <button className={`job-tabs__tab ${tab === 'bulk' ? 'job-tabs__tab--active' : ''}`} onClick={() => setTab('bulk')}>Bulk Add</button>
+      <div className="flex gap-1 mb-6 border-b-2 border-gray-200 overflow-x-auto">
+        <button className={cn("py-2 px-4 bg-transparent border-0 cursor-pointer font-semibold text-gray-500 border-b-2 border-b-transparent -mb-0.5 whitespace-nowrap transition-colors", tab === 'single' && "text-forest border-b-forest")} onClick={() => setTab('single')}>Single Add</button>
+        <button className={cn("py-2 px-4 bg-transparent border-0 cursor-pointer font-semibold text-gray-500 border-b-2 border-b-transparent -mb-0.5 whitespace-nowrap transition-colors", tab === 'bulk' && "text-forest border-b-forest")} onClick={() => setTab('bulk')}>Bulk Add</button>
       </div>
 
       {tab === 'single' ? (
         <Card padding="md">
-          <div className="job-form__row">
-            <div className="job-form__field">
-              <label>Phone Number *</label>
-              <input value={form.phone_number} onChange={e => update('phone_number', e.target.value)} placeholder="+234..." />
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="mb-4">
+              <label className="block font-semibold mb-1">Phone Number *</label>
+              <input className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.phone_number} onChange={e => update('phone_number', e.target.value)} placeholder="+234..." />
             </div>
-            <div className="job-form__field">
-              <label>Full Name *</label>
-              <input value={form.full_name} onChange={e => update('full_name', e.target.value)} placeholder="John Doe" />
+            <div className="mb-4">
+              <label className="block font-semibold mb-1">Full Name *</label>
+              <input className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.full_name} onChange={e => update('full_name', e.target.value)} placeholder="John Doe" />
             </div>
           </div>
-          <div className="job-form__row">
-            <div className="job-form__field">
-              <label>Gender</label>
-              <select value={form.gender} onChange={e => update('gender', e.target.value)}>
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="mb-4">
+              <label className="block font-semibold mb-1">Gender</label>
+              <select className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.gender} onChange={e => update('gender', e.target.value)}>
                 <option value="">Select</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
               </select>
             </div>
-            <div className="job-form__field">
-              <label>Date of Birth</label>
-              <input type="date" value={form.date_of_birth} onChange={e => update('date_of_birth', e.target.value)} />
+            <div className="mb-4">
+              <label className="block font-semibold mb-1">Date of Birth</label>
+              <input className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" type="date" value={form.date_of_birth} onChange={e => update('date_of_birth', e.target.value)} />
             </div>
           </div>
-          <div className="job-form__field">
-            <label>Occupation</label>
-            <input value={form.occupation} onChange={e => update('occupation', e.target.value)} />
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">Occupation</label>
+            <input className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.occupation} onChange={e => update('occupation', e.target.value)} />
           </div>
-          <div className="job-form__row">
-            <div className="job-form__field">
-              <label>State *</label>
-              <select value={form.state_id} onChange={e => { update('state_id', e.target.value); update('lga_id', ''); update('ward_id', ''); }}>
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="mb-4">
+              <label className="block font-semibold mb-1">State *</label>
+              <select className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.state_id} onChange={e => { update('state_id', e.target.value); update('lga_id', ''); update('ward_id', ''); }}>
                 <option value="">Select</option>
                 {states.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
             </div>
-            <div className="job-form__field">
-              <label>LGA *</label>
-              <select value={form.lga_id} onChange={e => { update('lga_id', e.target.value); update('ward_id', ''); }}>
+            <div className="mb-4">
+              <label className="block font-semibold mb-1">LGA *</label>
+              <select className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.lga_id} onChange={e => { update('lga_id', e.target.value); update('ward_id', ''); }}>
                 <option value="">Select</option>
                 {lgas.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
               </select>
             </div>
           </div>
-          <div className="job-form__field">
-            <label>Ward *</label>
-            <select value={form.ward_id} onChange={e => update('ward_id', e.target.value)}>
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">Ward *</label>
+            <select className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.ward_id} onChange={e => update('ward_id', e.target.value)}>
               <option value="">Select</option>
               {wards.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
             </select>
           </div>
-          <div className="job-form__field">
-            <label>Address</label>
-            <textarea value={form.address} onChange={e => update('address', e.target.value)} rows={2} />
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">Address</label>
+            <textarea className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem] resize-y min-h-25" value={form.address} onChange={e => update('address', e.target.value)} rows={2} />
           </div>
           <Button onClick={handleSingle} disabled={submitting}>{submitting ? 'Adding...' : 'Add Member'}</Button>
         </Card>
       ) : (
         <Card padding="md">
-          <div className="job-form__row" style={{ marginBottom: 'var(--space-sm)' }}>
-            <div className="job-form__field">
-              <label>State *</label>
-              <select value={form.state_id} onChange={e => { update('state_id', e.target.value); update('lga_id', ''); }}>
+          <div className="grid grid-cols-2 gap-4 mb-4" style={{ marginBottom: 'var(--space-sm)' }}>
+            <div className="mb-4">
+              <label className="block font-semibold mb-1">State *</label>
+              <select className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.state_id} onChange={e => { update('state_id', e.target.value); update('lga_id', ''); }}>
                 <option value="">Select</option>
                 {states.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
             </div>
-            <div className="job-form__field">
-              <label>LGA *</label>
-              <select value={form.lga_id} onChange={e => update('lga_id', e.target.value)}>
+            <div className="mb-4">
+              <label className="block font-semibold mb-1">LGA *</label>
+              <select className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.lga_id} onChange={e => update('lga_id', e.target.value)}>
                 <option value="">Select</option>
                 {lgas.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
               </select>

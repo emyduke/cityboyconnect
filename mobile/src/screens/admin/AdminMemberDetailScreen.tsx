@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, RefreshControl, StyleSheet, Modal, TextInput, Pressable, Image } from 'react-native';
+import { View, Text, ScrollView, RefreshControl, Modal, TextInput, Pressable, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { colors, spacing, typography, radius, shadows } from '../../theme';
 import { adminApi } from '../../api/admin';
 import { useToastStore } from '../../store/toastStore';
 import Avatar from '../../components/ui/Avatar';
@@ -68,10 +67,10 @@ export default function AdminMemberDetailScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.safe} edges={['bottom']}>
-        <View style={styles.container}>
+      <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+        <View className="p-4 pb-12">
           <Skeleton variant="card" height={200} />
-          <Skeleton variant="card" style={{ marginTop: spacing.md }} />
+          <Skeleton variant="card" className="mt-4" />
         </View>
       </SafeAreaView>
     );
@@ -79,9 +78,9 @@ export default function AdminMemberDetailScreen() {
 
   if (!member) {
     return (
-      <SafeAreaView style={styles.safe} edges={['bottom']}>
-        <View style={[styles.container, { alignItems: 'center', justifyContent: 'center' }]}>
-          <Text style={typography.body}>Member not found</Text>
+      <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+        <View className="p-4 pb-12 flex-1 items-center justify-center">
+          <Text className="text-base font-body text-gray-900">Member not found</Text>
         </View>
       </SafeAreaView>
     );
@@ -105,16 +104,16 @@ export default function AdminMemberDetailScreen() {
   ];
 
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
       <ScrollView
-        contentContainerStyle={styles.container}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+        contentContainerClassName="p-4 pb-12"
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1a472a" />}
       >
         {/* Header */}
-        <View style={styles.header}>
+        <View className="items-center mb-6">
           <Avatar name={member.full_name || ''} size="xl" />
-          <Text style={styles.name}>{member.full_name}</Text>
-          <View style={styles.badges}>
+          <Text className="text-xl font-display-bold text-gray-900 mt-2">{member.full_name}</Text>
+          <View className="flex-row gap-1 mt-1">
             <Badge label={member.role || 'MEMBER'} variant="info" />
             <Badge
               label={member.voter_verification_status || 'PENDING'}
@@ -125,44 +124,44 @@ export default function AdminMemberDetailScreen() {
         </View>
 
         {/* Info card */}
-        <Card style={styles.infoCard}>
+        <Card className="mb-6">
           {infoRows.map((row, i) => (
-            <View key={row.label} style={[styles.infoRow, i < infoRows.length - 1 && styles.infoRowBorder]}>
-              <Text style={styles.infoLabel}>{row.label}</Text>
-              <Text style={styles.infoValue}>{row.value}</Text>
+            <View key={row.label} className={`flex-row justify-between py-2 ${i < infoRows.length - 1 ? 'border-b border-gray-100' : ''}`}>
+              <Text className="text-sm font-body text-gray-500">{row.label}</Text>
+              <Text className="text-base font-body-medium text-gray-900 max-w-[55%] text-right">{row.value}</Text>
             </View>
           ))}
         </Card>
 
         {/* Voter Card Image */}
         {member.voter_card_image && (
-          <View style={styles.voterCardSection}>
-            <Text style={styles.sectionTitle}>Voter Card</Text>
-            <Image source={{ uri: member.voter_card_image }} style={styles.voterCardImage} resizeMode="contain" />
+          <View className="mb-4">
+            <Text className="text-lg font-display-semibold text-gray-900 mb-2">Voter Card</Text>
+            <Image source={{ uri: member.voter_card_image }} className="w-full h-[200px] rounded-lg bg-background" resizeMode="contain" />
           </View>
         )}
 
         {/* Actions */}
-        <Text style={styles.sectionTitle}>Actions</Text>
-        <View style={styles.actions}>
+        <Text className="text-lg font-display-semibold text-gray-900 mb-2">Actions</Text>
+        <View className="flex-row gap-2 mb-2">
           {member.voter_verification_status !== 'VERIFIED' && (
-            <Button onPress={() => handleAction('verify')} loading={actionLoading === 'verify'} style={{ flex: 1 }}>
+            <Button onPress={() => handleAction('verify')} loading={actionLoading === 'verify'} className="flex-1">
               Verify
             </Button>
           )}
           {member.voter_verification_status !== 'REJECTED' && (
-            <Button variant="danger" onPress={() => setRejectModalVisible(true)} loading={actionLoading === 'reject'} style={{ flex: 1 }}>
+            <Button variant="danger" onPress={() => setRejectModalVisible(true)} loading={actionLoading === 'reject'} className="flex-1">
               Reject
             </Button>
           )}
         </View>
-        <View style={styles.actions}>
+        <View className="flex-row gap-2 mb-2">
           {member.is_active ? (
-            <Button variant="danger" onPress={() => setSuspendModalVisible(true)} loading={actionLoading === 'suspend'} style={{ flex: 1 }}>
+            <Button variant="danger" onPress={() => setSuspendModalVisible(true)} loading={actionLoading === 'suspend'} className="flex-1">
               Suspend
             </Button>
           ) : (
-            <Button variant="secondary" onPress={() => handleAction('unsuspend')} loading={actionLoading === 'unsuspend'} style={{ flex: 1 }}>
+            <Button variant="secondary" onPress={() => handleAction('unsuspend')} loading={actionLoading === 'unsuspend'} className="flex-1">
               Unsuspend
             </Button>
           )}
@@ -171,19 +170,19 @@ export default function AdminMemberDetailScreen() {
 
       {/* Reject Modal */}
       <Modal visible={rejectModalVisible} transparent animationType="slide" onRequestClose={() => setRejectModalVisible(false)}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Reject Membership</Text>
-            <Text style={styles.modalSubtitle}>Select a reason:</Text>
+        <View className="flex-1 justify-end bg-black/50">
+          <View className="bg-surface rounded-t-2xl p-6">
+            <Text className="text-xl font-display-bold text-gray-900 mb-1">Reject Membership</Text>
+            <Text className="text-sm font-body text-gray-500 mb-4">Select a reason:</Text>
             {REJECTION_REASONS.map((reason) => (
-              <Pressable key={reason} style={[styles.reasonRow, rejectReason === reason && styles.reasonRowActive]} onPress={() => setRejectReason(reason)}>
-                <View style={[styles.radio, rejectReason === reason && styles.radioActive]} />
-                <Text style={styles.reasonText}>{reason}</Text>
+              <Pressable key={reason} className={`flex-row items-center py-2 gap-2 ${rejectReason === reason ? 'rounded' : ''}`} onPress={() => setRejectReason(reason)}>
+                <View className={`w-5 h-5 rounded-full border-2 ${rejectReason === reason ? 'border-forest bg-forest' : 'border-gray-200'}`} />
+                <Text className="text-base font-body text-gray-900">{reason}</Text>
               </Pressable>
             ))}
-            <View style={styles.modalActions}>
-              <Button variant="secondary" onPress={() => setRejectModalVisible(false)} style={{ flex: 1 }}>Cancel</Button>
-              <Button variant="danger" onPress={() => handleAction('reject', rejectReason)} loading={actionLoading === 'reject'} disabled={!rejectReason} style={{ flex: 1 }}>
+            <View className="flex-row gap-2">
+              <Button variant="secondary" onPress={() => setRejectModalVisible(false)} className="flex-1">Cancel</Button>
+              <Button variant="danger" onPress={() => handleAction('reject', rejectReason)} loading={actionLoading === 'reject'} disabled={!rejectReason} className="flex-1">
                 Reject
               </Button>
             </View>
@@ -193,23 +192,23 @@ export default function AdminMemberDetailScreen() {
 
       {/* Suspend Modal */}
       <Modal visible={suspendModalVisible} transparent animationType="slide" onRequestClose={() => setSuspendModalVisible(false)}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Suspend Member</Text>
-            <Text style={styles.modalSubtitle}>Reason for suspension:</Text>
+        <View className="flex-1 justify-end bg-black/50">
+          <View className="bg-surface rounded-t-2xl p-6">
+            <Text className="text-xl font-display-bold text-gray-900 mb-1">Suspend Member</Text>
+            <Text className="text-sm font-body text-gray-500 mb-4">Reason for suspension:</Text>
             <TextInput
-              style={styles.textarea}
+              className="bg-background rounded-lg border border-gray-200 p-4 text-base font-body text-gray-900 min-h-[100px] mb-4"
               value={suspendReason}
               onChangeText={setSuspendReason}
               placeholder="Enter reason..."
-              placeholderTextColor={colors.textTertiary}
+              placeholderTextColor="#9ca3af"
               multiline
               numberOfLines={4}
               textAlignVertical="top"
             />
-            <View style={styles.modalActions}>
-              <Button variant="secondary" onPress={() => setSuspendModalVisible(false)} style={{ flex: 1 }}>Cancel</Button>
-              <Button variant="danger" onPress={() => handleAction('suspend', suspendReason)} loading={actionLoading === 'suspend'} disabled={!suspendReason.trim()} style={{ flex: 1 }}>
+            <View className="flex-row gap-2">
+              <Button variant="secondary" onPress={() => setSuspendModalVisible(false)} className="flex-1">Cancel</Button>
+              <Button variant="danger" onPress={() => handleAction('suspend', suspendReason)} loading={actionLoading === 'suspend'} disabled={!suspendReason.trim()} className="flex-1">
                 Suspend
               </Button>
             </View>
@@ -220,34 +219,3 @@ export default function AdminMemberDetailScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  container: { padding: spacing.md, paddingBottom: spacing.xxl },
-  header: { alignItems: 'center', marginBottom: spacing.lg },
-  name: { ...typography.h3, color: colors.text, marginTop: spacing.sm },
-  badges: { flexDirection: 'row', gap: spacing.xs, marginTop: spacing.xs },
-  infoCard: { marginBottom: spacing.lg },
-  infoRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: spacing.sm },
-  infoRowBorder: { borderBottomWidth: 1, borderBottomColor: colors.divider },
-  infoLabel: { ...typography.bodySm, color: colors.textSecondary },
-  infoValue: { ...typography.bodyMedium, color: colors.text, maxWidth: '55%', textAlign: 'right' },
-  sectionTitle: { ...typography.h4, color: colors.text, marginBottom: spacing.sm },
-  voterCardSection: { marginBottom: spacing.md },
-  voterCardImage: { width: '100%', height: 200, borderRadius: radius.md, backgroundColor: colors.background },
-  actions: { flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.sm },
-  modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: colors.overlay },
-  modalContent: { backgroundColor: colors.surface, borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, padding: spacing.lg },
-  modalTitle: { ...typography.h3, color: colors.text, marginBottom: spacing.xs },
-  modalSubtitle: { ...typography.bodySm, color: colors.textSecondary, marginBottom: spacing.md },
-  reasonRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: spacing.sm, gap: spacing.sm },
-  reasonRowActive: { borderRadius: radius.sm },
-  radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: colors.border },
-  radioActive: { borderColor: colors.primary, backgroundColor: colors.primary },
-  reasonText: { ...typography.body, color: colors.text },
-  textarea: {
-    backgroundColor: colors.background, borderRadius: radius.md, borderWidth: 1,
-    borderColor: colors.border, padding: spacing.md, ...typography.body, color: colors.text,
-    minHeight: 100, marginBottom: spacing.md,
-  },
-  modalActions: { flexDirection: 'row', gap: spacing.sm },
-});

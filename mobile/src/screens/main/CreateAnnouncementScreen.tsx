@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { colors, spacing, typography, radius } from '../../theme';
 import { createAnnouncement } from '../../api/opportunities';
 import { useToastStore } from '../../store/toastStore';
 import Button from '../../components/ui/Button';
@@ -36,40 +35,31 @@ export default function CreateAnnouncementScreen() {
   };
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: spacing.xxl }} keyboardShouldPersistTaps="handled">
-        <Text style={styles.heading}>Create Announcement</Text>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
+      <ScrollView className="flex-1 bg-background p-4" contentContainerClassName="pb-12" keyboardShouldPersistTaps="handled">
+        <Text className="font-display-bold text-2xl text-gray-900 mb-4">Create Announcement</Text>
 
         <Input label="Title *" value={form.title} onChangeText={(v: string) => set('title', v)} placeholder="Announcement title" />
         <Input label="Body *" value={form.body} onChangeText={(v: string) => set('body', v)} placeholder="Write the announcement content..." multiline numberOfLines={6} />
 
-        <Text style={styles.label}>Priority</Text>
-        <View style={styles.chipRow}>
+        <Text className="font-body-medium text-base text-gray-900 mt-4 mb-1">Priority</Text>
+        <View className="flex-row flex-wrap gap-1">
           {PRIORITY_OPTIONS.map((p) => (
-            <Text key={p} style={[styles.chip, form.priority === p && styles.chipActive]} onPress={() => set('priority', p)}>{p}</Text>
+            <Text key={p} className={`font-body text-xs px-2 py-1 rounded-full border overflow-hidden ${form.priority === p ? 'bg-forest/10 border-forest text-forest' : 'bg-surface border-gray-200 text-gray-500'}`} onPress={() => set('priority', p)}>{p}</Text>
           ))}
         </View>
 
-        <Text style={styles.label}>Scope</Text>
-        <View style={styles.chipRow}>
+        <Text className="font-body-medium text-base text-gray-900 mt-4 mb-1">Scope</Text>
+        <View className="flex-row flex-wrap gap-1">
           {SCOPE_OPTIONS.map((s) => (
-            <Text key={s} style={[styles.chip, form.scope === s && styles.chipActive]} onPress={() => set('scope', s)}>{s}</Text>
+            <Text key={s} className={`font-body text-xs px-2 py-1 rounded-full border overflow-hidden ${form.scope === s ? 'bg-forest/10 border-forest text-forest' : 'bg-surface border-gray-200 text-gray-500'}`} onPress={() => set('scope', s)}>{s}</Text>
           ))}
         </View>
 
-        {error ? <Text style={styles.error}>{error}</Text> : null}
-        <Button onPress={handleSubmit} loading={loading} size="lg" style={{ marginTop: spacing.lg }}>Create Announcement</Button>
+        {error ? <Text className="font-body text-xs text-danger mt-2">{error}</Text> : null}
+        <Button onPress={handleSubmit} loading={loading} size="lg" className="mt-6">Create Announcement</Button>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background, padding: spacing.md },
-  heading: { ...typography.h2, color: colors.text, marginBottom: spacing.md },
-  label: { ...typography.bodyMedium, color: colors.text, marginTop: spacing.md, marginBottom: spacing.xs },
-  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
-  chip: { ...typography.caption, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, backgroundColor: colors.surface, borderRadius: 999, borderWidth: 1, borderColor: colors.border, overflow: 'hidden', color: colors.textSecondary },
-  chipActive: { backgroundColor: colors.primary + '15', borderColor: colors.primary, color: colors.primary },
-  error: { ...typography.caption, color: colors.danger, marginTop: spacing.sm },
-});

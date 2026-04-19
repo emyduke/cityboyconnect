@@ -5,7 +5,7 @@ import Badge from '../../components/Badge';
 import Button from '../../components/Button';
 import Skeleton from '../../components/Skeleton';
 import { useToastStore } from '../../store/toastStore';
-import './VerificationsQueue.css';
+import { cn } from '../../lib/cn';
 
 const REJECT_REASONS = [
   { value: 'CARD_UNREADABLE', label: 'Card Unreadable' },
@@ -122,26 +122,29 @@ export default function VerificationsQueue() {
   };
 
   return (
-    <div className="admin-verifications">
-      <h1>Verifications Queue</h1>
-      <div className="admin-verifications__stats-bar">
-        <div className="admin-verifications__stat">
-          <span className="admin-verifications__stat-val">{stats.pending}</span> pending
+    <div>
+      <h1 className="text-2xl font-extrabold mb-4">Verifications Queue</h1>
+      <div className="flex gap-4 text-sm text-gray-500 mb-4 pb-3 border-b border-gray-200 flex-wrap items-center">
+        <div className="flex items-center gap-1">
+          <span className="font-extrabold text-lg text-gray-900">{stats.pending}</span> pending
         </div>
-        <div className="admin-verifications__stat admin-verifications__stat--success">
-          <span className="admin-verifications__stat-val">{stats.approved_today}</span> approved today
+        <div className="flex items-center gap-1">
+          <span className="font-extrabold text-lg text-success">{stats.approved_today}</span> approved today
         </div>
-        <div className="admin-verifications__stat admin-verifications__stat--danger">
-          <span className="admin-verifications__stat-val">{stats.rejected_today}</span> rejected today
+        <div className="flex items-center gap-1">
+          <span className="font-extrabold text-lg text-danger">{stats.rejected_today}</span> rejected today
         </div>
-        <span className="admin-verifications__hint">Shortcuts: A=Approve, R=Reject, S=Skip</span>
+        <span className="ml-auto text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">Shortcuts: A=Approve, R=Reject, S=Skip</span>
       </div>
 
-      <div className="admin-verifications__filter-bar">
+      <div className="flex gap-1 mb-4">
         {['PENDING', 'VERIFIED', 'REJECTED'].map(s => (
           <button
             key={s}
-            className={`admin-verifications__filter-btn ${statusFilter === s ? 'active' : ''}`}
+            className={cn(
+              'px-3 py-1 rounded-full border border-gray-200 bg-white cursor-pointer text-xs font-semibold text-gray-500 transition-all hover:bg-gray-50',
+              statusFilter === s && 'bg-forest text-white border-forest'
+            )}
             onClick={() => { setStatusFilter(s); setSelected(null); }}
           >
             {s}
@@ -149,64 +152,67 @@ export default function VerificationsQueue() {
         ))}
       </div>
 
-      <div className="admin-verifications__split">
-        <div className="admin-verifications__list">
+      <div className="flex gap-4 min-h-[500px] max-md:flex-col">
+        <div className="w-[340px] min-w-[280px] max-md:w-full border border-gray-200 rounded-xl bg-white overflow-y-auto max-h-[calc(100vh-200px)] max-md:max-h-[300px]">
           {loading ? <Skeleton variant="table" /> : queue.length === 0 ? (
-            <div className="admin-verifications__empty">
-              <span className="admin-verifications__empty-icon">{statusFilter === 'PENDING' ? '✅' : '📋'}</span>
+            <div className="text-center py-12 text-gray-400 flex flex-col items-center gap-2">
+              <span className="text-4xl">{statusFilter === 'PENDING' ? '✅' : '📋'}</span>
               <p>{statusFilter === 'PENDING' ? 'All verifications processed!' : `No ${statusFilter.toLowerCase()} records`}</p>
-              <p className="admin-verifications__empty-sub">{statusFilter === 'PENDING' ? 'No pending verifications in queue' : 'Nothing to show yet'}</p>
+              <p className="text-xs">{statusFilter === 'PENDING' ? 'No pending verifications in queue' : 'Nothing to show yet'}</p>
             </div>
           ) : queue.map(m => (
             <div
               key={m.pk}
-              className={`admin-verifications__item ${selected?.pk === m.pk ? 'admin-verifications__item--selected' : ''}`}
+              className={cn(
+                'flex items-center gap-2 p-3 border-b border-gray-100 cursor-pointer transition-colors hover:bg-gray-50',
+                selected?.pk === m.pk && 'bg-off-white border-l-[3px] border-l-forest'
+              )}
               onClick={() => selectMember(m)}
             >
               <Avatar name={m.full_name || m.name || ''} size="sm" />
-              <div className="admin-verifications__item-info">
-                <span className="admin-verifications__item-name">{m.full_name || m.name}</span>
-                <span className="admin-verifications__item-meta">{m.state_name || m.state || ''} · {m.joined_at ? `${Math.floor((Date.now() - new Date(m.joined_at)) / 86400000)}d ago` : ''}</span>
+              <div className="flex-1">
+                <span className="block text-sm font-semibold">{m.full_name || m.name}</span>
+                <span className="block text-[0.7rem] text-gray-400">{m.state_name || m.state || ''} · {m.joined_at ? `${Math.floor((Date.now() - new Date(m.joined_at)) / 86400000)}d ago` : ''}</span>
               </div>
               <Badge variant={statusVariant(m.voter_verification_status)}>{m.voter_verification_status || 'PENDING'}</Badge>
             </div>
           ))}
         </div>
 
-        <div className="admin-verifications__review">
+        <div className="flex-1 border border-gray-200 rounded-xl bg-white p-4">
           {!selected ? (
-            <div className="admin-verifications__placeholder">
-              <span className="admin-verifications__placeholder-icon">👈</span>
+            <div className="text-center text-gray-400 py-16 flex flex-col items-center gap-2">
+              <span className="text-3xl">👈</span>
               <p>Select a member to review</p>
             </div>
           ) : (
-            <div className="admin-verifications__review-content">
-              <div className="admin-verifications__review-header">
+            <div className="flex flex-col gap-4">
+              <div className="text-center flex flex-col items-center gap-1">
                 <Avatar name={selected.full_name || ''} size="lg" />
                 <h3>{selected.full_name || selected.name}</h3>
                 <p>{selected.state_name || ''} · {selected.lga_name || ''}</p>
               </div>
 
               {voterCardUrl ? (
-                <div className="admin-verifications__voter-card">
-                  <img src={voterCardUrl} alt="Voter card" />
+                <div className="border border-gray-200 rounded-lg overflow-hidden">
+                  <img className="w-full max-h-[300px] object-contain" src={voterCardUrl} alt="Voter card" />
                 </div>
               ) : selected.voter_card_image ? (
-                <div className="admin-verifications__voter-card">
-                  <img src={selected.voter_card_image} alt="Voter card" />
+                <div className="border border-gray-200 rounded-lg overflow-hidden">
+                  <img className="w-full max-h-[300px] object-contain" src={selected.voter_card_image} alt="Voter card" />
                 </div>
               ) : (
-                <div className="admin-verifications__no-card">No voter card image uploaded</div>
+                <div className="text-center p-4 text-gray-400 border-2 border-dashed border-gray-200 rounded-lg text-sm">No voter card image uploaded</div>
               )}
 
               {selected.voter_card_number && (
-                <div className="admin-verifications__vin">
+                <div className="text-sm py-2">
                   <strong>VIN:</strong> {selected.voter_card_number}
                 </div>
               )}
 
               {statusFilter === 'PENDING' && (
-                <div className="admin-verifications__actions">
+                <div className="flex gap-4">
                   <Button onClick={handleApprove} loading={actionLoading === 'approve'} size="lg" style={{ flex: 1 }}>
                     ✓ Approve (A)
                   </Button>
@@ -216,7 +222,7 @@ export default function VerificationsQueue() {
                 </div>
               )}
               {statusFilter === 'PENDING' && (
-                <button className="admin-verifications__skip" onClick={handleSkip}>→ Skip for now (S)</button>
+                <button className="bg-transparent border-none text-gray-400 text-sm cursor-pointer text-center hover:text-gray-600" onClick={handleSkip}>→ Skip for now (S)</button>
               )}
             </div>
           )}
@@ -224,19 +230,22 @@ export default function VerificationsQueue() {
       </div>
 
       {rejectModal && (
-        <div className="admin-verifications__modal-overlay" onClick={() => setRejectModal(false)}>
-          <div className="admin-verifications__modal" onClick={e => e.stopPropagation()}>
-            <h3>Reject Verification</h3>
-            <p className="admin-verifications__modal-sub">Select a reason for rejecting <strong>{selected?.full_name}</strong>'s voter card</p>
-            <div className="admin-verifications__reason-list">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[1000]" onClick={() => setRejectModal(false)}>
+          <div className="bg-white rounded-xl p-5 w-[90%] max-w-[440px] shadow-[0_20px_60px_rgba(0,0,0,0.2)]" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-extrabold mb-1">Reject Verification</h3>
+            <p className="text-sm text-gray-500 mb-4">Select a reason for rejecting <strong>{selected?.full_name}</strong>'s voter card</p>
+            <div className="flex flex-col gap-1 mb-4">
               {REJECT_REASONS.map(r => (
-                <label key={r.value} className={`admin-verifications__reason-option ${rejectReason === r.value ? 'active' : ''}`}>
-                  <input type="radio" name="reject_reason" value={r.value} checked={rejectReason === r.value} onChange={() => setRejectReason(r.value)} />
+                <label key={r.value} className={cn(
+                  'flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg cursor-pointer text-sm transition-all hover:bg-gray-50',
+                  rejectReason === r.value && 'border-danger bg-red-50/50'
+                )}>
+                  <input type="radio" name="reject_reason" value={r.value} checked={rejectReason === r.value} onChange={() => setRejectReason(r.value)} className="accent-danger" />
                   <span>{r.label}</span>
                 </label>
               ))}
             </div>
-            <div className="admin-verifications__modal-actions">
+            <div className="flex gap-2 justify-end">
               <Button variant="ghost" onClick={() => setRejectModal(false)}>Cancel</Button>
               <Button variant="danger" onClick={handleReject} disabled={!rejectReason}>Reject</Button>
             </div>

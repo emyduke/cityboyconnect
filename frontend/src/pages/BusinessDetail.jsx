@@ -1,4 +1,3 @@
-import './Opportunities.css';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getBusinessDetail } from '../api/client';
@@ -30,7 +29,7 @@ export default function BusinessDetail() {
   const owner = biz.user || {};
 
   return (
-    <div className="opportunities" style={{ maxWidth: 800 }}>
+    <div className="max-w-[800px] mx-auto">
       <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)', marginBottom: 'var(--space-md)' }}>← Back to Search</button>
 
       <Card padding="lg">
@@ -42,9 +41,9 @@ export default function BusinessDetail() {
           )}
           <div style={{ flex: 1 }}>
             <h1 style={{ margin: 0 }}>{biz.name}</h1>
-            <div className="opportunity-card__badges" style={{ marginTop: 8 }}>
-              <span className="opportunity-card__badge opportunity-card__badge--category">{biz.category_display || biz.category}</span>
-              {biz.operates_nationwide && <span className="opportunity-card__badge">🌍 Nationwide</span>}
+            <div className="flex gap-1.5 flex-wrap mt-1" style={{ marginTop: 8 }}>
+              <span className="px-2 py-0.5 rounded-xl text-xs font-medium bg-amber-100 text-amber-800">{biz.category_display || biz.category}</span>
+              {biz.operates_nationwide && <span className="px-2 py-0.5 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800">🌍 Nationwide</span>}
             </div>
           </div>
         </div>

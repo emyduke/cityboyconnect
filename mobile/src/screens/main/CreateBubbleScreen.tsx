@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TextInput, Alert } from 'react-native';
+import { View, Text, ScrollView, TextInput, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
-import { colors, spacing, radius, typography, shadows } from '../../theme';
 import { createBubble } from '../../api/bubbles';
 import Button from '../../components/ui/Button';
 import { useAuthStore } from '../../store/authStore';
@@ -64,24 +63,24 @@ export default function CreateBubbleScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>Create a Bubble</Text>
-        <Text style={styles.subtitle}>Describe what your community needs</Text>
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+      <ScrollView contentContainerClassName="p-4">
+        <Text className="text-[22px] font-extrabold text-gray-900 mb-1">Create a Bubble</Text>
+        <Text className="text-sm text-gray-500 mb-6">Describe what your community needs</Text>
 
-        <View style={styles.card}>
-          <Text style={styles.label}>Title</Text>
+        <View className="bg-surface rounded-lg p-5 shadow-sm">
+          <Text className="text-[13px] font-semibold text-gray-900 mb-1.5 mt-2">Title</Text>
           <TextInput
-            style={styles.input}
+            className="border-[1.5px] border-gray-200 rounded-md p-2 text-[15px] text-gray-900 bg-surface"
             value={title}
             onChangeText={setTitle}
             placeholder="e.g. Barber clippers for Wuse II ward"
-            placeholderTextColor={colors.textTertiary}
+            placeholderTextColor="#9ca3af"
           />
 
-          <Text style={styles.label}>Category</Text>
-          <View style={styles.pickerWrap}>
-            <Picker selectedValue={category} onValueChange={setCategory} style={styles.picker}>
+          <Text className="text-[13px] font-semibold text-gray-900 mb-1.5 mt-2">Category</Text>
+          <View className="border-[1.5px] border-gray-200 rounded-md overflow-hidden">
+            <Picker selectedValue={category} onValueChange={setCategory} className="h-[50px]">
               <Picker.Item label="Tools & Equipment" value="TOOLS" />
               <Picker.Item label="Jobs & Opportunities" value="OPPORTUNITIES" />
               <Picker.Item label="Services" value="SERVICES" />
@@ -90,23 +89,24 @@ export default function CreateBubbleScreen() {
             </Picker>
           </View>
 
-          <Text style={styles.label}>Description</Text>
+          <Text className="text-[13px] font-semibold text-gray-900 mb-1.5 mt-2">Description</Text>
           <TextInput
-            style={[styles.input, { minHeight: 100, textAlignVertical: 'top' }]}
+            className="border-[1.5px] border-gray-200 rounded-md p-2 text-[15px] text-gray-900 bg-surface min-h-[100px]"
             value={description}
             onChangeText={setDescription}
             placeholder="Describe the need, who benefits, and how it helps..."
-            placeholderTextColor={colors.textTertiary}
+            placeholderTextColor="#9ca3af"
             multiline
+            textAlignVertical="top"
           />
 
-          <Text style={styles.label}>Your Phone</Text>
-          <TextInput style={styles.input} value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
+          <Text className="text-[13px] font-semibold text-gray-900 mb-1.5 mt-2">Your Phone</Text>
+          <TextInput className="border-[1.5px] border-gray-200 rounded-md p-2 text-[15px] text-gray-900 bg-surface" value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
 
-          <Text style={styles.label}>Your WhatsApp</Text>
-          <TextInput style={styles.input} value={whatsapp} onChangeText={setWhatsapp} keyboardType="phone-pad" />
+          <Text className="text-[13px] font-semibold text-gray-900 mb-1.5 mt-2">Your WhatsApp</Text>
+          <TextInput className="border-[1.5px] border-gray-200 rounded-md p-2 text-[15px] text-gray-900 bg-surface" value={whatsapp} onChangeText={setWhatsapp} keyboardType="phone-pad" />
 
-          <Button variant="secondary" size="sm" onPress={pickImages} style={{ marginBottom: spacing.md }}>
+          <Button variant="secondary" size="sm" onPress={pickImages} className="mb-4">
             {images.length > 0 ? `${images.length} photo(s) selected` : '📷 Add Photos (optional)'}
           </Button>
 
@@ -114,8 +114,8 @@ export default function CreateBubbleScreen() {
             Submit Bubble for Review
           </Button>
 
-          <View style={styles.infoBox}>
-            <Text style={styles.infoText}>
+          <View className="bg-success-light rounded-md p-4 mt-4">
+            <Text className="text-[13px] text-forest leading-5">
               💡 Your bubble will be reviewed by the City Boy Connect team. We'll contact you on WhatsApp to discuss the details.
             </Text>
           </View>
@@ -125,19 +125,3 @@ export default function CreateBubbleScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  container: { padding: spacing.md },
-  title: { fontSize: 22, fontWeight: '800', color: colors.text, marginBottom: 4 },
-  subtitle: { fontSize: 14, color: colors.textSecondary, marginBottom: spacing.lg },
-  card: { backgroundColor: colors.surface, borderRadius: 16, padding: 20, ...shadows.sm },
-  label: { fontSize: 13, fontWeight: '600', color: colors.text, marginBottom: 6, marginTop: spacing.sm },
-  input: {
-    borderWidth: 1.5, borderColor: colors.border, borderRadius: radius.md,
-    padding: spacing.sm, fontSize: 15, color: colors.text, backgroundColor: colors.surface,
-  },
-  pickerWrap: { borderWidth: 1.5, borderColor: colors.border, borderRadius: radius.md, overflow: 'hidden' },
-  picker: { height: 50 },
-  infoBox: { backgroundColor: '#f0fdf4', borderRadius: radius.md, padding: spacing.md, marginTop: spacing.md },
-  infoText: { fontSize: 13, color: colors.primary, lineHeight: 20 },
-});

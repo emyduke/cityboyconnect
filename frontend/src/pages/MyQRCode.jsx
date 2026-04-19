@@ -6,7 +6,6 @@ import { useToastStore } from '../store/toastStore';
 import Avatar from '../components/Avatar';
 import Button from '../components/Button';
 import Skeleton from '../components/Skeleton';
-import './MyQRCode.css';
 
 export default function MyQRCode() {
   const [data, setData] = useState(null);
@@ -63,15 +62,15 @@ export default function MyQRCode() {
     }
   };
 
-  if (loading) return <div className="qr-fullscreen"><Skeleton variant="card" /></div>;
+  if (loading) return <div className="flex justify-center items-center min-h-[80vh] px-4 py-8"><Skeleton variant="card" /></div>;
 
   if (error) {
     return (
-      <div className="qr-fullscreen">
-        <div className="qr-card qr-error">
-          <button className="qr-close" onClick={() => navigate(-1)}>✕</button>
+      <div className="flex justify-center items-center min-h-[80vh] px-4 py-8">
+        <div className="bg-white rounded-3xl px-8 py-10 text-center max-w-[400px] w-full relative shadow-elevated flex flex-col items-center gap-4">
+          <button className="absolute top-4 right-4 bg-transparent border-none text-xl cursor-pointer text-gray-500" onClick={() => navigate(-1)}>✕</button>
           <h2>QR Code Unavailable</h2>
-          <p className="qr-subtitle">{error}</p>
+          <p className="text-gray-500 text-sm mb-6">{error}</p>
           <Button onClick={() => { setError(null); setLoading(true); getMyQR().then(r => setData(r.data?.data ?? r.data)).catch(e => setError(e.response?.data?.message || 'Failed to load QR code')).finally(() => setLoading(false)); }}>Retry</Button>
         </div>
       </div>
@@ -79,37 +78,37 @@ export default function MyQRCode() {
   }
 
   return (
-    <div className="qr-fullscreen">
-      <div className="qr-card">
-        <button className="qr-close" onClick={() => navigate(-1)}>✕</button>
+    <div className="flex justify-center items-center min-h-[80vh] px-4 py-8">
+      <div className="bg-white rounded-3xl px-8 py-10 text-center max-w-[400px] w-full relative shadow-elevated">
+        <button className="absolute top-4 right-4 bg-transparent border-none text-xl cursor-pointer text-gray-500" onClick={() => navigate(-1)}>✕</button>
         <Avatar name={user?.full_name || ''} size="lg" />
-        <h2>{user?.full_name}</h2>
-        <p className="qr-subtitle">{user?.state_name || ''} · City Boy Movement</p>
+        <h2 className="mt-3 mb-1 font-display">{user?.full_name}</h2>
+        <p className="text-gray-500 text-sm mb-6">{user?.state_name || ''} · City Boy Movement</p>
 
         {data?.qr_image && (
-          <div className="qr-frame">
-            <img src={`data:image/png;base64,${data.qr_image}`} alt="My onboarding QR" />
+          <div className="bg-white rounded-2xl p-6 inline-block shadow-card">
+            <img className="w-[200px] h-[200px] block" src={`data:image/png;base64,${data.qr_image}`} alt="My onboarding QR" />
           </div>
         )}
 
-        <p className="qr-instruction">Scan to join the movement under me</p>
+        <p className="text-gray-500 text-[0.8rem] my-4">Scan to join the movement under me</p>
 
-        <div className="qr-stats">
-          <div className="qr-stat">
-            <span className="qr-stat__value">{data?.direct_count ?? 0}</span>
-            <span className="qr-stat__label">Direct</span>
+        <div className="flex justify-center gap-8 my-6">
+          <div className="flex flex-col items-center">
+            <span className="text-2xl font-bold text-forest">{data?.direct_count ?? 0}</span>
+            <span className="text-xs text-gray-500 uppercase tracking-wide">Direct</span>
           </div>
-          <div className="qr-stat">
-            <span className="qr-stat__value">{data?.network_size ?? 0}</span>
-            <span className="qr-stat__label">Network</span>
+          <div className="flex flex-col items-center">
+            <span className="text-2xl font-bold text-forest">{data?.network_size ?? 0}</span>
+            <span className="text-xs text-gray-500 uppercase tracking-wide">Network</span>
           </div>
-          <div className="qr-stat">
-            <span className="qr-stat__value">{data?.today_count ?? 0}</span>
-            <span className="qr-stat__label">Today</span>
+          <div className="flex flex-col items-center">
+            <span className="text-2xl font-bold text-forest">{data?.today_count ?? 0}</span>
+            <span className="text-xs text-gray-500 uppercase tracking-wide">Today</span>
           </div>
         </div>
 
-        <div className="qr-actions">
+        <div className="flex gap-3 justify-center flex-wrap">
           <Button variant="secondary" onClick={copyLink}>Copy Link</Button>
           <Button variant="secondary" onClick={downloadQR}>Download</Button>
           <Button onClick={shareQR}>Share</Button>

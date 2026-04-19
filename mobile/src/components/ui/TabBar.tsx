@@ -1,9 +1,8 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
-import { colors, spacing, typography } from '../../theme';
 
 const TAB_CONFIG: Record<string, { icon: string; label: string }> = {
   HomeTab: { icon: '🏠', label: 'Home' },
@@ -21,12 +20,14 @@ function TabItem({ routeName, isFocused, onPress }: { routeName: string; isFocus
   }));
 
   return (
-    <Pressable style={styles.tab} onPress={onPress}>
-      {isFocused && <View style={styles.indicator} />}
-      <Animated.View style={[styles.iconWrap, animStyle]}>
-        <Text style={[styles.iconText, { opacity: isFocused ? 1 : 0.5 }]}>{config.icon}</Text>
+    <Pressable className="flex-1 items-center relative" onPress={onPress}>
+      {isFocused && (
+        <View className="absolute -top-2 w-6 h-[3px] rounded-[1.5px] bg-gold" />
+      )}
+      <Animated.View className="mb-0.5" style={animStyle}>
+        <Text className={`text-[22px] ${isFocused ? 'opacity-100' : 'opacity-50'}`}>{config.icon}</Text>
       </Animated.View>
-      <Text style={[styles.label, isFocused && styles.labelActive]}>
+      <Text className={`text-[11px] ${isFocused ? 'text-gold font-body-bold' : 'text-gray-400 font-body-medium'}`}>
         {config.label}
       </Text>
     </Pressable>
@@ -37,7 +38,7 @@ export default function TabBar({ state, descriptors, navigation }: any) {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom || spacing.sm }]}>
+    <View className="flex-row bg-surface border-t border-gray-200 pt-2" style={{ paddingBottom: insets.bottom || 8 }}>
       {state.routes.map((route: any, index: number) => {
         const isFocused = state.index === index;
         const onPress = () => {
@@ -52,30 +53,3 @@ export default function TabBar({ state, descriptors, navigation }: any) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    backgroundColor: colors.surface,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    paddingTop: spacing.sm,
-  },
-  tab: {
-    flex: 1,
-    alignItems: 'center',
-    position: 'relative',
-  },
-  indicator: {
-    position: 'absolute',
-    top: -spacing.sm,
-    width: 24,
-    height: 3,
-    borderRadius: 1.5,
-    backgroundColor: colors.accent,
-  },
-  iconWrap: { marginBottom: 2 },
-  iconText: { fontSize: 22 },
-  label: { ...typography.tabLabel, color: colors.textTertiary },
-  labelActive: { color: colors.accent, fontFamily: 'PlusJakartaSans-Bold' },
-});

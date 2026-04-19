@@ -1,28 +1,25 @@
 import React from 'react';
-import { View, Pressable, StyleSheet, ViewStyle } from 'react-native';
-import { colors, spacing, radius, shadows } from '../../theme';
+import { View, Pressable, ViewStyle } from 'react-native';
 
 interface CardProps {
   children: React.ReactNode;
   style?: ViewStyle;
   padding?: 'sm' | 'md' | 'lg';
   onPress?: () => void;
+  className?: string;
 }
 
+const paddingClasses = { sm: 'p-2', md: 'p-4', lg: 'p-6' };
+
 export default function Card({ children, style, padding = 'md', onPress }: CardProps) {
-  const padVal = padding === 'sm' ? spacing.sm : padding === 'lg' ? spacing.lg : spacing.md;
   const Wrapper = onPress ? Pressable : View;
   return (
-    <Wrapper onPress={onPress} style={[styles.card, shadows.sm, { padding: padVal }, style]}>
+    <Wrapper
+      onPress={onPress}
+      className={`bg-surface rounded-lg overflow-hidden shadow-sm ${paddingClasses[padding]}`}
+      style={style}
+    >
       {children}
     </Wrapper>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    overflow: 'hidden',
-  },
-});

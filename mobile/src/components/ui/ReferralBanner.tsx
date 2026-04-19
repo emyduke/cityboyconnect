@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { colors, spacing, radius, typography } from '../../theme';
+import { View, Text, Pressable } from 'react-native';
 
 interface ReferralBannerProps {
   referrerName: string;
@@ -9,28 +8,15 @@ interface ReferralBannerProps {
 
 export default function ReferralBanner({ referrerName, onDismiss }: ReferralBannerProps) {
   return (
-    <View style={styles.banner}>
-      <Text style={styles.text}>🎉 You were invited by {referrerName}</Text>
+    <View className="flex-row items-center justify-between bg-forest-light rounded-full px-4 py-2 mb-4">
+      <Text className="text-[13px] font-body-medium leading-[18px] text-white flex-1">
+        🎉 You were invited by {referrerName}
+      </Text>
       {onDismiss && (
         <Pressable onPress={onDismiss} hitSlop={8}>
-          <Text style={styles.dismiss}>✕</Text>
+          <Text className="text-white/70 text-[16px] ml-2">✕</Text>
         </Pressable>
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  banner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: colors.primaryLight,
-    borderRadius: radius.full,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    marginBottom: spacing.md,
-  },
-  text: { ...typography.bodySm, color: colors.textInverse, fontFamily: 'PlusJakartaSans-Medium', flex: 1 },
-  dismiss: { color: 'rgba(255,255,255,0.7)', fontSize: 16, marginLeft: spacing.sm },
-});

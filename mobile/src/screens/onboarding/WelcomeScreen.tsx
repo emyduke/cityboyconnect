@@ -1,13 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, Dimensions } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInUp, FadeInDown } from 'react-native-reanimated';
-import { colors, spacing, radius, typography } from '../../theme';
 import Button from '../../components/ui/Button';
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface WelcomeScreenProps {
   onGetStarted: () => void;
@@ -21,26 +18,26 @@ export default function WelcomeScreen({ onGetStarted, onLogin, currentPage = 0, 
 
   return (
     <LinearGradient
-      colors={[colors.primaryDark, colors.primary, colors.primaryLight]}
-      style={styles.container}
+      colors={['#0d2416', '#1a472a', '#2d6a4f']}
+      className="flex-1"
     >
-      <View style={[styles.content, { paddingTop: insets.top + spacing.xxl }]}>
-        <Animated.View entering={FadeInUp.delay(200).duration(800)} style={styles.logoWrap}>
+      <View className="flex-1 justify-center items-center px-8" style={{ paddingTop: insets.top + 48 }}>
+        <Animated.View entering={FadeInUp.delay(200).duration(800)} className="mb-8">
           <Image
             source={require('../../../assets/files/02_primary_transparent.png')}
-            style={styles.logo}
+            style={{ width: 240, height: 100 }}
             contentFit="contain"
           />
         </Animated.View>
 
         <Animated.View entering={FadeInUp.delay(500).duration(600)}>
-          <Text style={styles.headline}>
+          <Text className="font-display text-2xl text-white text-center mb-4" style={{ lineHeight: 32 }}>
             Building Nigeria's Most Organised Youth Movement
           </Text>
         </Animated.View>
 
         <Animated.View entering={FadeInUp.delay(700).duration(600)}>
-          <Text style={styles.subtext}>
+          <Text className="font-body text-base text-gold text-center opacity-90">
             Join 50,000+ members across all 36 states and the FCT
           </Text>
         </Animated.View>
@@ -48,75 +45,32 @@ export default function WelcomeScreen({ onGetStarted, onLogin, currentPage = 0, 
 
       <Animated.View
         entering={FadeInDown.delay(900).duration(600)}
-        style={[styles.bottom, { paddingBottom: insets.bottom + spacing.lg }]}
+        className="px-6"
+        style={{ paddingBottom: insets.bottom + 24 }}
       >
         {/* Page dots */}
-        <View style={styles.dots}>
+        <View className="flex-row justify-center mb-6 gap-2">
           {Array.from({ length: totalPages }).map((_, i) => (
-            <View key={i} style={[styles.dot, i === currentPage && styles.dotActive]} />
+            <View
+              key={i}
+              className={i === currentPage
+                ? 'h-2 rounded-full bg-gold w-6'
+                : 'w-2 h-2 rounded-full bg-white/30'
+              }
+            />
           ))}
         </View>
 
-        <Button onPress={onGetStarted} size="lg" style={styles.cta}>
+        <Button onPress={onGetStarted} size="lg" className="w-full mb-4">
           Get Started
         </Button>
 
         <Pressable onPress={onLogin}>
-          <Text style={styles.loginLink}>I have an account</Text>
+          <Text className="font-body text-base text-white text-center underline opacity-80">
+            I have an account
+          </Text>
         </Pressable>
       </Animated.View>
     </LinearGradient>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: spacing.xl,
-  },
-  logoWrap: { marginBottom: spacing.xl },
-  logo: { width: 240, height: 100 },
-  headline: {
-    ...typography.h2,
-    color: colors.textInverse,
-    textAlign: 'center',
-    marginBottom: spacing.md,
-    lineHeight: 32,
-  },
-  subtext: {
-    ...typography.body,
-    color: colors.accent,
-    textAlign: 'center',
-    opacity: 0.9,
-  },
-  bottom: {
-    paddingHorizontal: spacing.lg,
-  },
-  dots: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: spacing.lg,
-    gap: spacing.sm,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: 'rgba(255,255,255,0.3)',
-  },
-  dotActive: {
-    backgroundColor: colors.accent,
-    width: 24,
-  },
-  cta: { width: '100%', marginBottom: spacing.md },
-  loginLink: {
-    ...typography.body,
-    color: colors.textInverse,
-    textAlign: 'center',
-    textDecorationLine: 'underline',
-    opacity: 0.8,
-  },
-});

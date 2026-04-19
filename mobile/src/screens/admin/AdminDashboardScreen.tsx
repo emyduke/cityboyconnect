@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, RefreshControl, StyleSheet, FlatList } from 'react-native';
+import { View, Text, ScrollView, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { colors, spacing, typography, radius, shadows } from '../../theme';
 import { adminApi } from '../../api/admin';
 import StatCard from '../../components/StatCard';
 import Skeleton from '../../components/ui/Skeleton';
@@ -34,10 +33,10 @@ export default function AdminDashboardScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.safe} edges={['bottom']}>
-        <View style={styles.container}>
+      <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+        <View className="flex-1 p-4">
           <Skeleton variant="card" />
-          <Skeleton variant="card" style={{ marginTop: spacing.sm }} />
+          <Skeleton variant="card" className="mt-2" />
         </View>
       </SafeAreaView>
     );
@@ -63,39 +62,39 @@ export default function AdminDashboardScreen() {
   ];
 
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
       <ScrollView
-        style={styles.container}
-        contentContainerStyle={{ paddingBottom: spacing.xxl }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+        className="flex-1 p-4"
+        contentContainerStyle={{ paddingBottom: 48 }}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1a472a" />}
       >
         {/* Stats grid */}
-        <View style={styles.grid}>
+        <View className="flex-row flex-wrap gap-2 mb-6">
           {stats.map((s) => (
-            <StatCard key={s.label} label={s.label} value={s.value} style={{ flex: 1 }} />
+            <StatCard key={s.label} label={s.label} value={s.value} className="flex-1" />
           ))}
         </View>
 
         {/* Quick links */}
-        <Text style={styles.sectionTitle}>Admin Sections</Text>
-        <View style={styles.linkGrid}>
+        <Text className="text-lg font-display-semibold text-gray-900 mb-2">Admin Sections</Text>
+        <View className="flex-row flex-wrap gap-2 mb-6">
           {adminLinks.map((link) => (
-            <Card key={link.screen} style={styles.linkCard} onPress={() => navigation.navigate(link.screen)}>
-              <Text style={styles.linkIcon}>{link.icon}</Text>
-              <Text style={styles.linkLabel}>{link.label}</Text>
+            <Card key={link.screen} className="w-[47%] items-center p-4" onPress={() => navigation.navigate(link.screen)}>
+              <Text className="text-[28px] mb-1">{link.icon}</Text>
+              <Text className="text-sm font-body text-gray-900 text-center">{link.label}</Text>
             </Card>
           ))}
         </View>
 
         {/* Activity feed */}
-        <Text style={styles.sectionTitle}>Recent Activity</Text>
+        <Text className="text-lg font-display-semibold text-gray-900 mb-2">Recent Activity</Text>
         {feed.length === 0 ? (
-          <Text style={styles.empty}>No recent activity</Text>
+          <Text className="text-sm font-body text-gray-400 text-center mt-4">No recent activity</Text>
         ) : (
           feed.slice(0, 10).map((item, idx) => (
-            <View key={idx} style={styles.feedItem}>
-              <Text style={styles.feedText}>{item.description || item.action || JSON.stringify(item)}</Text>
-              <Text style={styles.feedTime}>{item.created_at ? new Date(item.created_at).toLocaleString() : ''}</Text>
+            <View key={idx} className="bg-surface rounded p-2 mb-1 shadow-sm">
+              <Text className="text-sm font-body text-gray-900">{item.description || item.action || JSON.stringify(item)}</Text>
+              <Text className="text-xs font-body text-gray-400 mt-0.5">{item.created_at ? new Date(item.created_at).toLocaleString() : ''}</Text>
             </View>
           ))
         )}
@@ -104,17 +103,3 @@ export default function AdminDashboardScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  container: { flex: 1, padding: spacing.md },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.lg },
-  sectionTitle: { ...typography.h4, color: colors.text, marginBottom: spacing.sm },
-  linkGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.lg },
-  linkCard: { width: '47%', alignItems: 'center', padding: spacing.md },
-  linkIcon: { fontSize: 28, marginBottom: 4 },
-  linkLabel: { ...typography.bodySm, color: colors.text, textAlign: 'center' },
-  feedItem: { backgroundColor: colors.surface, borderRadius: radius.sm, padding: spacing.sm, marginBottom: spacing.xs, ...shadows.sm },
-  feedText: { ...typography.bodySm, color: colors.text },
-  feedTime: { ...typography.caption, color: colors.textTertiary, marginTop: 2 },
-  empty: { ...typography.bodySm, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.md },
-});

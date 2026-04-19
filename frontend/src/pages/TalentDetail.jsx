@@ -1,4 +1,3 @@
-import './Opportunities.css';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getOpportunityProfile } from '../api/client';
@@ -31,7 +30,7 @@ export default function TalentDetail() {
   const user = profile.user || {};
 
   return (
-    <div className="opportunities" style={{ maxWidth: 800 }}>
+    <div className="max-w-[800px] mx-auto">
       <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)', marginBottom: 'var(--space-md)' }}>← Back to Search</button>
       <Card padding="lg">
         <div style={{ display: 'flex', gap: 'var(--space-lg)', alignItems: 'flex-start', flexWrap: 'wrap' }}>
@@ -43,10 +42,10 @@ export default function TalentDetail() {
           <div style={{ flex: 1 }}>
             <h1 style={{ margin: 0 }}>{user.full_name}</h1>
             <p style={{ color: '#6b7280', margin: '4px 0' }}>{profile.title}</p>
-            <div className="opportunity-card__badges" style={{ marginTop: 8 }}>
-              <span className="opportunity-card__badge opportunity-card__badge--category">{profile.category_display || profile.category}</span>
-              {profile.years_of_experience > 0 && <span className="opportunity-card__badge">{profile.years_of_experience} years experience</span>}
-              {profile.available_nationwide && <span className="opportunity-card__badge">🌍 Nationwide</span>}
+            <div className="flex gap-1.5 flex-wrap mt-1" style={{ marginTop: 8 }}>
+              <span className="px-2 py-0.5 rounded-xl text-xs font-medium bg-amber-100 text-amber-800">{profile.category_display || profile.category}</span>
+              {profile.years_of_experience > 0 && <span className="px-2 py-0.5 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800">{profile.years_of_experience} years experience</span>}
+              {profile.available_nationwide && <span className="px-2 py-0.5 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800">🌍 Nationwide</span>}
             </div>
             {profile.service_state_name && (
               <p style={{ color: '#6b7280', fontSize: '0.9rem', marginTop: 8 }}>📍 {profile.service_state_name}{profile.service_lga_name ? `, ${profile.service_lga_name}` : ''}</p>

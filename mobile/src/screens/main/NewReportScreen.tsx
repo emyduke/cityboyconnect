@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { ScrollView, Text, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { ScrollView, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { colors, spacing, typography } from '../../theme';
 import { createReport, submitReport } from '../../api/reports';
 import { unwrap } from '../../api/client';
 import { useToastStore } from '../../store/toastStore';
@@ -42,22 +41,17 @@ export default function NewReportScreen() {
   };
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: spacing.xxl }} keyboardShouldPersistTaps="handled">
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
+      <ScrollView className="flex-1 bg-background p-4" contentContainerClassName="pb-12" keyboardShouldPersistTaps="handled">
         <Input label="Report Period" value={period} onChangeText={setPeriod} placeholder="e.g. 2025-Q2 or 2025-06" />
         <Input label="Summary of Activities" value={summary} onChangeText={setSummary} placeholder="What was accomplished?" multiline numberOfLines={4} />
         <Input label="New Members" value={newMembers} onChangeText={setNewMembers} placeholder="0" keyboardType="number-pad" />
         <Input label="Events Held" value={eventsHeld} onChangeText={setEventsHeld} placeholder="0" keyboardType="number-pad" />
         <Input label="Challenges" value={challenges} onChangeText={setChallenges} placeholder="Any challenges faced?" multiline />
         <Input label="Plans for Next Period" value={plans} onChangeText={setPlans} placeholder="What's planned?" multiline />
-        {error ? <Text style={styles.error}>{error}</Text> : null}
-        <Button onPress={handleSubmit} loading={loading} size="lg" style={{ marginTop: spacing.md }}>Submit Report</Button>
+        {error ? <Text className="text-xs font-body text-danger mb-2">{error}</Text> : null}
+        <Button onPress={handleSubmit} loading={loading} size="lg" className="mt-4">Submit Report</Button>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background, padding: spacing.md },
-  error: { ...typography.caption, color: colors.danger, marginBottom: spacing.sm },
-});

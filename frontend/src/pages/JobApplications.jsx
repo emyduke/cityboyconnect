@@ -1,4 +1,4 @@
-import './Jobs.css';
+import { cn } from '../lib/cn';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getJobApplications, updateApplicationStatus, getJobDetail } from '../api/client';
@@ -14,6 +14,17 @@ const STATUS_TRANSITIONS = {
   SHORTLISTED: ['INTERVIEW', 'REJECTED'],
   INTERVIEW: ['OFFERED', 'REJECTED'],
   OFFERED: ['HIRED', 'REJECTED'],
+};
+
+const JOB_STATUS_COLORS = {
+  applied: 'bg-blue-100 text-blue-700',
+  reviewed: 'bg-indigo-100 text-indigo-700',
+  shortlisted: 'bg-amber-100 text-amber-800',
+  interview: 'bg-emerald-100 text-emerald-800',
+  offered: 'bg-emerald-50 text-emerald-700',
+  hired: 'bg-[#065f46] text-white',
+  rejected: 'bg-red-100 text-red-800',
+  withdrawn: 'bg-gray-100 text-gray-500',
 };
 
 export default function JobApplications() {
@@ -60,15 +71,15 @@ export default function JobApplications() {
   if (loading) return <div style={{ padding: '2rem' }}><Skeleton variant="card" /><Skeleton variant="card" /></div>;
 
   return (
-    <div className="jobs-page">
+    <div className="max-w-[1200px] mx-auto">
       <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)', marginBottom: 'var(--space-md)' }}>← Back</button>
       {job && <h1>Applications for {job.title} at {job.company_name}</h1>}
 
-      <div className="job-tabs">
+      <div className="flex gap-1 mb-6 border-b-2 border-gray-200 overflow-x-auto">
         {STATUS_TABS.map(t => (
-          <button key={t} className={`job-tabs__tab ${tab === t ? 'job-tabs__tab--active' : ''}`} onClick={() => setTab(t)}>
+          <button key={t} className={cn('py-2 px-4 border-none bg-transparent cursor-pointer font-semibold text-gray-500 border-b-2 border-transparent -mb-[2px] whitespace-nowrap transition-colors', tab === t && 'text-forest border-b-forest')} onClick={() => setTab(t)}>
             {t === 'All' ? 'All' : t}
-            {t !== 'All' && <span className="badge-count">{apps.filter(a => a.status === t).length}</span>}
+            {t !== 'All' && <span className="inline-block bg-forest text-white rounded-[10px] px-1.5 text-[0.7rem] ml-1">{apps.filter(a => a.status === t).length}</span>}
           </button>
         ))}
       </div>
@@ -81,19 +92,19 @@ export default function JobApplications() {
           const transitions = STATUS_TRANSITIONS[app.status] || [];
           const isExpanded = expanded === app.id;
           return (
-            <div key={app.id} className="app-card">
-              <div className="app-card__header" style={{ cursor: 'pointer' }} onClick={() => setExpanded(isExpanded ? null : app.id)}>
+            <div key={app.id} className="bg-white border border-gray-200 rounded-lg p-4 mb-2">
+              <div className="flex items-center gap-2" style={{ cursor: 'pointer' }} onClick={() => setExpanded(isExpanded ? null : app.id)}>
                 {applicant.profile_photo ? (
-                  <img src={applicant.profile_photo} alt="" className="app-card__avatar" />
+                  <img src={applicant.profile_photo} alt="" className="w-10 h-10 rounded-full object-cover bg-gray-200" />
                 ) : (
-                  <div className="app-card__avatar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>👤</div>
+                  <div className="w-10 h-10 rounded-full object-cover bg-gray-200" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>👤</div>
                 )}
                 <div style={{ flex: 1 }}>
                   <strong>{applicant.full_name}</strong>
                   {app.headline && <p style={{ color: '#6b7280', margin: 0, fontSize: '0.85rem' }}>{app.headline}</p>}
                   <p style={{ color: '#9ca3af', margin: 0, fontSize: '0.8rem' }}>Applied {new Date(app.applied_at).toLocaleDateString()}</p>
                 </div>
-                <span className={`status-badge status-badge--${app.status?.toLowerCase()}`}>{app.status}</span>
+                <span className={cn('px-2.5 py-0.5 rounded-xl text-xs font-semibold', JOB_STATUS_COLORS[app.status?.toLowerCase()])}>{app.status}</span>
               </div>
 
               {isExpanded && (

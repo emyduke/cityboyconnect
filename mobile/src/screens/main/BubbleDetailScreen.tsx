@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Image, Pressable, Linking, Alert } from 'react-native';
+import { View, Text, ScrollView, Image, Pressable, Linking, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { colors, spacing, radius, typography, shadows } from '../../theme';
 import { getBubble, addBubbleImage, Bubble, BubbleImage as BImg } from '../../api/bubbles';
 import { unwrap } from '../../api/client';
 import Skeleton from '../../components/ui/Skeleton';
@@ -66,8 +65,8 @@ export default function BubbleDetailScreen() {
     }
   };
 
-  if (loading) return <View style={styles.container}><Skeleton variant="card" /></View>;
-  if (!bubble) return <View style={styles.container}><Text>Bubble not found.</Text></View>;
+  if (loading) return <View className="p-4"><Skeleton variant="card" /></View>;
+  if (!bubble) return <View className="p-4"><Text>Bubble not found.</Text></View>;
 
   const sc = STATUS_COLORS[bubble.status] || STATUS_COLORS.PENDING;
   const idx = STATUS_ORDER.indexOf(bubble.status);
@@ -77,52 +76,52 @@ export default function BubbleDetailScreen() {
   const canAddPhoto = isCreator && ['PENDING', 'IN_REVIEW'].includes(bubble.status);
 
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
-      <ScrollView contentContainerStyle={styles.container}>
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+      <ScrollView contentContainerClassName="p-4">
         {/* Status Stepper */}
         {!['REJECTED', 'CANCELLED'].includes(bubble.status) && (
-          <View style={styles.stepper}>
+          <View className="flex-row gap-1 mb-4">
             {STATUS_ORDER.map((s, i) => (
-              <View key={s} style={[styles.stepperBar, i < idx && styles.stepperDone, i === idx && styles.stepperActive]} />
+              <View key={s} className={`flex-1 h-1 rounded-[2px] ${i < idx ? 'bg-forest' : i === idx ? 'bg-gold' : 'bg-gray-200'}`} />
             ))}
           </View>
         )}
 
-        <View style={styles.badges}>
-          <View style={[styles.catBadge, { backgroundColor: CAT_COLORS[bubble.category] || '#6b7280' }]}>
-            <Text style={styles.catBadgeText}>{bubble.category_display}</Text>
+        <View className="flex-row gap-2 mb-2">
+          <View className="px-2.5 py-[3px] rounded-full" style={{ backgroundColor: CAT_COLORS[bubble.category] || '#6b7280' }}>
+            <Text className="text-white text-xs font-body-semibold">{bubble.category_display}</Text>
           </View>
-          <View style={[styles.statusBadge, { backgroundColor: sc.bg }]}>
-            <Text style={[styles.statusBadgeText, { color: sc.text }]}>{bubble.status_display}</Text>
+          <View className="px-2.5 py-[3px] rounded-full" style={{ backgroundColor: sc.bg }}>
+            <Text className="text-xs font-body-semibold" style={{ color: sc.text }}>{bubble.status_display}</Text>
           </View>
         </View>
 
-        <Text style={styles.title}>{bubble.title}</Text>
+        <Text className="text-[22px] font-extrabold text-gray-900 mb-4">{bubble.title}</Text>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Description</Text>
-          <Text style={styles.desc}>{bubble.description}</Text>
+        <View className="bg-surface rounded-lg p-4 mb-4 shadow-sm">
+          <Text className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-2">Description</Text>
+          <Text className="text-[15px] leading-[22px] text-gray-900">{bubble.description}</Text>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Location</Text>
-          <Text style={styles.locationText}>
+        <View className="bg-surface rounded-lg p-4 mb-4 shadow-sm">
+          <Text className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-2">Location</Text>
+          <Text className="text-sm text-gray-500">
             {[bubble.state_name, bubble.lga_name, bubble.ward_name].filter(Boolean).join(' → ') || 'N/A'}
           </Text>
         </View>
 
         {(bubble.contact_phone || bubble.contact_whatsapp) && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Contact</Text>
-            <View style={styles.contactRow}>
+          <View className="bg-surface rounded-lg p-4 mb-4 shadow-sm">
+            <Text className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-2">Contact</Text>
+            <View className="flex-row gap-3 flex-wrap">
               {bubble.contact_phone && (
-                <Pressable style={styles.contactBtn} onPress={() => Linking.openURL(`tel:${bubble.contact_phone}`)}>
-                  <Text style={styles.contactBtnText}>📞 {bubble.contact_phone}</Text>
+                <Pressable className="bg-[#e8f5e9] px-3.5 py-2 rounded-md" onPress={() => Linking.openURL(`tel:${bubble.contact_phone}`)}>
+                  <Text className="font-semibold text-sm text-forest">📞 {bubble.contact_phone}</Text>
                 </Pressable>
               )}
               {bubble.contact_whatsapp && (
-                <Pressable style={[styles.contactBtn, { backgroundColor: '#dcfce7' }]} onPress={() => Linking.openURL(`https://wa.me/${bubble.contact_whatsapp?.replace(/[^0-9]/g, '')}`)}>
-                  <Text style={[styles.contactBtnText, { color: '#15803d' }]}>💬 WhatsApp</Text>
+                <Pressable className="bg-success-light px-3.5 py-2 rounded-md" onPress={() => Linking.openURL(`https://wa.me/${bubble.contact_whatsapp?.replace(/[^0-9]/g, '')}`)}>
+                  <Text className="font-semibold text-sm text-green-700">💬 WhatsApp</Text>
                 </Pressable>
               )}
             </View>
@@ -130,46 +129,46 @@ export default function BubbleDetailScreen() {
         )}
 
         {requestImages.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Photos</Text>
+          <View className="bg-surface rounded-lg p-4 mb-4 shadow-sm">
+            <Text className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-2">Photos</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {requestImages.map((img) => (
-                <Image key={img.id} source={{ uri: img.image }} style={styles.imgThumb} />
+                <Image key={img.id} source={{ uri: img.image }} className="w-[120px] h-[120px] rounded-md mr-2" />
               ))}
             </ScrollView>
           </View>
         )}
 
         {canAddPhoto && (
-          <Button variant="secondary" size="sm" onPress={handleAddPhoto} style={{ marginBottom: spacing.md }}>
+          <Button variant="secondary" size="sm" onPress={handleAddPhoto} className="mb-4">
             + Add Photo
           </Button>
         )}
 
         {['SERVICES', 'ENTERTAINMENT', 'EDUCATION', 'TECHNOLOGY'].includes(bubble.category) && (
-          <Pressable style={styles.suggestionCard} onPress={() => navigation.navigate('MoreTab', { screen: 'Opportunities' })}>
-            <Text style={styles.suggestionText}>💡 Looking for a specific talent? <Text style={{ fontWeight: '700' }}>Search our directory →</Text></Text>
+          <Pressable className="bg-forest/10 border border-forest rounded-md p-4 mb-4" onPress={() => navigation.navigate('MoreTab', { screen: 'Opportunities' })}>
+            <Text className="font-body text-sm text-forest">💡 Looking for a specific talent? <Text className="font-bold">Search our directory →</Text></Text>
           </Pressable>
         )}
 
         {bubble.status === 'DELIVERED' && (
-          <View style={styles.deliveryBox}>
-            <Text style={styles.sectionTitle}>Delivery</Text>
-            <Text style={styles.desc}>{bubble.delivery_notes}</Text>
+          <View className="bg-success-light rounded-md p-4 mb-4">
+            <Text className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-2">Delivery</Text>
+            <Text className="text-[15px] leading-[22px] text-gray-900">{bubble.delivery_notes}</Text>
             {bubble.delivered_at && (
-              <Text style={styles.deliveryDate}>Delivered {new Date(bubble.delivered_at).toLocaleDateString()}</Text>
+              <Text className="text-[13px] text-gray-400 mt-1">Delivered {new Date(bubble.delivered_at).toLocaleDateString()}</Text>
             )}
             {deliveryImages.length > 0 && (
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mt-2">
                 {deliveryImages.map((img) => (
-                  <Image key={img.id} source={{ uri: img.image }} style={styles.imgThumb} />
+                  <Image key={img.id} source={{ uri: img.image }} className="w-[120px] h-[120px] rounded-md mr-2" />
                 ))}
               </ScrollView>
             )}
           </View>
         )}
 
-        <Text style={styles.metaText}>
+        <Text className="text-[13px] text-gray-400 text-center mt-2">
           Created by {bubble.created_by_name} · {new Date(bubble.created_at).toLocaleDateString()}
         </Text>
       </ScrollView>
@@ -177,30 +176,3 @@ export default function BubbleDetailScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  container: { padding: spacing.md },
-  stepper: { flexDirection: 'row', gap: 4, marginBottom: spacing.md },
-  stepperBar: { flex: 1, height: 4, borderRadius: 2, backgroundColor: colors.border },
-  stepperDone: { backgroundColor: colors.primary },
-  stepperActive: { backgroundColor: colors.accent },
-  badges: { flexDirection: 'row', gap: 8, marginBottom: spacing.sm },
-  catBadge: { paddingHorizontal: 10, paddingVertical: 3, borderRadius: 100 },
-  catBadgeText: { color: '#fff', fontSize: 12, fontWeight: '600' },
-  statusBadge: { paddingHorizontal: 10, paddingVertical: 3, borderRadius: 100 },
-  statusBadgeText: { fontSize: 12, fontWeight: '600' },
-  title: { fontSize: 22, fontWeight: '800', color: colors.text, marginBottom: spacing.md },
-  section: { backgroundColor: colors.surface, borderRadius: 16, padding: 16, marginBottom: spacing.md, ...shadows.sm },
-  sectionTitle: { fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, color: colors.textTertiary, marginBottom: 8 },
-  desc: { fontSize: 15, lineHeight: 22, color: colors.text },
-  locationText: { fontSize: 14, color: colors.textSecondary },
-  contactRow: { flexDirection: 'row', gap: 12, flexWrap: 'wrap' },
-  contactBtn: { backgroundColor: '#e8f5e9', paddingHorizontal: 14, paddingVertical: 8, borderRadius: radius.md },
-  contactBtnText: { fontWeight: '600', fontSize: 14, color: colors.primary },
-  imgThumb: { width: 120, height: 120, borderRadius: radius.md, marginRight: 8 },
-  deliveryBox: { backgroundColor: '#f0fdf4', borderRadius: radius.md, padding: 16, marginBottom: spacing.md },
-  deliveryDate: { fontSize: 13, color: colors.textTertiary, marginTop: 4 },
-  metaText: { fontSize: 13, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.sm },
-  suggestionCard: { backgroundColor: colors.primary + '10', borderWidth: 1, borderColor: colors.primary, borderRadius: radius.md, padding: spacing.md, marginBottom: spacing.md },
-  suggestionText: { ...typography.bodySm, color: colors.primary },
-});

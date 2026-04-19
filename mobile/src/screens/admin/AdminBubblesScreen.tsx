@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, RefreshControl, StyleSheet, Pressable, Alert, TextInput } from 'react-native';
+import { View, Text, FlatList, RefreshControl, Pressable, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { colors, spacing, radius, shadows } from '../../theme';
 import { getAdminBubbles, updateBubbleStatus, Bubble } from '../../api/bubbles';
 import { unwrap } from '../../api/client';
 import Skeleton from '../../components/ui/Skeleton';
@@ -60,25 +59,25 @@ export default function AdminBubblesScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.safe} edges={['bottom']}>
-        <View style={styles.container}>
+      <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+        <View className="p-4">
           <Skeleton variant="card" />
-          <Skeleton variant="card" style={{ marginTop: spacing.sm }} />
+          <Skeleton variant="card" className="mt-2" />
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
       <FlatList
         data={bubbles}
         keyExtractor={(item) => String(item.id)}
-        contentContainerStyle={styles.container}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetch(); }} tintColor={colors.primary} />}
+        contentContainerClassName="p-4"
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetch(); }} tintColor="#1a472a" />}
         ListHeaderComponent={
           <View>
-            <View style={styles.statsRow}>
+            <View className="flex-row gap-1.5 mb-4 flex-wrap">
               {[
                 { label: 'Pending', value: stats.pending_count, color: '#eab308' },
                 { label: 'Review', value: stats.in_review_count, color: '#3b82f6' },
@@ -86,9 +85,9 @@ export default function AdminBubblesScreen() {
                 { label: 'Progress', value: stats.in_progress_count, color: '#f97316' },
                 { label: 'Delivered', value: stats.delivered_count, color: '#10b981' },
               ].map((s) => (
-                <View key={s.label} style={styles.statCard}>
-                  <Text style={[styles.statValue, { color: s.color }]}>{s.value ?? 0}</Text>
-                  <Text style={styles.statLabel}>{s.label}</Text>
+                <View key={s.label} className="flex-1 min-w-[60px] bg-surface rounded-xl p-2.5 items-center shadow-sm">
+                  <Text className="text-xl font-extrabold" style={{ color: s.color }}>{s.value ?? 0}</Text>
+                  <Text className="text-[10px] text-gray-400 uppercase mt-0.5">{s.label}</Text>
                 </View>
               ))}
             </View>
@@ -99,16 +98,16 @@ export default function AdminBubblesScreen() {
           const sc = STATUS_COLORS[item.status] || STATUS_COLORS.PENDING;
           const actions = STATUS_ACTIONS[item.status] || [];
           return (
-            <Pressable style={styles.card} onPress={() => navigation.navigate('BubbleDetail', { id: item.id })}>
-              <View style={styles.cardHeader}>
-                <Text style={styles.cardTitle} numberOfLines={1}>{item.title}</Text>
-                <View style={[styles.statusBadge, { backgroundColor: sc.bg }]}>
-                  <Text style={[styles.statusText, { color: sc.text }]}>{item.status_display}</Text>
+            <Pressable className="bg-surface rounded-2xl p-4 mb-2 shadow-sm" onPress={() => navigation.navigate('BubbleDetail', { id: item.id })}>
+              <View className="flex-row justify-between items-center mb-1.5">
+                <Text className="text-[15px] font-bold text-gray-900 flex-1 mr-2" numberOfLines={1}>{item.title}</Text>
+                <View className="px-2.5 py-0.5 rounded-full" style={{ backgroundColor: sc.bg }}>
+                  <Text className="text-[11px] font-semibold" style={{ color: sc.text }}>{item.status_display}</Text>
                 </View>
               </View>
-              <Text style={styles.cardMeta}>{item.created_by_name} · {[item.ward_name, item.lga_name].filter(Boolean).join(', ')}</Text>
+              <Text className="text-xs text-gray-400 mb-2">{item.created_by_name} · {[item.ward_name, item.lga_name].filter(Boolean).join(', ')}</Text>
               {actions.length > 0 && (
-                <View style={styles.actionsRow}>
+                <View className="flex-row mt-1">
                   {actions.map((a) => (
                     <Button
                       key={a.status}
@@ -116,7 +115,7 @@ export default function AdminBubblesScreen() {
                       variant={a.status === 'REJECTED' ? 'danger' : 'primary'}
                       onPress={() => handleStatusChange(item.id, a.status)}
                       loading={actionLoading === item.id}
-                      style={{ marginRight: 8 }}
+                      className="mr-2"
                     >
                       {a.label}
                     </Button>
@@ -131,18 +130,3 @@ export default function AdminBubblesScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  container: { padding: spacing.md },
-  statsRow: { flexDirection: 'row', gap: 6, marginBottom: spacing.md, flexWrap: 'wrap' },
-  statCard: { flex: 1, minWidth: 60, backgroundColor: colors.surface, borderRadius: 12, padding: 10, alignItems: 'center', ...shadows.sm },
-  statValue: { fontSize: 20, fontWeight: '800' },
-  statLabel: { fontSize: 10, color: colors.textTertiary, textTransform: 'uppercase', marginTop: 2 },
-  card: { backgroundColor: colors.surface, borderRadius: 16, padding: 16, marginBottom: spacing.sm, ...shadows.sm },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: colors.text, flex: 1, marginRight: 8 },
-  statusBadge: { paddingHorizontal: 10, paddingVertical: 2, borderRadius: 100 },
-  statusText: { fontSize: 11, fontWeight: '600' },
-  cardMeta: { fontSize: 12, color: colors.textTertiary, marginBottom: 8 },
-  actionsRow: { flexDirection: 'row', marginTop: 4 },
-});

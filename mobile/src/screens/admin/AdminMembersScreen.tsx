@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, RefreshControl, TextInput, StyleSheet, Pressable } from 'react-native';
+import { View, Text, FlatList, RefreshControl, TextInput, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { colors, spacing, typography, radius, shadows } from '../../theme';
 import { adminApi } from '../../api/admin';
 import Avatar from '../../components/ui/Avatar';
 import Badge from '../../components/ui/Badge';
@@ -31,23 +30,23 @@ export default function AdminMembersScreen() {
 
   if (loading && members.length === 0) {
     return (
-      <SafeAreaView style={styles.safe} edges={['bottom']}>
-        <View style={styles.container}>
+      <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+        <View className="flex-1 p-4">
           <Skeleton variant="text" width="100%" />
-          <Skeleton variant="card" style={{ marginTop: spacing.sm }} />
-          <Skeleton variant="card" style={{ marginTop: spacing.sm }} />
+          <Skeleton variant="card" className="mt-2" />
+          <Skeleton variant="card" className="mt-2" />
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
-      <View style={styles.container}>
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+      <View className="flex-1 p-4">
         <TextInput
-          style={styles.search}
+          className="bg-surface rounded-lg px-4 py-2 text-base font-body text-gray-900 border border-gray-200 mb-4"
           placeholder="Search members..."
-          placeholderTextColor={colors.textTertiary}
+          placeholderTextColor="#9ca3af"
           value={search}
           onChangeText={setSearch}
           autoCorrect={false}
@@ -57,17 +56,17 @@ export default function AdminMembersScreen() {
         <FlatList
           data={members}
           keyExtractor={(item) => String(item.id || item.pk)}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1a472a" />}
           ListEmptyComponent={<EmptyState title="No members found" />}
           renderItem={({ item }) => (
             <Pressable
-              style={styles.row}
+              className="flex-row items-center bg-surface rounded-lg p-2 mb-1 gap-2 shadow-sm"
               onPress={() => navigation.navigate('AdminMemberDetail', { pk: item.id || item.pk })}
             >
               <Avatar name={item.full_name || ''} size="sm" />
-              <View style={styles.rowInfo}>
-                <Text style={styles.rowName} numberOfLines={1}>{item.full_name || 'Member'}</Text>
-                <Text style={styles.rowMeta}>{item.phone_number || ''} · {item.state_name || ''}</Text>
+              <View className="flex-1">
+                <Text className="text-base font-body-medium text-gray-900" numberOfLines={1}>{item.full_name || 'Member'}</Text>
+                <Text className="text-xs font-body text-gray-500">{item.phone_number || ''} · {item.state_name || ''}</Text>
               </View>
               <Badge
                 label={item.voter_verification_status || item.status || 'pending'}
@@ -75,26 +74,10 @@ export default function AdminMembersScreen() {
               />
             </Pressable>
           )}
-          contentContainerStyle={{ paddingBottom: spacing.xxl }}
+          contentContainerClassName="pb-12"
         />
       </View>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  container: { flex: 1, padding: spacing.md },
-  search: {
-    backgroundColor: colors.surface, borderRadius: radius.md, paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm, ...typography.body, color: colors.text,
-    borderWidth: 1, borderColor: colors.border, marginBottom: spacing.md,
-  },
-  row: {
-    flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface,
-    borderRadius: radius.md, padding: spacing.sm, marginBottom: spacing.xs, gap: spacing.sm, ...shadows.sm,
-  },
-  rowInfo: { flex: 1 },
-  rowName: { ...typography.bodyMedium, color: colors.text },
-  rowMeta: { ...typography.caption, color: colors.textSecondary },
-});

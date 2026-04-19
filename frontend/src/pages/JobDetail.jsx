@@ -1,4 +1,3 @@
-import './Jobs.css';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getJobDetail, applyToJob, saveJob, withdrawApplication, getMyProfessionalProfile } from '../api/client';
@@ -77,7 +76,7 @@ export default function JobDetail() {
   const daysLeft = deadline ? Math.ceil((deadline - Date.now()) / 86400000) : null;
 
   return (
-    <div className="job-detail">
+    <div className="max-w-[800px] mx-auto">
       <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)', marginBottom: 'var(--space-md)' }}>← Back</button>
 
       <Card padding="lg">
@@ -93,26 +92,26 @@ export default function JobDetail() {
           </div>
         )}
 
-        <div className="job-card__badges" style={{ marginTop: 12 }}>
-          <span className="job-card__badge job-card__badge--type">{(job.job_type || '').replace('_', ' ')}</span>
-          <span className="job-card__badge job-card__badge--mode">{job.work_mode}</span>
-          {job.experience_level && job.experience_level !== 'ANY' && <span className="job-card__badge">{job.experience_level_display || job.experience_level}</span>}
-          {job.location && <span className="job-card__badge">📍 {job.location}</span>}
-          {job.is_remote && <span className="job-card__badge">🌐 Remote</span>}
+        <div className="flex gap-1.5 flex-wrap my-2" style={{ marginTop: 12 }}>
+          <span className="px-2 py-0.5 rounded-xl text-xs font-medium bg-blue-100 text-blue-700">{(job.job_type || '').replace('_', ' ')}</span>
+          <span className="px-2 py-0.5 rounded-xl text-xs font-medium bg-amber-100 text-amber-800">{job.work_mode}</span>
+          {job.experience_level && job.experience_level !== 'ANY' && <span className="px-2 py-0.5 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800">{job.experience_level_display || job.experience_level}</span>}
+          {job.location && <span className="px-2 py-0.5 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800">📍 {job.location}</span>}
+          {job.is_remote && <span className="px-2 py-0.5 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800">🌐 Remote</span>}
         </div>
 
         {job.salary_display ? (
-          <p className="job-card__salary" style={{ fontSize: '1.1rem' }}>{job.salary_display}</p>
+          <p className="font-semibold text-forest text-sm mt-2" style={{ fontSize: '1.1rem' }}>{job.salary_display}</p>
         ) : job.salary_min ? (
-          <p className="job-card__salary" style={{ fontSize: '1.1rem' }}>₦{Number(job.salary_min).toLocaleString()}{job.salary_max ? ` - ₦${Number(job.salary_max).toLocaleString()}` : ''} / {job.salary_period}</p>
+          <p className="font-semibold text-forest text-sm mt-2" style={{ fontSize: '1.1rem' }}>₦{Number(job.salary_min).toLocaleString()}{job.salary_max ? ` - ₦${Number(job.salary_max).toLocaleString()}` : ''} / {job.salary_period}</p>
         ) : null}
       </Card>
 
       {(job.skills || []).length > 0 && (
         <Card padding="md" style={{ marginTop: 'var(--space-md)' }}>
           <h3>Skills Required</h3>
-          <div className="opportunity-card__badges">
-            {job.skills.map(s => <span key={s.id || s} className="opportunity-card__badge">{s.name || s}</span>)}
+          <div className="flex gap-1.5 flex-wrap">
+            {job.skills.map(s => <span key={s.id || s} className="px-2 py-0.5 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800">{s.name || s}</span>)}
           </div>
         </Card>
       )}
@@ -148,7 +147,7 @@ export default function JobDetail() {
                     {job.is_accepting_applications ? 'Apply Now' : 'Not Accepting'}
                   </Button>
                 ) : (
-                  <span className="status-badge status-badge--applied">Applied ✓</span>
+                  <span className="px-2.5 py-0.5 rounded-xl text-xs font-semibold bg-blue-100 text-blue-700">Applied ✓</span>
                 )}
                 <Button variant="secondary" onClick={handleSave}>{job.is_saved ? '🔖 Saved' : '🏷️ Save'}</Button>
               </>
@@ -158,7 +157,7 @@ export default function JobDetail() {
       </Card>
 
       {showApply && (
-        <div className="job-detail__apply-form">
+        <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
           <h3>Apply for this position</h3>
           <div style={{ marginBottom: 12 }}>
             <label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>Cover Letter (optional)</label>

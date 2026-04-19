@@ -1,10 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInUp } from 'react-native-reanimated';
-import { colors, spacing, radius, typography } from '../../theme';
 import Button from '../../components/ui/Button';
 
 interface OnboardingSlide3Props {
@@ -24,31 +23,34 @@ export default function OnboardingSlide3Screen({ onJoin, onLogin, currentPage = 
   ];
 
   return (
-    <LinearGradient colors={[colors.primaryDark, '#0f3320']} style={styles.container}>
-      <View style={[styles.content, { paddingTop: insets.top + spacing.xxl }]}>
+    <LinearGradient colors={['#0d2416', '#0f3320']} className="flex-1">
+      <View className="flex-1 justify-center items-center px-8" style={{ paddingTop: insets.top + 48 }}>
         <Animated.View entering={FadeInUp.delay(200).duration(600)}>
           <Image
             source={require('../../../assets/files/07_icon_gold.png')}
-            style={styles.icon}
+            style={{ width: 80, height: 80 }}
+            className="mb-6"
             contentFit="contain"
           />
         </Animated.View>
 
         <Animated.View entering={FadeInUp.delay(400).duration(600)}>
-          <Text style={styles.headline}>Climb the Ranks.{'\n'}Lead Your Ward.</Text>
+          <Text className="font-display text-3xl text-white text-center mb-4" style={{ lineHeight: 36 }}>
+            Climb the Ranks.{'\n'}Lead Your Ward.
+          </Text>
         </Animated.View>
 
         <Animated.View entering={FadeInUp.delay(500).duration(600)}>
-          <Text style={styles.subtext}>
+          <Text className="font-body text-base text-gold text-center mb-8" style={{ lineHeight: 22 }}>
             From Ward Coordinator to State Director — your performance drives your promotion.
           </Text>
         </Animated.View>
 
-        <Animated.View entering={FadeInUp.delay(600).duration(600)} style={styles.featureList}>
+        <Animated.View entering={FadeInUp.delay(600).duration(600)} className="w-full gap-4">
           {features.map((f, i) => (
-            <View key={i} style={styles.featureRow}>
-              <Text style={styles.featureIcon}>{f.icon}</Text>
-              <Text style={styles.featureText}>{f.text}</Text>
+            <View key={i} className="flex-row items-center gap-4">
+              <Text className="text-xl">{f.icon}</Text>
+              <Text className="font-body text-base text-white">{f.text}</Text>
             </View>
           ))}
         </Animated.View>
@@ -56,70 +58,29 @@ export default function OnboardingSlide3Screen({ onJoin, onLogin, currentPage = 
 
       <Animated.View
         entering={FadeInUp.delay(800).duration(600)}
-        style={[styles.bottom, { paddingBottom: insets.bottom + spacing.lg }]}
+        className="px-6"
+        style={{ paddingBottom: insets.bottom + 24 }}
       >
-        <View style={styles.dots}>
+        <View className="flex-row justify-center mb-6 gap-2">
           {Array.from({ length: totalPages }).map((_, i) => (
-            <View key={i} style={[styles.dot, i === currentPage && styles.dotActive]} />
+            <View
+              key={i}
+              className={i === currentPage
+                ? 'h-2 rounded-full bg-gold w-6'
+                : 'w-2 h-2 rounded-full bg-white/30'
+              }
+            />
           ))}
         </View>
 
-        <Button onPress={onJoin} size="lg" style={styles.joinBtn}>
+        <Button onPress={onJoin} size="lg" className="w-full mb-2">
           Join Now
         </Button>
 
-        <Button variant="outline" onPress={onLogin} size="lg" style={styles.loginBtn}>
+        <Button variant="outline" onPress={onLogin} size="lg" className="w-full border-white/30 bg-transparent">
           Log In
         </Button>
       </Animated.View>
     </LinearGradient>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: spacing.xl,
-  },
-  icon: { width: 80, height: 80, marginBottom: spacing.lg },
-  headline: {
-    ...typography.h1,
-    color: colors.textInverse,
-    textAlign: 'center',
-    marginBottom: spacing.md,
-    lineHeight: 36,
-  },
-  subtext: {
-    ...typography.body,
-    color: colors.accent,
-    textAlign: 'center',
-    marginBottom: spacing.xl,
-    lineHeight: 22,
-  },
-  featureList: { width: '100%', gap: spacing.md },
-  featureRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  featureIcon: { fontSize: 20 },
-  featureText: { ...typography.body, color: colors.textInverse },
-  bottom: { paddingHorizontal: spacing.lg },
-  dots: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: spacing.lg,
-    gap: spacing.sm,
-  },
-  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: 'rgba(255,255,255,0.3)' },
-  dotActive: { backgroundColor: colors.accent, width: 24 },
-  joinBtn: { width: '100%', marginBottom: spacing.sm },
-  loginBtn: {
-    width: '100%',
-    borderColor: 'rgba(255,255,255,0.3)',
-    backgroundColor: 'transparent',
-  },
-});

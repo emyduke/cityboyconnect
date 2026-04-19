@@ -1,8 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, Modal, Pressable, FlatList, TextInput, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, Modal, Pressable, FlatList, TextInput, Dimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { SlideInDown, SlideOutDown } from 'react-native-reanimated';
-import { colors, spacing, radius, typography } from '../../theme';
 
 interface Option {
   label: string;
@@ -39,23 +38,24 @@ export default function BottomSheetPicker({ visible, options, value, onSelect, o
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <Pressable style={styles.backdrop} onPress={onClose}>
+      <Pressable className="flex-1 bg-black/50 justify-end" onPress={onClose}>
         <Animated.View
           entering={SlideInDown.springify().damping(18)}
           exiting={SlideOutDown.duration(200)}
-          style={[styles.sheet, { maxHeight: SCREEN_HEIGHT * 0.65, paddingBottom: insets.bottom + spacing.md }]}
+          className="bg-surface rounded-t-xl pt-2 px-6"
+          style={{ maxHeight: SCREEN_HEIGHT * 0.65, paddingBottom: insets.bottom + 16 }}
           onStartShouldSetResponder={() => true}
         >
-          <View style={styles.handle} />
-          <Text style={styles.title}>{title}</Text>
+          <View className="w-10 h-1 rounded-[2px] bg-gray-200 self-center mb-4" />
+          <Text className="text-[17px] font-display-semibold text-gray-900 mb-4">{title}</Text>
 
           {searchable && (
-            <View style={styles.searchWrap}>
-              <Text style={styles.searchIcon}>🔍</Text>
+            <View className="flex-row items-center bg-background rounded-md px-4 mb-4 h-11">
+              <Text className="text-sm mr-2">🔍</Text>
               <TextInput
-                style={styles.searchInput}
+                className="flex-1 text-[15px] font-body leading-[22px] text-gray-900"
                 placeholder={`Search ${title.toLowerCase()}...`}
-                placeholderTextColor={colors.textTertiary}
+                placeholderTextColor="#9ca3af"
                 value={search}
                 onChangeText={setSearch}
                 autoCorrect={false}
@@ -68,16 +68,20 @@ export default function BottomSheetPicker({ visible, options, value, onSelect, o
             keyExtractor={(item) => String(item.value)}
             renderItem={({ item }) => (
               <Pressable
-                style={[styles.option, item.value === value && styles.optionSelected]}
+                className={`flex-row items-center justify-between py-4 border-b border-gray-100 ${item.value === value ? 'bg-background -mx-6 px-6' : ''}`}
                 onPress={() => handleSelect(item)}
               >
-                <Text style={[styles.optionText, item.value === value && styles.optionTextSelected]}>
+                <Text className={`text-[15px] font-body leading-[22px] flex-1 ${item.value === value ? 'text-forest font-body-semibold' : 'text-gray-900'}`}>
                   {item.label}
                 </Text>
-                {item.value === value && <Text style={styles.check}>✓</Text>}
+                {item.value === value && <Text className="text-lg text-forest font-body-bold">✓</Text>}
               </Pressable>
             )}
-            ListEmptyComponent={<Text style={styles.empty}>No results found</Text>}
+            ListEmptyComponent={
+              <Text className="text-[15px] font-body leading-[22px] text-gray-400 text-center py-8">
+                No results found
+              </Text>
+            }
             keyboardShouldPersistTaps="handled"
           />
         </Animated.View>
@@ -85,51 +89,3 @@ export default function BottomSheetPicker({ visible, options, value, onSelect, o
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    backgroundColor: colors.overlay,
-    justifyContent: 'flex-end',
-  },
-  sheet: {
-    backgroundColor: colors.surface,
-    borderTopLeftRadius: radius.xl,
-    borderTopRightRadius: radius.xl,
-    paddingTop: spacing.sm,
-    paddingHorizontal: spacing.lg,
-  },
-  handle: {
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: colors.border,
-    alignSelf: 'center',
-    marginBottom: spacing.md,
-  },
-  title: { ...typography.h4, color: colors.text, marginBottom: spacing.md },
-  searchWrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.background,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
-    marginBottom: spacing.md,
-    height: 44,
-  },
-  searchIcon: { fontSize: 14, marginRight: spacing.sm },
-  searchInput: { flex: 1, ...typography.body, color: colors.text },
-  option: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.divider,
-  },
-  optionSelected: { backgroundColor: colors.background, marginHorizontal: -spacing.lg, paddingHorizontal: spacing.lg },
-  optionText: { ...typography.body, color: colors.text, flex: 1 },
-  optionTextSelected: { color: colors.primary, fontFamily: 'PlusJakartaSans-SemiBold' },
-  check: { fontSize: 18, color: colors.primary, fontFamily: 'PlusJakartaSans-Bold' },
-  empty: { ...typography.body, color: colors.textTertiary, textAlign: 'center', paddingVertical: spacing.xl },
-});

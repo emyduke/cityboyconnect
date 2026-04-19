@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import './OTPInput.css';
+import { cn } from '../lib/cn';
 
 export default function OTPInput({ digits = 6, onComplete, error }) {
   const [values, setValues] = useState(Array(digits).fill(''));
@@ -45,8 +45,8 @@ export default function OTPInput({ digits = 6, onComplete, error }) {
   };
 
   return (
-    <div className={`otp-input ${error ? 'otp-input--error' : ''}`}>
-      <div className="otp-input__boxes">
+    <div className="flex flex-col items-center gap-2">
+      <div className="flex gap-2">
         {values.map((val, i) => (
           <input
             key={i}
@@ -58,12 +58,17 @@ export default function OTPInput({ digits = 6, onComplete, error }) {
             onChange={(e) => handleChange(i, e)}
             onKeyDown={(e) => handleKeyDown(i, e)}
             onPaste={i === 0 ? handlePaste : undefined}
-            className="otp-input__box"
+            className={cn(
+              'w-12 h-14 text-center text-2xl font-bold font-mono border-2 border-gray-300 rounded-[10px] outline-none transition-colors',
+              'focus:border-forest focus:shadow-[0_0_0_3px_rgba(26,71,42,0.1)]',
+              error && 'border-danger animate-shake',
+              'max-[400px]:w-10 max-[400px]:h-12 max-[400px]:text-xl',
+            )}
             aria-label={`Digit ${i + 1}`}
           />
         ))}
       </div>
-      {error && <span className="otp-input__error" role="alert">{error}</span>}
+      {error && <span className="text-[0.8125rem] text-danger" role="alert">{error}</span>}
     </div>
   );
 }

@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, Pressable } from 'react-native';
+import { View, Text, FlatList, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { colors, spacing, typography, radius, shadows } from '../../theme';
 import { getSavedJobs, saveJob } from '../../api/opportunities';
 import { unwrap } from '../../api/client';
 import { useToastStore } from '../../store/toastStore';
@@ -37,48 +36,36 @@ export default function SavedJobsScreen() {
     const job = item.job || item;
     const jobId = item.job_id || job.id;
     return (
-      <Pressable style={styles.card} onPress={() => navigation.navigate('JobDetail', { id: jobId })}>
-        <View style={styles.cardHeader}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.cardTitle} numberOfLines={1}>{job.title}</Text>
-            <Text style={styles.cardSub}>{job.company_name}</Text>
+      <Pressable className="bg-surface rounded-md p-4 mb-2 shadow-sm" onPress={() => navigation.navigate('JobDetail', { id: jobId })}>
+        <View className="flex-row items-center">
+          <View className="flex-1">
+            <Text className="font-body-medium text-base text-gray-900" numberOfLines={1}>{job.title}</Text>
+            <Text className="font-body text-xs text-gray-500">{job.company_name}</Text>
           </View>
-          <Pressable style={styles.unsaveBtn} onPress={() => handleUnsave(jobId)}>
-            <Text style={styles.unsaveText}>🔖 Remove</Text>
+          <Pressable className="py-1 px-2 bg-warning-light rounded-sm" onPress={() => handleUnsave(jobId)}>
+            <Text className="font-body text-xs text-warning">🔖 Remove</Text>
           </Pressable>
         </View>
-        {job.location && <Text style={styles.location}>📍 {job.location}</Text>}
-        {job.job_type && <Text style={styles.meta}>{job.job_type.replace('_', ' ')} • {job.work_mode || ''}</Text>}
+        {job.location && <Text className="font-body text-sm text-gray-500 mt-1">📍 {job.location}</Text>}
+        {job.job_type && <Text className="font-body text-xs text-gray-400 mt-0.5">{job.job_type.replace('_', ' ')} • {job.work_mode || ''}</Text>}
       </Pressable>
     );
   };
 
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
       {loading ? (
-        <View style={{ padding: spacing.md }}><Skeleton variant="card" /><Skeleton variant="card" style={{ marginTop: spacing.sm }} /></View>
+        <View className="p-4"><Skeleton variant="card" /><Skeleton variant="card" className="mt-2" /></View>
       ) : (
         <FlatList
           data={jobs}
           keyExtractor={(item, i) => (item.id || i).toString()}
           renderItem={renderItem}
-          contentContainerStyle={{ padding: spacing.md, paddingBottom: spacing.xxl }}
-          ListEmptyComponent={<Text style={styles.empty}>No saved jobs yet</Text>}
+          contentContainerClassName="p-4 pb-12"
+          ListEmptyComponent={<Text className="font-body text-base text-gray-500 text-center mt-12">No saved jobs yet</Text>}
         />
       )}
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  card: { backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.md, marginBottom: spacing.sm, ...shadows.sm },
-  cardHeader: { flexDirection: 'row', alignItems: 'center' },
-  cardTitle: { ...typography.bodyMedium, color: colors.text },
-  cardSub: { ...typography.caption, color: colors.textSecondary },
-  unsaveBtn: { paddingVertical: spacing.xs, paddingHorizontal: spacing.sm, backgroundColor: colors.warningLight, borderRadius: radius.sm },
-  unsaveText: { ...typography.caption, color: colors.warning },
-  location: { ...typography.bodySm, color: colors.textSecondary, marginTop: spacing.xs },
-  meta: { ...typography.caption, color: colors.textTertiary, marginTop: 2 },
-  empty: { ...typography.body, color: colors.textSecondary, textAlign: 'center', marginTop: spacing.xxl },
-});

@@ -1,4 +1,3 @@
-import './Jobs.css';
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getJobs, saveJob, getStates } from '../api/client';
@@ -76,10 +75,10 @@ export default function Jobs() {
   };
 
   return (
-    <div className="jobs-page">
-      <div className="jobs-page__header">
+    <div className="max-w-[1200px] mx-auto">
+      <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
         <h1>Job Board</h1>
-        <div className="jobs-page__actions">
+        <div className="flex gap-2 flex-wrap">
           {user?.voter_verification_status === 'APPROVED' && (
             <Button size="sm" onClick={() => navigate('/jobs/create')}>Post a Job</Button>
           )}
@@ -89,27 +88,27 @@ export default function Jobs() {
         </div>
       </div>
 
-      <div className="jobs-page__filters">
+      <div className="flex flex-col md:flex-row gap-2 mb-4 items-start md:items-center">
         <input
           type="text"
           placeholder="Search jobs..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="jobs-page__search"
+          className="w-full md:flex-1 md:min-w-[200px] py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]"
         />
-        <select value={jobType} onChange={e => setJobType(e.target.value)} className="jobs-page__select">
+        <select value={jobType} onChange={e => setJobType(e.target.value)} className="py-2 px-4 border border-gray-200 rounded-lg text-sm min-w-[130px]">
           <option value="">All Types</option>
           {JOB_TYPES.map(t => <option key={t} value={t}>{t.replace('_', ' ')}</option>)}
         </select>
-        <select value={workMode} onChange={e => setWorkMode(e.target.value)} className="jobs-page__select">
+        <select value={workMode} onChange={e => setWorkMode(e.target.value)} className="py-2 px-4 border border-gray-200 rounded-lg text-sm min-w-[130px]">
           <option value="">All Modes</option>
           {WORK_MODES.map(m => <option key={m} value={m}>{m}</option>)}
         </select>
-        <select value={expLevel} onChange={e => setExpLevel(e.target.value)} className="jobs-page__select">
+        <select value={expLevel} onChange={e => setExpLevel(e.target.value)} className="py-2 px-4 border border-gray-200 rounded-lg text-sm min-w-[130px]">
           <option value="">Any Level</option>
           {EXP_LEVELS.map(l => <option key={l} value={l}>{l.replace('_', ' ')}</option>)}
         </select>
-        <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} className="jobs-page__select">
+        <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} className="py-2 px-4 border border-gray-200 rounded-lg text-sm min-w-[130px]">
           <option value="">All States</option>
           {states.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
         </select>
@@ -120,44 +119,44 @@ export default function Jobs() {
       </div>
 
       {loading ? (
-        <div className="jobs-grid"><Skeleton variant="card" /><Skeleton variant="card" /><Skeleton variant="card" /></div>
+        <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fill,minmax(340px,1fr))] gap-4"><Skeleton variant="card" /><Skeleton variant="card" /><Skeleton variant="card" /></div>
       ) : jobs.length === 0 ? (
         <EmptyState title="No jobs found" description="Try adjusting your filters or check back later" icon="💼" />
       ) : (
         <>
-          <div className="jobs-grid">
+          <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fill,minmax(340px,1fr))] gap-4">
             {jobs.map(job => (
-              <div key={job.id} className="job-card" onClick={() => navigate(`/jobs/${job.id}`)}>
-                <button className="job-card__save" onClick={e => handleSave(e, job.id)} aria-label={job.is_saved ? 'Unsave' : 'Save'}>
+              <div key={job.id} className="bg-white border border-gray-200 rounded-xl p-4 cursor-pointer transition-all relative hover:shadow-elevated hover:-translate-y-0.5" onClick={() => navigate(`/jobs/${job.id}`)}>
+                <button className="absolute top-3 right-3 bg-transparent border-none cursor-pointer text-xl" onClick={e => handleSave(e, job.id)} aria-label={job.is_saved ? 'Unsave' : 'Save'}>
                   {job.is_saved ? '🔖' : '🏷️'}
                 </button>
-                <h3 className="job-card__title">{job.title}</h3>
-                <p className="job-card__company">{job.company_name}</p>
-                <div className="job-card__badges">
-                  <span className="job-card__badge job-card__badge--type">{(job.job_type || '').replace('_', ' ')}</span>
-                  <span className="job-card__badge job-card__badge--mode">{job.work_mode}</span>
-                  {job.experience_level && job.experience_level !== 'ANY' && <span className="job-card__badge">{job.experience_level}</span>}
+                <h3 className="font-semibold text-[1.05rem] m-0 mb-1">{job.title}</h3>
+                <p className="text-gray-500 text-sm">{job.company_name}</p>
+                <div className="flex gap-1.5 flex-wrap my-2">
+                  <span className="px-2 py-0.5 rounded-xl text-xs font-medium bg-blue-100 text-blue-700">{(job.job_type || '').replace('_', ' ')}</span>
+                  <span className="px-2 py-0.5 rounded-xl text-xs font-medium bg-amber-100 text-amber-800">{job.work_mode}</span>
+                  {job.experience_level && job.experience_level !== 'ANY' && <span className="px-2 py-0.5 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800">{job.experience_level}</span>}
                 </div>
-                <div className="job-card__meta">
+                <div className="flex items-center gap-2 text-gray-500 text-[0.85rem] mt-2">
                   {job.location && <span>📍 {job.location}</span>}
                   {job.is_remote && <span>🌐 Remote</span>}
                   <span>{timeAgo(job.created_at)}</span>
                 </div>
                 {job.salary_display ? (
-                  <p className="job-card__salary">{job.salary_display}</p>
+                  <p className="font-semibold text-forest text-sm mt-2">{job.salary_display}</p>
                 ) : job.salary_min ? (
-                  <p className="job-card__salary">₦{Number(job.salary_min).toLocaleString()}{job.salary_max ? ` - ₦${Number(job.salary_max).toLocaleString()}` : ''} / {job.salary_period}</p>
+                  <p className="font-semibold text-forest text-sm mt-2">₦{Number(job.salary_min).toLocaleString()}{job.salary_max ? ` - ₦${Number(job.salary_max).toLocaleString()}` : ''} / {job.salary_period}</p>
                 ) : null}
                 {(job.skills || []).length > 0 && (
-                  <div className="job-card__skills">
-                    {job.skills.slice(0, 3).map(s => <span key={s.id || s} className="job-card__skill-tag">{s.name || s}</span>)}
+                  <div className="flex gap-1 flex-wrap mt-1.5">
+                    {job.skills.slice(0, 3).map(s => <span key={s.id || s} className="px-1.5 py-px rounded-lg text-[0.7rem] bg-gray-100 text-gray-700">{s.name || s}</span>)}
                   </div>
                 )}
               </div>
             ))}
           </div>
           {hasMore && (
-            <div className="jobs-page__load-more">
+            <div className="flex justify-center mt-6">
               <Button variant="secondary" onClick={() => { setPage(p => p + 1); fetchJobs(false); }}>Load More</Button>
             </div>
           )}

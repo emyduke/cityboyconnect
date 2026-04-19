@@ -5,7 +5,6 @@ import Badge from '../../components/Badge';
 import Skeleton from '../../components/Skeleton';
 import Card from '../../components/Card';
 import { useToastStore } from '../../store/toastStore';
-import './AdminEvents.css';
 
 const STATUS_COLORS = { upcoming: 'info', ongoing: 'success', completed: 'default', cancelled: 'danger' };
 
@@ -71,15 +70,15 @@ export default function AdminEvents() {
   };
 
   return (
-    <div className="admin-events">
-      <h1>Events Management</h1>
+    <div>
+      <h1 className="text-2xl font-extrabold mb-4">Events Management</h1>
 
-      <div className="admin-events__filters">
-        <form onSubmit={e => { e.preventDefault(); setPage(1); load(); }} className="admin-events__search">
-          <input placeholder="Search events..." value={search} onChange={e => setSearch(e.target.value)} />
+      <div className="flex gap-4 mb-4 flex-wrap">
+        <form onSubmit={e => { e.preventDefault(); setPage(1); load(); }} className="flex gap-2 flex-1 min-w-[200px]">
+          <input className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm" placeholder="Search events..." value={search} onChange={e => setSearch(e.target.value)} />
           <Button type="submit" size="sm">Search</Button>
         </form>
-        <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }}>
+        <select className="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white" value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }}>
           <option value="">All Status</option>
           <option value="upcoming">Upcoming</option>
           <option value="ongoing">Ongoing</option>
@@ -88,40 +87,40 @@ export default function AdminEvents() {
         </select>
       </div>
 
-      <div className="admin-events__body">
-        <div className="admin-events__list">
+      <div className="flex gap-4 max-[900px]:flex-col">
+        <div className="flex-1 overflow-x-auto">
           {loading ? <Skeleton variant="table" /> : events.length === 0 ? (
-            <div className="admin-events__empty">
+            <div className="text-center text-gray-400 py-12 flex flex-col items-center gap-2 text-3xl">
               <span>📅</span>
-              <p>No events found</p>
+              <p className="text-sm">No events found</p>
             </div>
           ) : (
-            <table className="admin-events__table">
+            <table className="w-full border-collapse text-sm">
               <thead>
                 <tr>
-                  <th>Event</th>
-                  <th>Date</th>
-                  <th>Location</th>
-                  <th>Status</th>
-                  <th>Attendees</th>
-                  <th>Actions</th>
+                  <th className="text-left px-3 py-2 border-b-2 border-gray-200 font-semibold text-gray-500 text-xs uppercase">Event</th>
+                  <th className="text-left px-3 py-2 border-b-2 border-gray-200 font-semibold text-gray-500 text-xs uppercase">Date</th>
+                  <th className="text-left px-3 py-2 border-b-2 border-gray-200 font-semibold text-gray-500 text-xs uppercase">Location</th>
+                  <th className="text-left px-3 py-2 border-b-2 border-gray-200 font-semibold text-gray-500 text-xs uppercase">Status</th>
+                  <th className="text-left px-3 py-2 border-b-2 border-gray-200 font-semibold text-gray-500 text-xs uppercase">Attendees</th>
+                  <th className="text-left px-3 py-2 border-b-2 border-gray-200 font-semibold text-gray-500 text-xs uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {events.map(ev => (
                   <tr key={ev.id || ev.pk}>
-                    <td className="admin-events__title-cell">
-                      <strong>{ev.title}</strong>
-                      <span className="admin-events__organizer">{ev.created_by_name || ''}</span>
+                    <td className="px-3 py-2 border-b border-gray-100 flex flex-col">
+                      <strong className="text-sm">{ev.title}</strong>
+                      <span className="text-[0.7rem] text-gray-400">{ev.created_by_name || ''}</span>
                     </td>
-                    <td>{ev.date ? new Date(ev.date).toLocaleDateString() : ev.start_date ? new Date(ev.start_date).toLocaleDateString() : '—'}</td>
-                    <td>{ev.location || ev.venue || '—'}</td>
-                    <td><Badge variant={STATUS_COLORS[ev.status] || 'default'}>{ev.status || '—'}</Badge></td>
-                    <td>{ev.attendance_count ?? ev.attendees_count ?? '—'}</td>
-                    <td>
-                      <button className="admin-events__action-btn" onClick={() => openDetail(ev.id || ev.pk)}>View</button>
+                    <td className="px-3 py-2 border-b border-gray-100">{ev.date ? new Date(ev.date).toLocaleDateString() : ev.start_date ? new Date(ev.start_date).toLocaleDateString() : '—'}</td>
+                    <td className="px-3 py-2 border-b border-gray-100">{ev.location || ev.venue || '—'}</td>
+                    <td className="px-3 py-2 border-b border-gray-100"><Badge variant={STATUS_COLORS[ev.status] || 'default'}>{ev.status || '—'}</Badge></td>
+                    <td className="px-3 py-2 border-b border-gray-100">{ev.attendance_count ?? ev.attendees_count ?? '—'}</td>
+                    <td className="px-3 py-2 border-b border-gray-100">
+                      <button className="bg-transparent border-none text-forest text-xs cursor-pointer font-medium mr-2 hover:underline" onClick={() => openDetail(ev.id || ev.pk)}>View</button>
                       {ev.status !== 'cancelled' && (
-                        <button className="admin-events__action-btn admin-events__action-btn--danger" onClick={() => handleCancel(ev.id || ev.pk)}>Cancel</button>
+                        <button className="bg-transparent border-none text-danger text-xs cursor-pointer font-medium hover:underline" onClick={() => handleCancel(ev.id || ev.pk)}>Cancel</button>
                       )}
                     </td>
                   </tr>
@@ -130,7 +129,7 @@ export default function AdminEvents() {
             </table>
           )}
           {total > 20 && (
-            <div className="admin-events__pagination">
+            <div className="flex justify-center items-center gap-4 p-4 text-sm">
               <Button variant="secondary" size="sm" disabled={page <= 1} onClick={() => setPage(p => p - 1)}>Previous</Button>
               <span>Page {page}</span>
               <Button variant="secondary" size="sm" disabled={events.length < 20} onClick={() => setPage(p => p + 1)}>Next</Button>
@@ -139,30 +138,30 @@ export default function AdminEvents() {
         </div>
 
         {selected && (
-          <div className="admin-events__detail-panel">
-            <button className="admin-events__panel-close" onClick={() => setSelected(null)}>✕</button>
+          <div className="w-[380px] min-w-[320px] max-[900px]:w-full max-[900px]:static bg-white border border-gray-200 rounded-xl p-4 sticky top-[72px] max-h-[calc(100vh-100px)] overflow-y-auto relative">
+            <button className="absolute top-2 right-2 bg-transparent border-none text-xl cursor-pointer text-gray-400" onClick={() => setSelected(null)}>✕</button>
             {detailLoading ? <Skeleton variant="card" /> : (
               <>
-                <h3>{selected.title}</h3>
-                <div className="admin-events__detail-meta">
+                <h3 className="text-lg font-bold mb-4">{selected.title}</h3>
+                <div className="flex flex-col gap-1 text-sm">
                   <div><strong>Date:</strong> {selected.date || selected.start_date || '—'}</div>
                   <div><strong>Location:</strong> {selected.location || selected.venue || '—'}</div>
                   <div><strong>Created by:</strong> {selected.created_by_name || '—'}</div>
                   <div><strong>Status:</strong> <Badge variant={STATUS_COLORS[selected.status] || 'default'}>{selected.status}</Badge></div>
                 </div>
-                {selected.description && <p className="admin-events__detail-desc">{selected.description}</p>}
-                <h4>Attendance ({attendance.length})</h4>
-                {attendance.length === 0 ? <p className="admin-events__no-data">No attendance recorded</p> : (
-                  <div className="admin-events__attendance-list">
+                {selected.description && <p className="text-sm text-gray-600 mt-4">{selected.description}</p>}
+                <h4 className="text-sm font-bold mt-4 mb-2">Attendance ({attendance.length})</h4>
+                {attendance.length === 0 ? <p className="text-xs text-gray-400">No attendance recorded</p> : (
+                  <div className="max-h-[200px] overflow-y-auto">
                     {attendance.map((a, i) => (
-                      <div key={i} className="admin-events__attendance-item">
+                      <div key={i} className="flex justify-between py-1 border-b border-gray-100 text-xs">
                         <span>{a.member_name || a.full_name || '—'}</span>
-                        <span className="admin-events__attendance-time">{a.checked_in_at ? new Date(a.checked_in_at).toLocaleString() : '—'}</span>
+                        <span className="text-gray-400 text-[0.7rem]">{a.checked_in_at ? new Date(a.checked_in_at).toLocaleString() : '—'}</span>
                       </div>
                     ))}
                   </div>
                 )}
-                <div className="admin-events__detail-actions">
+                <div className="flex gap-2 mt-4">
                   {selected.status !== 'cancelled' && <Button size="sm" variant="secondary" onClick={() => handleCancel(selected.id || selected.pk)}>Cancel Event</Button>}
                   <Button size="sm" variant="danger" onClick={() => handleDelete(selected.id || selected.pk)}>Delete Event</Button>
                 </div>

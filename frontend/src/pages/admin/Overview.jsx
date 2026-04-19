@@ -5,7 +5,7 @@ import Card from '../../components/Card';
 import Skeleton from '../../components/Skeleton';
 import Badge from '../../components/Badge';
 import { useToastStore } from '../../store/toastStore';
-import './Overview.css';
+import { cn } from '../../lib/cn';
 
 function AnimatedNumber({ value, duration = 1200 }) {
   const [display, setDisplay] = useState(0);
@@ -73,12 +73,12 @@ export default function Overview() {
   };
 
   if (loading) return (
-    <div className="admin-overview">
-      <h1>Platform Overview</h1>
-      <div className="admin-overview__stats">
+    <div>
+      <h1 className="text-2xl font-extrabold mb-4">Platform Overview</h1>
+      <div className="grid grid-cols-3 max-md:grid-cols-2 gap-4 mb-6">
         {[...Array(6)].map((_, i) => <Skeleton key={i} variant="card" />)}
       </div>
-      <div className="admin-overview__cols">
+      <div className="grid grid-cols-[2fr_1fr] max-md:grid-cols-1 gap-4">
         <Skeleton variant="card" />
         <Skeleton variant="card" />
       </div>
@@ -97,17 +97,17 @@ export default function Overview() {
   const maxGrowth = Math.max(...(growth.map?.(g => g.count) || [1]), 1);
 
   return (
-    <div className="admin-overview">
-      <h1>Platform Overview</h1>
+    <div>
+      <h1 className="text-2xl font-extrabold mb-4">Platform Overview</h1>
 
-      <div className="admin-overview__stats">
+      <div className="grid grid-cols-3 max-md:grid-cols-2 gap-4 mb-6">
         {statCards.map((s, i) => (
-          <div key={i} className="admin-overview__stat-card">
-            <div className="admin-overview__stat-icon">{s.icon}</div>
-            <div className="admin-overview__stat-value"><AnimatedNumber value={s.value ?? 0} /></div>
-            <div className="admin-overview__stat-label">{s.label}</div>
+          <div key={i} className="bg-white rounded-lg p-4 shadow-soft flex flex-col items-center text-center relative transition-all hover:-translate-y-0.5 hover:shadow-elevated cursor-default">
+            <div className="text-2xl mb-1">{s.icon}</div>
+            <div className="text-3xl max-md:text-xl font-extrabold text-gray-900 font-display"><AnimatedNumber value={s.value ?? 0} /></div>
+            <div className="text-xs text-gray-500 mt-0.5">{s.label}</div>
             {s.trend != null && (
-              <div className={`admin-overview__stat-trend ${s.trend >= 0 ? 'positive' : 'negative'}`}>
+              <div className={cn('text-[0.7rem] font-semibold mt-1', s.trend >= 0 ? 'text-success' : 'text-danger')}>
                 {s.trend >= 0 ? '↑' : '↓'} {Math.abs(s.trend)}%
               </div>
             )}
@@ -115,51 +115,54 @@ export default function Overview() {
         ))}
       </div>
 
-      <div className="admin-overview__cols">
-        <Card padding="md" className="admin-overview__growth">
-          <div className="admin-overview__growth-header">
-            <h3>Membership Growth</h3>
-            <div className="admin-overview__period-selector">
+      <div className="grid grid-cols-[2fr_1fr] max-md:grid-cols-1 gap-4">
+        <Card padding="md">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-base mb-0">Membership Growth</h3>
+            <div className="flex gap-0.5 bg-gray-100 rounded p-0.5">
               {['3months', '6months', '12months'].map(p => (
-                <button key={p} className={`admin-overview__period-btn ${period === p ? 'active' : ''}`} onClick={() => handlePeriod(p)}>
+                <button key={p} className={cn(
+                  'bg-transparent border-none px-2 py-1 text-[0.7rem] font-semibold rounded cursor-pointer text-gray-500 transition-all',
+                  period === p && 'bg-white text-forest shadow-soft'
+                )} onClick={() => handlePeriod(p)}>
                   {p.replace('months', 'M')}
                 </button>
               ))}
             </div>
           </div>
           {growth.length > 0 ? (
-            <div className="admin-overview__chart">
+            <div className="flex items-end gap-2 h-[180px] pt-4">
               {growth.map((pt, i) => (
-                <div key={i} className="admin-overview__bar-group">
-                  <div className="admin-overview__bar" style={{ height: `${Math.min(100, (pt.count / maxGrowth) * 100)}%` }}>
-                    <span className="admin-overview__bar-count">{pt.count}</span>
+                <div key={i} className="flex-1 flex flex-col items-center gap-1 h-full justify-end">
+                  <div className="w-full max-w-[40px] bg-gradient-to-t from-forest to-forest-light rounded-t transition-all min-h-1 relative" style={{ height: `${Math.min(100, (pt.count / maxGrowth) * 100)}%` }}>
+                    <span className="absolute -top-[18px] left-1/2 -translate-x-1/2 text-[0.6rem] font-bold text-gray-700 whitespace-nowrap">{pt.count}</span>
                   </div>
-                  <span className="admin-overview__bar-label">{pt.label || pt.month}</span>
+                  <span className="text-[0.65rem] text-gray-400">{pt.label || pt.month}</span>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="admin-overview__empty-text">No growth data yet</p>
+            <p className="text-gray-400 text-sm text-center py-4">No growth data yet</p>
           )}
         </Card>
 
-        <Card padding="md" className="admin-overview__feed">
-          <div className="admin-overview__feed-header">
-            <h3>Activity Feed</h3>
-            {feedLoading && <span className="admin-overview__feed-spinner">⟳</span>}
+        <Card padding="md">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-base mb-0">Activity Feed</h3>
+            {feedLoading && <span className="animate-spin inline-block text-sm text-gray-400">⟳</span>}
           </div>
           {activity.length === 0 ? (
-            <p className="admin-overview__empty-text">No recent activity</p>
+            <p className="text-gray-400 text-sm text-center py-4">No recent activity</p>
           ) : (
-            <div className="admin-overview__feed-list">
+            <div className="flex flex-col max-h-[360px] overflow-y-auto">
               {activity.map((item, i) => (
-                <div key={i} className="admin-overview__feed-item">
-                  <div className="admin-overview__feed-dot" />
-                  <div className="admin-overview__feed-body">
-                    <span className="admin-overview__feed-action">
-                      {item.performed_by_name && <strong>{item.performed_by_name}</strong>} {item.action}
+                <div key={i} className="flex items-start gap-2 py-2 border-b border-gray-100 text-sm">
+                  <div className="w-2 h-2 rounded-full bg-forest-light mt-[5px] shrink-0" />
+                  <div className="flex-1 flex flex-col gap-0.5">
+                    <span className="text-gray-700">
+                      {item.performed_by_name && <strong className="text-gray-900">{item.performed_by_name}</strong>} {item.action}
                     </span>
-                    <span className="admin-overview__feed-time">{timeAgo(item.created_at)}</span>
+                    <span className="text-gray-400 text-[0.7rem]">{timeAgo(item.created_at)}</span>
                   </div>
                 </div>
               ))}

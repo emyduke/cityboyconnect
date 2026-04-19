@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Pressable, TextInput, Linking } from 'react-native';
+import { View, Text, ScrollView, Pressable, TextInput, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { colors, spacing, typography, radius, shadows } from '../../theme';
 import { getJobDetail, applyToJob, saveJob, withdrawApplication } from '../../api/opportunities';
 import { unwrap } from '../../api/client';
 import { useToastStore } from '../../store/toastStore';
@@ -66,98 +65,98 @@ export default function JobDetailScreen() {
     } catch { /* ok */ }
   };
 
-  if (loading) return <SafeAreaView style={styles.safe}><View style={styles.pad}><Skeleton variant="card" /><Skeleton variant="card" style={{ marginTop: spacing.md }} /></View></SafeAreaView>;
+  if (loading) return <SafeAreaView className="flex-1 bg-background"><View className="p-4"><Skeleton variant="card" /><Skeleton variant="card" className="mt-4" /></View></SafeAreaView>;
   if (!job) return null;
 
   const isOwner = user?.id === (job.posted_by?.id || job.posted_by);
 
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
-      <ScrollView contentContainerStyle={styles.scroll}>
-        <View style={styles.hero}>
-          <Text style={styles.title}>{job.title}</Text>
-          <Text style={styles.company}>{job.company_name}</Text>
-          <View style={styles.badges}>
-            {job.job_type && <View style={styles.badge}><Text style={styles.badgeText}>{JOB_TYPES[job.job_type] || job.job_type}</Text></View>}
-            {job.work_mode && <View style={[styles.badge, { backgroundColor: colors.infoLight }]}><Text style={[styles.badgeText, { color: colors.info }]}>{WORK_MODES[job.work_mode] || job.work_mode}</Text></View>}
-            {job.experience_level && <View style={[styles.badge, { backgroundColor: colors.warningLight }]}><Text style={[styles.badgeText, { color: colors.warning }]}>{job.experience_level}</Text></View>}
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+      <ScrollView contentContainerClassName="pb-12">
+        <View className="p-4 bg-surface shadow-sm">
+          <Text className="font-display-bold text-2xl text-gray-900">{job.title}</Text>
+          <Text className="font-body-medium text-base text-gray-500 mt-1">{job.company_name}</Text>
+          <View className="flex-row gap-1 mt-2 flex-wrap">
+            {job.job_type && <View className="bg-forest/10 px-2 py-0.5 rounded-sm"><Text className="font-body text-xs text-forest">{JOB_TYPES[job.job_type] || job.job_type}</Text></View>}
+            {job.work_mode && <View className="bg-info-light px-2 py-0.5 rounded-sm"><Text className="font-body text-xs text-info">{WORK_MODES[job.work_mode] || job.work_mode}</Text></View>}
+            {job.experience_level && <View className="bg-warning-light px-2 py-0.5 rounded-sm"><Text className="font-body text-xs text-warning">{job.experience_level}</Text></View>}
           </View>
         </View>
 
-        <View style={styles.section}>
-          <View style={styles.detailRow}><Text style={styles.detailLabel}>Location</Text><Text style={styles.detailValue}>{job.location || job.state_name || 'Remote'}</Text></View>
-          <View style={styles.detailRow}><Text style={styles.detailLabel}>Salary</Text><Text style={styles.detailValue}>{job.salary_display || (job.hide_salary ? 'Competitive' : job.salary_min ? `₦${job.salary_min.toLocaleString()}` : '—')}</Text></View>
-          {job.application_deadline && <View style={styles.detailRow}><Text style={styles.detailLabel}>Deadline</Text><Text style={styles.detailValue}>{new Date(job.application_deadline).toLocaleDateString()}</Text></View>}
-          <View style={styles.detailRow}><Text style={styles.detailLabel}>Applications</Text><Text style={styles.detailValue}>{job.application_count ?? 0}</Text></View>
+        <View className="p-4 bg-surface mt-2 shadow-sm">
+          <View className="flex-row justify-between py-1 border-b border-gray-100"><Text className="font-body text-sm text-gray-500">Location</Text><Text className="font-body-medium text-base text-gray-900">{job.location || job.state_name || 'Remote'}</Text></View>
+          <View className="flex-row justify-between py-1 border-b border-gray-100"><Text className="font-body text-sm text-gray-500">Salary</Text><Text className="font-body-medium text-base text-gray-900">{job.salary_display || (job.hide_salary ? 'Competitive' : job.salary_min ? `₦${job.salary_min.toLocaleString()}` : '—')}</Text></View>
+          {job.application_deadline && <View className="flex-row justify-between py-1 border-b border-gray-100"><Text className="font-body text-sm text-gray-500">Deadline</Text><Text className="font-body-medium text-base text-gray-900">{new Date(job.application_deadline).toLocaleDateString()}</Text></View>}
+          <View className="flex-row justify-between py-1 border-b border-gray-100"><Text className="font-body text-sm text-gray-500">Applications</Text><Text className="font-body-medium text-base text-gray-900">{job.application_count ?? 0}</Text></View>
         </View>
 
         {job.skills?.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Skills</Text>
-            <View style={styles.skillsRow}>
+          <View className="p-4 bg-surface mt-2 shadow-sm">
+            <Text className="font-display-semibold text-base text-gray-900 mb-2">Skills</Text>
+            <View className="flex-row flex-wrap gap-1">
               {job.skills.map((s: any, i: number) => (
-                <View key={i} style={styles.skillBadge}><Text style={styles.skillText}>{typeof s === 'string' ? s : s.name}</Text></View>
+                <View key={i} className="bg-forest/10 px-2 py-1 rounded-full"><Text className="font-body text-sm text-forest">{typeof s === 'string' ? s : s.name}</Text></View>
               ))}
             </View>
           </View>
         )}
 
         {job.description && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Description</Text>
-            <Text style={styles.body}>{job.description}</Text>
+          <View className="p-4 bg-surface mt-2 shadow-sm">
+            <Text className="font-display-semibold text-base text-gray-900 mb-2">Description</Text>
+            <Text className="font-body text-base text-gray-500">{job.description}</Text>
           </View>
         )}
 
         {job.requirements && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Requirements</Text>
-            <Text style={styles.body}>{job.requirements}</Text>
+          <View className="p-4 bg-surface mt-2 shadow-sm">
+            <Text className="font-display-semibold text-base text-gray-900 mb-2">Requirements</Text>
+            <Text className="font-body text-base text-gray-500">{job.requirements}</Text>
           </View>
         )}
 
         {/* Actions */}
-        <View style={styles.actions}>
+        <View className="p-4 gap-2">
           {isOwner ? (
             <>
-              <Pressable style={styles.primaryBtn} onPress={() => navigation.navigate('CreateJob', { id: job.id })}>
-                <Text style={styles.primaryBtnText}>Edit Job</Text>
+              <Pressable className="bg-forest py-4 rounded-md items-center" onPress={() => navigation.navigate('CreateJob', { id: job.id })}>
+                <Text className="font-body-semibold text-sm text-white">Edit Job</Text>
               </Pressable>
-              <Pressable style={styles.secondaryBtn} onPress={() => navigation.navigate('JobApplications', { jobId: job.id })}>
-                <Text style={styles.secondaryBtnText}>Manage Applications</Text>
+              <Pressable className="bg-surface border border-forest py-4 rounded-md items-center" onPress={() => navigation.navigate('JobApplications', { jobId: job.id })}>
+                <Text className="font-body-semibold text-sm text-forest">Manage Applications</Text>
               </Pressable>
             </>
           ) : job.has_applied ? (
             <>
-              <View style={[styles.statusBadge, { backgroundColor: colors.successLight }]}>
-                <Text style={{ ...typography.bodyMedium, color: colors.success }}>Applied ✓ — {job.application_status || 'Submitted'}</Text>
+              <View className="bg-success-light py-4 rounded-md items-center">
+                <Text className="font-body-medium text-base text-success">Applied ✓ — {job.application_status || 'Submitted'}</Text>
               </View>
               {['APPLIED', 'REVIEWED', 'SHORTLISTED'].includes(job.application_status) && (
-                <Pressable style={styles.dangerBtn} onPress={handleWithdraw}>
-                  <Text style={styles.dangerBtnText}>Withdraw Application</Text>
+                <Pressable className="bg-danger-light py-4 rounded-md items-center" onPress={handleWithdraw}>
+                  <Text className="font-body-semibold text-sm text-danger">Withdraw Application</Text>
                 </Pressable>
               )}
             </>
           ) : (
-            <Pressable style={styles.primaryBtn} onPress={() => setShowApply(true)}>
-              <Text style={styles.primaryBtnText}>Apply Now</Text>
+            <Pressable className="bg-forest py-4 rounded-md items-center" onPress={() => setShowApply(true)}>
+              <Text className="font-body-semibold text-sm text-white">Apply Now</Text>
             </Pressable>
           )}
-          <Pressable style={styles.secondaryBtn} onPress={handleSave}>
-            <Text style={styles.secondaryBtnText}>{job.is_saved ? '🔖 Saved' : '🏷 Save Job'}</Text>
+          <Pressable className="bg-surface border border-forest py-4 rounded-md items-center" onPress={handleSave}>
+            <Text className="font-body-semibold text-sm text-forest">{job.is_saved ? '🔖 Saved' : '🏷 Save Job'}</Text>
           </Pressable>
         </View>
 
         {showApply && (
-          <View style={styles.applyForm}>
-            <Text style={styles.sectionTitle}>Apply</Text>
-            <TextInput style={[styles.input, { minHeight: 100 }]} placeholder="Cover letter (optional)" placeholderTextColor={colors.textTertiary} value={coverLetter} onChangeText={setCoverLetter} multiline textAlignVertical="top" />
-            <View style={styles.applyActions}>
-              <Pressable style={styles.primaryBtn} onPress={handleApply} disabled={applying}>
-                <Text style={styles.primaryBtnText}>{applying ? 'Submitting...' : 'Submit Application'}</Text>
+          <View className="p-4 bg-surface mt-2 shadow-sm">
+            <Text className="font-display-semibold text-base text-gray-900 mb-2">Apply</Text>
+            <TextInput className="bg-background rounded-sm p-4 font-body text-base text-gray-900 border border-gray-200 min-h-[100px]" placeholder="Cover letter (optional)" placeholderTextColor="#9ca3af" value={coverLetter} onChangeText={setCoverLetter} multiline textAlignVertical="top" />
+            <View className="mt-4">
+              <Pressable className="bg-forest py-4 rounded-md items-center" onPress={handleApply} disabled={applying}>
+                <Text className="font-body-semibold text-sm text-white">{applying ? 'Submitting...' : 'Submit Application'}</Text>
               </Pressable>
               <Pressable onPress={() => setShowApply(false)}>
-                <Text style={{ ...typography.bodyMedium, color: colors.textSecondary, textAlign: 'center', marginTop: spacing.sm }}>Cancel</Text>
+                <Text className="font-body-medium text-base text-gray-500 text-center mt-2">Cancel</Text>
               </Pressable>
             </View>
           </View>
@@ -167,34 +166,3 @@ export default function JobDetailScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  pad: { padding: spacing.md },
-  scroll: { paddingBottom: spacing.xxl },
-  hero: { padding: spacing.md, backgroundColor: colors.surface, ...shadows.sm },
-  title: { ...typography.h2, color: colors.text },
-  company: { ...typography.bodyMedium, color: colors.textSecondary, marginTop: spacing.xs },
-  badges: { flexDirection: 'row', gap: spacing.xs, marginTop: spacing.sm, flexWrap: 'wrap' },
-  badge: { backgroundColor: colors.primary + '15', paddingHorizontal: spacing.sm, paddingVertical: 2, borderRadius: radius.sm },
-  badgeText: { ...typography.caption, color: colors.primary },
-  section: { padding: spacing.md, backgroundColor: colors.surface, marginTop: spacing.sm, ...shadows.sm },
-  sectionTitle: { ...typography.h4, color: colors.text, marginBottom: spacing.sm },
-  body: { ...typography.body, color: colors.textSecondary },
-  detailRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: spacing.xs, borderBottomWidth: 1, borderBottomColor: colors.divider },
-  detailLabel: { ...typography.bodySm, color: colors.textSecondary },
-  detailValue: { ...typography.bodyMedium, color: colors.text },
-  skillsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
-  skillBadge: { backgroundColor: colors.primary + '15', paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, borderRadius: radius.full },
-  skillText: { ...typography.bodySm, color: colors.primary },
-  actions: { padding: spacing.md, gap: spacing.sm },
-  primaryBtn: { backgroundColor: colors.primary, paddingVertical: spacing.md, borderRadius: radius.md, alignItems: 'center' },
-  primaryBtnText: { ...typography.button, color: colors.textInverse },
-  secondaryBtn: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.primary, paddingVertical: spacing.md, borderRadius: radius.md, alignItems: 'center' },
-  secondaryBtnText: { ...typography.button, color: colors.primary },
-  dangerBtn: { backgroundColor: colors.dangerLight, paddingVertical: spacing.md, borderRadius: radius.md, alignItems: 'center' },
-  dangerBtnText: { ...typography.button, color: colors.danger },
-  statusBadge: { paddingVertical: spacing.md, borderRadius: radius.md, alignItems: 'center' },
-  applyForm: { padding: spacing.md, backgroundColor: colors.surface, marginTop: spacing.sm, ...shadows.sm },
-  input: { backgroundColor: colors.background, borderRadius: radius.sm, padding: spacing.md, ...typography.body, color: colors.text, borderWidth: 1, borderColor: colors.border },
-  applyActions: { marginTop: spacing.md },
-});

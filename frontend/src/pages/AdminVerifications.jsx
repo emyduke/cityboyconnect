@@ -1,4 +1,3 @@
-import './AdminVerifications.css';
 import { useState, useEffect } from 'react';
 import { getPendingVerifications, verifyMember } from '../api/client';
 import Card from '../components/Card';
@@ -38,32 +37,32 @@ export default function AdminVerifications() {
   };
 
   return (
-    <div className="admin-verify">
-      <h1>Pending Verifications</h1>
-      <p className="admin-verify__sub">Review voter card submissions from members</p>
+    <div>
+      <h1 className="text-2xl font-extrabold mb-1">Pending Verifications</h1>
+      <p className="text-gray-500 text-[0.9rem] mb-8">Review voter card submissions from members</p>
       {loading ? (
-        <div className="admin-verify__grid"><Skeleton variant="card" /><Skeleton variant="card" /></div>
+        <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fill,minmax(340px,1fr))] gap-4"><Skeleton variant="card" /><Skeleton variant="card" /></div>
       ) : members.length === 0 ? (
         <EmptyState title="No pending verifications" description="All voter cards have been reviewed" icon="✅" />
       ) : (
-        <div className="admin-verify__grid">
+        <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fill,minmax(340px,1fr))] gap-4">
           {members.map(m => (
-            <Card key={m.id} padding="md" className="verify-card">
-              <div className="verify-card__top">
+            <Card key={m.id} padding="md">
+              <div className="flex items-center gap-4 mb-4">
                 <Avatar src={m.profile_photo} name={m.full_name} size="md" />
-                <div className="verify-card__info">
-                  <h3>{m.full_name}</h3>
-                  <span className="verify-card__meta">{m.state_name} · {m.lga_name}</span>
+                <div>
+                  <h3 className="text-base font-semibold">{m.full_name}</h3>
+                  <span className="text-[0.8rem] text-gray-400">{m.state_name} · {m.lga_name}</span>
                 </div>
               </div>
-              <div className="verify-card__details">
-                <div className="verify-card__field"><label>VIN</label><span>{m.voter_card_number || '—'}</span></div>
-                <div className="verify-card__field"><label>Membership ID</label><span>{m.membership_id || '—'}</span></div>
+              <div className="grid grid-cols-2 gap-2 mb-4">
+                <div><label className="block text-[0.7rem] text-gray-400 uppercase tracking-wide">VIN</label><span className="text-[0.85rem] font-medium font-mono">{m.voter_card_number || '—'}</span></div>
+                <div><label className="block text-[0.7rem] text-gray-400 uppercase tracking-wide">Membership ID</label><span className="text-[0.85rem] font-medium font-mono">{m.membership_id || '—'}</span></div>
               </div>
               {m.voter_card_image && (
-                <img src={m.voter_card_image} alt="Voter card" className="verify-card__image" />
+                <img src={m.voter_card_image} alt="Voter card" className="w-full max-h-[200px] object-cover rounded-sm mb-4 border border-gray-200" />
               )}
-              <div className="verify-card__actions">
+              <div className="flex gap-2">
                 <Button size="sm" loading={processing === m.id} onClick={() => handleVerify(m.id, 'approve')}>Approve</Button>
                 <Button size="sm" variant="danger" loading={processing === m.id} onClick={() => handleVerify(m.id, 'reject')}>Reject</Button>
               </div>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { colors, spacing, typography } from '../../theme';
 import { createJobListing, updateJobListing, getJobDetail, getSkills } from '../../api/opportunities';
 import { unwrap } from '../../api/client';
 import { useToastStore } from '../../store/toastStore';
@@ -72,9 +71,9 @@ export default function CreateJobScreen() {
   };
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: spacing.xxl }} keyboardShouldPersistTaps="handled">
-        <Text style={styles.heading}>{editId ? 'Edit Job' : 'Post a Job'}</Text>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
+      <ScrollView className="flex-1 bg-background p-4" contentContainerClassName="pb-12" keyboardShouldPersistTaps="handled">
+        <Text className="font-display-bold text-2xl text-gray-900 mb-4">{editId ? 'Edit Job' : 'Post a Job'}</Text>
 
         <Input label="Job Title *" value={form.title} onChangeText={(v: string) => set('title', v)} placeholder="e.g. Software Engineer" />
         <Input label="Company Name *" value={form.company_name} onChangeText={(v: string) => set('company_name', v)} placeholder="Company or organization" />
@@ -82,47 +81,47 @@ export default function CreateJobScreen() {
         <Input label="Description" value={form.description} onChangeText={(v: string) => set('description', v)} placeholder="Job description..." multiline numberOfLines={5} />
         <Input label="Requirements" value={form.requirements} onChangeText={(v: string) => set('requirements', v)} placeholder="Requirements..." multiline numberOfLines={4} />
 
-        <Text style={styles.label}>Job Type</Text>
-        <View style={styles.chipRow}>
+        <Text className="font-body-medium text-base text-gray-900 mt-4 mb-1">Job Type</Text>
+        <View className="flex-row flex-wrap gap-1">
           {JOB_TYPES.map((t) => (
-            <Text key={t} style={[styles.chip, form.job_type === t && styles.chipActive]} onPress={() => set('job_type', t)}>
+            <Text key={t} className={`font-body text-xs px-2 py-1 rounded-full border overflow-hidden ${form.job_type === t ? 'bg-forest/10 border-forest text-forest' : 'bg-surface border-gray-200 text-gray-500'}`} onPress={() => set('job_type', t)}>
               {t.replace('_', ' ')}
             </Text>
           ))}
         </View>
 
-        <Text style={styles.label}>Work Mode</Text>
-        <View style={styles.chipRow}>
+        <Text className="font-body-medium text-base text-gray-900 mt-4 mb-1">Work Mode</Text>
+        <View className="flex-row flex-wrap gap-1">
           {WORK_MODES.map((m) => (
-            <Text key={m} style={[styles.chip, form.work_mode === m && styles.chipActive]} onPress={() => set('work_mode', m)}>
+            <Text key={m} className={`font-body text-xs px-2 py-1 rounded-full border overflow-hidden ${form.work_mode === m ? 'bg-forest/10 border-forest text-forest' : 'bg-surface border-gray-200 text-gray-500'}`} onPress={() => set('work_mode', m)}>
               {m}
             </Text>
           ))}
         </View>
 
-        <Text style={styles.label}>Experience Level</Text>
-        <View style={styles.chipRow}>
+        <Text className="font-body-medium text-base text-gray-900 mt-4 mb-1">Experience Level</Text>
+        <View className="flex-row flex-wrap gap-1">
           {EXP_LEVELS.map((e) => (
-            <Text key={e} style={[styles.chip, form.experience_level === e && styles.chipActive]} onPress={() => set('experience_level', e)}>
+            <Text key={e} className={`font-body text-xs px-2 py-1 rounded-full border overflow-hidden ${form.experience_level === e ? 'bg-forest/10 border-forest text-forest' : 'bg-surface border-gray-200 text-gray-500'}`} onPress={() => set('experience_level', e)}>
               {e}
             </Text>
           ))}
         </View>
 
-        <View style={styles.row}>
-          <View style={{ flex: 1 }}><Input label="Min Salary (₦)" value={form.salary_min} onChangeText={(v: string) => set('salary_min', v)} keyboardType="numeric" /></View>
-          <View style={{ width: spacing.sm }} />
-          <View style={{ flex: 1 }}><Input label="Max Salary (₦)" value={form.salary_max} onChangeText={(v: string) => set('salary_max', v)} keyboardType="numeric" /></View>
+        <View className="flex-row mt-2">
+          <View className="flex-1"><Input label="Min Salary (₦)" value={form.salary_min} onChangeText={(v: string) => set('salary_min', v)} keyboardType="numeric" /></View>
+          <View className="w-2" />
+          <View className="flex-1"><Input label="Max Salary (₦)" value={form.salary_max} onChangeText={(v: string) => set('salary_max', v)} keyboardType="numeric" /></View>
         </View>
 
         <Input label="Application URL (optional)" value={form.application_url} onChangeText={(v: string) => set('application_url', v)} placeholder="https://..." keyboardType="url" />
         <Input label="Deadline (YYYY-MM-DD)" value={form.application_deadline} onChangeText={(v: string) => set('application_deadline', v)} placeholder="2025-12-31" />
 
-        {error ? <Text style={styles.error}>{error}</Text> : null}
+        {error ? <Text className="font-body text-xs text-danger mt-2">{error}</Text> : null}
 
-        <View style={styles.btnRow}>
+        <View className="flex-row mt-6">
           <Button variant="outline" onPress={() => handleSubmit(false)} loading={loading} style={{ flex: 1 }}>Save Draft</Button>
-          <View style={{ width: spacing.sm }} />
+          <View className="w-2" />
           <Button onPress={() => handleSubmit(true)} loading={loading} style={{ flex: 1 }}>Publish</Button>
         </View>
       </ScrollView>
@@ -130,14 +129,3 @@ export default function CreateJobScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background, padding: spacing.md },
-  heading: { ...typography.h2, color: colors.text, marginBottom: spacing.md },
-  label: { ...typography.bodyMedium, color: colors.text, marginTop: spacing.md, marginBottom: spacing.xs },
-  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
-  chip: { ...typography.caption, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, backgroundColor: colors.surface, borderRadius: 999, borderWidth: 1, borderColor: colors.border, overflow: 'hidden', color: colors.textSecondary },
-  chipActive: { backgroundColor: colors.primary + '15', borderColor: colors.primary, color: colors.primary },
-  row: { flexDirection: 'row', marginTop: spacing.sm },
-  error: { ...typography.caption, color: colors.danger, marginTop: spacing.sm },
-  btnRow: { flexDirection: 'row', marginTop: spacing.lg },
-});

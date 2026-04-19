@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, RefreshControl, StyleSheet, Switch } from 'react-native';
+import { View, Text, ScrollView, RefreshControl, Switch } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, spacing, typography, radius, shadows } from '../../theme';
 import { adminApi } from '../../api/admin';
 import { useToastStore } from '../../store/toastStore';
 import Button from '../../components/ui/Button';
@@ -46,8 +45,8 @@ export default function AdminSettingsScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.safe} edges={['bottom']}>
-        <View style={styles.container}>
+      <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+        <View className="p-4 pb-12">
           <Skeleton variant="card" height={200} />
         </View>
       </SafeAreaView>
@@ -56,50 +55,50 @@ export default function AdminSettingsScreen() {
 
   if (!settings) {
     return (
-      <SafeAreaView style={styles.safe} edges={['bottom']}>
-        <View style={[styles.container, { alignItems: 'center', justifyContent: 'center' }]}>
-          <Text style={typography.body}>Unable to load settings</Text>
+      <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+        <View className="p-4 pb-12 flex-1 items-center justify-center">
+          <Text className="text-base font-body text-gray-900">Unable to load settings</Text>
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
       <ScrollView
-        contentContainerStyle={styles.container}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+        contentContainerClassName="p-4 pb-12"
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1a472a" />}
       >
-        <Card style={styles.section}>
-          <Text style={styles.sectionTitle}>General</Text>
+        <Card className="mb-4">
+          <Text className="text-lg font-display-semibold text-gray-900 mb-4">General</Text>
           {settings.site_name != null && (
             <Input label="Site Name" value={settings.site_name || ''} onChangeText={(v: string) => updateField('site_name', v)} />
           )}
           {settings.maintenance_mode != null && (
-            <View style={styles.switchRow}>
-              <Text style={styles.switchLabel}>Maintenance Mode</Text>
+            <View className="flex-row justify-between items-center py-2 border-b border-gray-100">
+              <Text className="text-base font-body text-gray-900">Maintenance Mode</Text>
               <Switch
                 value={settings.maintenance_mode}
                 onValueChange={(v) => updateField('maintenance_mode', v)}
-                trackColor={{ true: colors.primary }}
-                thumbColor={colors.surface}
+                trackColor={{ true: '#1a472a' }}
+                thumbColor="#FFFFFF"
               />
             </View>
           )}
           {settings.registration_enabled != null && (
-            <View style={styles.switchRow}>
-              <Text style={styles.switchLabel}>Registration Enabled</Text>
+            <View className="flex-row justify-between items-center py-2 border-b border-gray-100">
+              <Text className="text-base font-body text-gray-900">Registration Enabled</Text>
               <Switch
                 value={settings.registration_enabled}
                 onValueChange={(v) => updateField('registration_enabled', v)}
-                trackColor={{ true: colors.primary }}
-                thumbColor={colors.surface}
+                trackColor={{ true: '#1a472a' }}
+                thumbColor="#FFFFFF"
               />
             </View>
           )}
         </Card>
 
-        <Button onPress={handleSave} loading={saving} size="lg" style={{ marginTop: spacing.md }}>
+        <Button onPress={handleSave} loading={saving} size="lg" className="mt-4">
           Save Settings
         </Button>
       </ScrollView>
@@ -107,14 +106,3 @@ export default function AdminSettingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  container: { padding: spacing.md, paddingBottom: spacing.xxl },
-  section: { marginBottom: spacing.md },
-  sectionTitle: { ...typography.h4, color: colors.text, marginBottom: spacing.md },
-  switchRow: {
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.divider,
-  },
-  switchLabel: { ...typography.body, color: colors.text },
-});

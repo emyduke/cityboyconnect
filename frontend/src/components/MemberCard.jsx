@@ -1,4 +1,3 @@
-import './MemberCard.css';
 import Avatar from './Avatar';
 import Badge from './Badge';
 
@@ -10,18 +9,18 @@ export default function MemberCard({ member, onClick }) {
     : '';
 
   return (
-    <div className="member-card" onClick={onClick}>
+    <div className="flex items-center gap-4 p-4 bg-white border border-gray-200 rounded-[10px] cursor-pointer transition-shadow hover:shadow-elevated" onClick={onClick}>
       <Avatar src={member.profile_photo} name={member.full_name} size="lg" />
-      <div className="member-card__info">
-        <h4 className="member-card__name">{member.full_name}</h4>
-        <span className="member-card__phone">{maskedPhone}</span>
-        <span className="member-card__location">{member.ward_name || member.lga_name || member.state_name || ''}</span>
+      <div className="flex-1 flex flex-col gap-0.5 min-w-0">
+        <h4 className="text-[0.95rem] font-semibold text-gray-900 truncate">{member.full_name}</h4>
+        <span className="text-[0.8rem] text-gray-500 font-mono">{maskedPhone}</span>
+        <span className="text-[0.8rem] text-gray-400">{member.ward_name || member.lga_name || member.state_name || ''}</span>
       </div>
-      <div className="member-card__meta">
+      <div className="flex flex-col items-end gap-1 shrink-0">
         <Badge variant={statusVariant[member.voter_verification_status] || 'default'}>
           {member.voter_verification_status || 'Pending'}
         </Badge>
-        {member.membership_id && <span className="member-card__id">{member.membership_id}</span>}
+        {member.membership_id && <span className="text-[0.7rem] text-gray-400 font-mono">{member.membership_id}</span>}
       </div>
     </div>
   );

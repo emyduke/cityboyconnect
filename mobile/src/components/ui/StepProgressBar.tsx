@@ -1,7 +1,6 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
-import { colors, radius } from '../../theme';
 
 interface StepProgressBarProps {
   current: number;
@@ -16,35 +15,10 @@ export default function StepProgressBar({ current, total }: StepProgressBarProps
   }));
 
   return (
-    <View style={styles.track}>
-      <Animated.View style={[styles.fill, fillStyle]}>
-        <View style={styles.dot} />
+    <View className="h-1 bg-gray-200 rounded-[2px] overflow-visible">
+      <Animated.View className="h-1 bg-forest rounded-[2px] relative overflow-visible" style={fillStyle}>
+        <View className="absolute -right-[5px] -top-[3px] w-[10px] h-[10px] rounded-full bg-gold" />
       </Animated.View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  track: {
-    height: 4,
-    backgroundColor: colors.border,
-    borderRadius: 2,
-    overflow: 'visible',
-  },
-  fill: {
-    height: 4,
-    backgroundColor: colors.primary,
-    borderRadius: 2,
-    position: 'relative',
-    overflow: 'visible',
-  },
-  dot: {
-    position: 'absolute',
-    right: -5,
-    top: -3,
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: colors.accent,
-  },
-});

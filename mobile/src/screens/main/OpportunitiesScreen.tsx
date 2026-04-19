@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, TextInput, Pressable, StyleSheet, RefreshControl, ScrollView } from 'react-native';
+import { View, Text, FlatList, TextInput, Pressable, RefreshControl, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { colors, spacing, typography, radius, shadows } from '../../theme';
 import { searchTalents, searchProfessionals, searchBusinesses, getTalentCategories } from '../../api/opportunities';
 import { unwrap } from '../../api/client';
 import Avatar from '../../components/ui/Avatar';
@@ -58,96 +57,67 @@ export default function OpportunitiesScreen() {
   };
 
   const renderCard = ({ item }: { item: any }) => (
-    <Pressable style={styles.card} onPress={() => navigateToDetail(item)}>
+    <Pressable className="flex-row items-center bg-surface rounded-md p-4 mb-2 shadow-sm" onPress={() => navigateToDetail(item)}>
       <Avatar name={item.full_name || item.name || ''} size="md" />
-      <View style={styles.cardContent}>
-        <Text style={styles.cardName} numberOfLines={1}>{item.full_name || item.name || item.title}</Text>
-        <Text style={styles.cardSub} numberOfLines={1}>
+      <View className="flex-1 ml-4">
+        <Text className="text-base font-body-medium text-gray-900" numberOfLines={1}>{item.full_name || item.name || item.title}</Text>
+        <Text className="text-sm font-body text-gray-500 mt-0.5" numberOfLines={1}>
           {tab === 'talents' ? item.category_display || item.category : tab === 'professionals' ? item.headline : item.category_display}
         </Text>
-        {item.state_name && <Text style={styles.cardMeta}>{item.state_name}{item.lga_name ? ` · ${item.lga_name}` : ''}</Text>}
+        {item.state_name && <Text className="text-xs font-body text-gray-400 mt-0.5">{item.state_name}{item.lga_name ? ` · ${item.lga_name}` : ''}</Text>}
       </View>
-      <Text style={styles.chevron}>›</Text>
+      <Text className="text-xl text-gray-400">›</Text>
     </Pressable>
   );
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Opportunities</Text>
-        <Pressable style={styles.myBtn} onPress={() => navigation.navigate('MyOpportunities')}>
-          <Text style={styles.myBtnText}>My Profiles</Text>
+    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
+      <View className="flex-row justify-between items-center px-4 py-2">
+        <Text className="text-2xl font-display-bold text-gray-900">Opportunities</Text>
+        <Pressable className="bg-forest px-4 py-2 rounded-sm" onPress={() => navigation.navigate('MyOpportunities')}>
+          <Text className="text-[13px] font-body-bold text-white">My Profiles</Text>
         </Pressable>
       </View>
 
-      <View style={styles.tabs}>
+      <View className="flex-row px-4 gap-1 mb-2">
         {tabs.map(t => (
-          <Pressable key={t.key} style={[styles.tab, tab === t.key && styles.tabActive]} onPress={() => { setTab(t.key); setSelectedCategory(''); }}>
-            <Text style={[styles.tabText, tab === t.key && styles.tabTextActive]}>{t.label}</Text>
+          <Pressable key={t.key} className={`flex-1 py-2 rounded-sm items-center ${tab === t.key ? 'bg-forest' : 'bg-surface'}`} onPress={() => { setTab(t.key); setSelectedCategory(''); }}>
+            <Text className={`text-base font-body-medium ${tab === t.key ? 'text-white' : 'text-gray-500'}`}>{t.label}</Text>
           </Pressable>
         ))}
       </View>
 
-      <View style={styles.searchWrap}>
-        <TextInput style={styles.searchInput} placeholder="Search..." placeholderTextColor={colors.textTertiary} value={search} onChangeText={setSearch} />
+      <View className="px-4 mb-2">
+        <TextInput className="bg-surface rounded-sm px-4 py-2 text-base font-body text-gray-900 border border-gray-200" placeholder="Search..." placeholderTextColor="#9ca3af" value={search} onChangeText={setSearch} />
       </View>
 
       {tab === 'talents' && categories.length > 0 && (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chips} contentContainerStyle={{ paddingHorizontal: spacing.md }}>
-          <Pressable style={[styles.chip, !selectedCategory && styles.chipActive]} onPress={() => setSelectedCategory('')}>
-            <Text style={[styles.chipText, !selectedCategory && styles.chipTextActive]}>All</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-2" style={{ maxHeight: 40 }} contentContainerClassName="px-4">
+          <Pressable className={`px-4 py-1 rounded-full mr-1 border ${!selectedCategory ? 'bg-forest border-forest' : 'bg-surface border-gray-200'}`} onPress={() => setSelectedCategory('')}>
+            <Text className={`text-sm font-body ${!selectedCategory ? 'text-white' : 'text-gray-500'}`}>All</Text>
           </Pressable>
           {categories.map((c: any) => (
-            <Pressable key={c.value} style={[styles.chip, selectedCategory === c.value && styles.chipActive]} onPress={() => setSelectedCategory(c.value)}>
-              <Text style={[styles.chipText, selectedCategory === c.value && styles.chipTextActive]}>{c.label}</Text>
+            <Pressable key={c.value} className={`px-4 py-1 rounded-full mr-1 border ${selectedCategory === c.value ? 'bg-forest border-forest' : 'bg-surface border-gray-200'}`} onPress={() => setSelectedCategory(c.value)}>
+              <Text className={`text-sm font-body ${selectedCategory === c.value ? 'text-white' : 'text-gray-500'}`}>{c.label}</Text>
             </Pressable>
           ))}
         </ScrollView>
       )}
 
       {loading ? (
-        <View style={styles.loadWrap}>
-          {[1, 2, 3, 4].map(i => <Skeleton key={i} variant="card" style={{ marginBottom: spacing.sm }} />)}
+        <View className="p-4">
+          {[1, 2, 3, 4].map(i => <Skeleton key={i} variant="card" className="mb-2" />)}
         </View>
       ) : (
         <FlatList
           data={data}
           keyExtractor={(item, i) => String(item.id || i)}
           renderItem={renderCard}
-          contentContainerStyle={styles.list}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
-          ListEmptyComponent={<Text style={styles.empty}>No results found</Text>}
+          contentContainerClassName="px-4 pb-12"
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1a472a" />}
+          ListEmptyComponent={<Text className="text-base font-body text-gray-500 text-center p-8">No results found</Text>}
         />
       )}
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: spacing.md, paddingVertical: spacing.sm },
-  title: { ...typography.h2, color: colors.text },
-  myBtn: { backgroundColor: colors.primary, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, borderRadius: radius.sm },
-  myBtnText: { ...typography.button, color: colors.textInverse, fontSize: 13 },
-  tabs: { flexDirection: 'row', paddingHorizontal: spacing.md, gap: spacing.xs, marginBottom: spacing.sm },
-  tab: { flex: 1, paddingVertical: spacing.sm, borderRadius: radius.sm, alignItems: 'center', backgroundColor: colors.surface },
-  tabActive: { backgroundColor: colors.primary },
-  tabText: { ...typography.bodyMedium, color: colors.textSecondary },
-  tabTextActive: { color: colors.textInverse },
-  searchWrap: { paddingHorizontal: spacing.md, marginBottom: spacing.sm },
-  searchInput: { backgroundColor: colors.surface, borderRadius: radius.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, ...typography.body, color: colors.text, borderWidth: 1, borderColor: colors.border },
-  chips: { marginBottom: spacing.sm, maxHeight: 40 },
-  chip: { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radius.full, backgroundColor: colors.surface, marginRight: spacing.xs, borderWidth: 1, borderColor: colors.border },
-  chipActive: { backgroundColor: colors.primary, borderColor: colors.primary },
-  chipText: { ...typography.bodySm, color: colors.textSecondary },
-  chipTextActive: { color: colors.textInverse },
-  list: { paddingHorizontal: spacing.md, paddingBottom: spacing.xxl },
-  card: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.md, marginBottom: spacing.sm, ...shadows.sm },
-  cardContent: { flex: 1, marginLeft: spacing.md },
-  cardName: { ...typography.bodyMedium, color: colors.text },
-  cardSub: { ...typography.bodySm, color: colors.textSecondary, marginTop: 2 },
-  cardMeta: { ...typography.caption, color: colors.textTertiary, marginTop: 2 },
-  chevron: { fontSize: 20, color: colors.textTertiary },
-  loadWrap: { padding: spacing.md },
-  empty: { ...typography.body, color: colors.textSecondary, textAlign: 'center', padding: spacing.xl },
-});

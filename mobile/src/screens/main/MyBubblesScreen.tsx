@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, FlatList, StyleSheet, RefreshControl, Text, Pressable } from 'react-native';
+import { View, FlatList, RefreshControl, Text, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { colors, spacing, shadows } from '../../theme';
 import { getMyBubbles, Bubble } from '../../api/bubbles';
 import { unwrap } from '../../api/client';
 import Skeleton from '../../components/ui/Skeleton';
@@ -47,26 +46,26 @@ export default function MyBubblesScreen() {
     const sc = STATUS_COLORS[item.status] || STATUS_COLORS.PENDING;
     const idx = STATUS_ORDER.indexOf(item.status);
     return (
-      <Pressable style={styles.card} onPress={() => navigation.navigate('BubbleDetail', { id: item.id })}>
+      <Pressable className="bg-surface rounded-lg p-5 mb-2 shadow-sm" onPress={() => navigation.navigate('BubbleDetail', { id: item.id })}>
         {!['REJECTED', 'CANCELLED'].includes(item.status) && (
-          <View style={styles.stepper}>
+          <View className="flex-row gap-1 mb-2.5">
             {STATUS_ORDER.map((s, i) => (
-              <View key={s} style={[styles.stepperBar, i < idx && styles.stepperDone, i === idx && styles.stepperActive]} />
+              <View key={s} className={`flex-1 h-1 rounded-[2px] ${i < idx ? 'bg-forest' : i === idx ? 'bg-gold' : 'bg-gray-200'}`} />
             ))}
           </View>
         )}
-        <View style={styles.cardTop}>
-          <View style={[styles.catBadge, { backgroundColor: CAT_COLORS[item.category] || '#6b7280' }]}>
-            <Text style={styles.catBadgeText}>{item.category_display}</Text>
+        <View className="flex-row gap-2 mb-2">
+          <View className="px-2.5 py-0.5 rounded-full" style={{ backgroundColor: CAT_COLORS[item.category] || '#6b7280' }}>
+            <Text className="text-white text-xs font-body-semibold">{item.category_display}</Text>
           </View>
-          <View style={[styles.statusBadge, { backgroundColor: sc.bg }]}>
-            <Text style={[styles.statusBadgeText, { color: sc.text }]}>{item.status_display}</Text>
+          <View className="px-2.5 py-0.5 rounded-full" style={{ backgroundColor: sc.bg }}>
+            <Text className="text-xs font-body-semibold" style={{ color: sc.text }}>{item.status_display}</Text>
           </View>
         </View>
-        <Text style={styles.cardTitle} numberOfLines={1}>{item.title}</Text>
-        <View style={styles.cardMeta}>
-          <Text style={styles.cardDate}>{new Date(item.created_at).toLocaleDateString()}</Text>
-          <Text style={styles.cardDate}>{item.images_count} photo{item.images_count !== 1 ? 's' : ''}</Text>
+        <Text className="text-base font-bold text-gray-900 mb-1" numberOfLines={1}>{item.title}</Text>
+        <View className="flex-row justify-between">
+          <Text className="text-xs text-gray-400">{new Date(item.created_at).toLocaleDateString()}</Text>
+          <Text className="text-xs text-gray-400">{item.images_count} photo{item.images_count !== 1 ? 's' : ''}</Text>
         </View>
       </Pressable>
     );
@@ -74,24 +73,24 @@ export default function MyBubblesScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.safe} edges={['bottom']}>
-        <View style={styles.container}>
-          {[1, 2].map((k) => <Skeleton key={k} variant="card" style={{ marginBottom: spacing.sm }} />)}
+      <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+        <View className="p-4">
+          {[1, 2].map((k) => <Skeleton key={k} variant="card" className="mb-2" />)}
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
       <FlatList
         data={bubbles}
         keyExtractor={(item) => String(item.id)}
         renderItem={renderCard}
-        contentContainerStyle={styles.container}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetch(); }} tintColor={colors.primary} />}
+        contentContainerClassName="p-4"
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetch(); }} tintColor="#1a472a" />}
         ListHeaderComponent={
-          <Button variant="primary" size="sm" onPress={() => navigation.navigate('CreateBubble')} style={{ marginBottom: spacing.md }}>
+          <Button variant="primary" size="sm" onPress={() => navigation.navigate('CreateBubble')} className="mb-4">
             + Create Bubble
           </Button>
         }
@@ -103,20 +102,3 @@ export default function MyBubblesScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  container: { padding: spacing.md },
-  card: { backgroundColor: colors.surface, borderRadius: 16, padding: 20, marginBottom: spacing.sm, ...shadows.sm },
-  stepper: { flexDirection: 'row', gap: 4, marginBottom: 10 },
-  stepperBar: { flex: 1, height: 4, borderRadius: 2, backgroundColor: colors.border },
-  stepperDone: { backgroundColor: colors.primary },
-  stepperActive: { backgroundColor: colors.accent },
-  cardTop: { flexDirection: 'row', gap: 8, marginBottom: 8 },
-  catBadge: { paddingHorizontal: 10, paddingVertical: 2, borderRadius: 100 },
-  catBadgeText: { color: '#fff', fontSize: 12, fontWeight: '600' },
-  statusBadge: { paddingHorizontal: 10, paddingVertical: 2, borderRadius: 100 },
-  statusBadgeText: { fontSize: 12, fontWeight: '600' },
-  cardTitle: { fontSize: 16, fontWeight: '700', color: colors.text, marginBottom: 4 },
-  cardMeta: { flexDirection: 'row', justifyContent: 'space-between' },
-  cardDate: { fontSize: 12, color: colors.textTertiary },
-});

@@ -1,7 +1,6 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import Badge from './ui/Badge';
-import { colors, spacing, radius, typography, shadows } from '../theme';
 
 interface AnnouncementCardProps {
   announcement: {
@@ -20,38 +19,31 @@ export default function AnnouncementCard({ announcement, onPress }: Announcement
     : announcement.priority === 'IMPORTANT' ? 'warning' : 'default';
 
   return (
-    <Pressable onPress={onPress} style={[styles.card, shadows.sm, !announcement.is_read && styles.unread]}>
-      <View style={styles.header}>
-        <Text style={styles.title} numberOfLines={2}>{announcement.title}</Text>
+    <Pressable
+      onPress={onPress}
+      className={`bg-surface rounded-md p-4 mb-2 relative shadow-sm ${!announcement.is_read ? 'border-l-[3px] border-l-forest' : ''}`}
+    >
+      <View className="flex-row justify-between items-start gap-2">
+        <Text className="text-[15px] font-body-medium leading-[22px] text-gray-900 flex-1" numberOfLines={2}>
+          {announcement.title}
+        </Text>
         {announcement.priority && announcement.priority !== 'NORMAL' && (
           <Badge label={announcement.priority} variant={priorityVariant} />
         )}
       </View>
       {announcement.body ? (
-        <Text style={styles.body} numberOfLines={2}>{announcement.body}</Text>
+        <Text className="text-[13px] font-body leading-[18px] text-gray-500 mt-1" numberOfLines={2}>
+          {announcement.body}
+        </Text>
       ) : null}
       {announcement.published_at ? (
-        <Text style={styles.date}>
+        <Text className="text-xs font-body tracking-wide text-gray-400 mt-1">
           {new Date(announcement.published_at).toLocaleDateString('en-NG', { day: 'numeric', month: 'short' })}
         </Text>
       ) : null}
-      {!announcement.is_read && <View style={styles.dot} />}
+      {!announcement.is_read && (
+        <View className="absolute top-4 right-4 w-2 h-2 rounded-full bg-forest" />
+      )}
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    marginBottom: spacing.sm,
-    position: 'relative',
-  },
-  unread: { borderLeftWidth: 3, borderLeftColor: colors.primary },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: spacing.sm },
-  title: { ...typography.bodyMedium, color: colors.text, flex: 1 },
-  body: { ...typography.bodySm, color: colors.textSecondary, marginTop: spacing.xs },
-  date: { ...typography.caption, color: colors.textTertiary, marginTop: spacing.xs },
-  dot: { position: 'absolute', top: spacing.md, right: spacing.md, width: 8, height: 8, borderRadius: 4, backgroundColor: colors.primary },
-});

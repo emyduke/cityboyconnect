@@ -1,4 +1,3 @@
-import './SetPassword.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Input from '../components/Input';
@@ -39,18 +38,18 @@ export default function SetPassword() {
   };
 
   return (
-    <div className="set-password-page">
-      <div className="set-password-card">
-        <h2 className="set-password-title">
+    <div className="min-h-[80vh] flex items-center justify-center p-6">
+      <div className="w-full max-w-[420px] bg-white rounded-3xl p-8 border border-gray-100 shadow-[0_4px_24px_rgba(26,71,42,0.08)]">
+        <h2 className="font-display text-xl font-bold text-gray-900 mb-1.5">
           {user?.has_password ? 'Change Password' : 'Set a Password'}
         </h2>
-        <p className="set-password-sub">
+        <p className="text-sm text-gray-500 mb-6">
           {user?.has_password
             ? 'Update the password you use to sign in.'
             : 'Set a password so you can sign in without needing a code every time.'}
         </p>
 
-        <form onSubmit={handleSubmit} className="set-password-form">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {user?.has_password && (
             <Input
               type="password"
@@ -72,8 +71,8 @@ export default function SetPassword() {
             value={confPwd}
             onChange={(e) => setConfPwd(e.target.value)}
           />
-          {error && <p className="set-password-error">{error}</p>}
-          <Button type="submit" loading={loading} size="lg" className="set-password-btn">
+          {error && <p className="text-danger text-[0.85rem] text-center">{error}</p>}
+          <Button type="submit" loading={loading} size="lg" className="w-full">
             {user?.has_password ? 'Update Password' : 'Set Password'}
           </Button>
         </form>

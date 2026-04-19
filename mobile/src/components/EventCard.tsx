@@ -1,7 +1,6 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import Badge from './ui/Badge';
-import { colors, spacing, radius, typography, shadows } from '../theme';
 
 interface EventCardProps {
   event: {
@@ -16,50 +15,32 @@ interface EventCardProps {
 }
 
 export default function EventCard({ event, onPress }: EventCardProps) {
-  const date = event.start_datetime
-    ? new Date(event.start_datetime).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' })
-    : '';
-
   return (
-    <Pressable onPress={onPress} style={[styles.card, shadows.sm]}>
-      <View style={styles.dateBox}>
-        <Text style={styles.dateDay}>{event.start_datetime ? new Date(event.start_datetime).getDate() : '--'}</Text>
-        <Text style={styles.dateMonth}>{event.start_datetime ? new Date(event.start_datetime).toLocaleString('en', { month: 'short' }).toUpperCase() : ''}</Text>
+    <Pressable onPress={onPress} className="bg-surface rounded-md p-4 flex-row mb-2 shadow-sm">
+      <View className="w-[50px] h-[50px] bg-forest-light rounded-sm items-center justify-center mr-2">
+        <Text className="text-xl font-display-bold text-white">
+          {event.start_datetime ? new Date(event.start_datetime).getDate() : '--'}
+        </Text>
+        <Text className="text-xs font-body-bold tracking-wide text-gold-light">
+          {event.start_datetime ? new Date(event.start_datetime).toLocaleString('en', { month: 'short' }).toUpperCase() : ''}
+        </Text>
       </View>
-      <View style={styles.info}>
-        <Text style={styles.title} numberOfLines={2}>{event.title}</Text>
-        {event.venue_name ? <Text style={styles.venue} numberOfLines={1}>📍 {event.venue_name}</Text> : null}
-        <View style={styles.meta}>
+      <View className="flex-1">
+        <Text className="text-[15px] font-body-medium leading-[22px] text-gray-900" numberOfLines={2}>
+          {event.title}
+        </Text>
+        {event.venue_name ? (
+          <Text className="text-xs font-body tracking-wide text-gray-500 mt-0.5" numberOfLines={1}>
+            📍 {event.venue_name}
+          </Text>
+        ) : null}
+        <View className="flex-row items-center gap-2 mt-1">
           {event.event_type ? <Badge label={event.event_type} /> : null}
-          <Text style={styles.attendance}>👥 {event.attendance_count ?? 0}</Text>
+          <Text className="text-xs font-body tracking-wide text-gray-500">
+            👥 {event.attendance_count ?? 0}
+          </Text>
         </View>
       </View>
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    flexDirection: 'row',
-    marginBottom: spacing.sm,
-  },
-  dateBox: {
-    width: 50,
-    height: 50,
-    backgroundColor: colors.primaryLight,
-    borderRadius: radius.sm,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.sm,
-  },
-  dateDay: { ...typography.h3, color: colors.textInverse },
-  dateMonth: { ...typography.caption, color: colors.accentLight, fontFamily: 'PlusJakartaSans-Bold' },
-  info: { flex: 1 },
-  title: { ...typography.bodyMedium, color: colors.text },
-  venue: { ...typography.caption, color: colors.textSecondary, marginTop: 2 },
-  meta: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: spacing.xs },
-  attendance: { ...typography.caption, color: colors.textSecondary },
-});

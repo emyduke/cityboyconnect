@@ -1,4 +1,3 @@
-import './CreateEvent.css';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CardFlow from '../components/CardFlow/CardFlow';
@@ -127,7 +126,7 @@ export default function CreateEvent() {
           <h2>Description <span style={{ fontSize: '0.78rem', color: 'var(--color-gray-400)', fontWeight: 400, marginLeft: '4px' }}>(optional)</span></h2>
           <p className="subtitle">Tell members what this event is about</p>
           <textarea
-            className="create-event__textarea"
+            className="w-full p-3 rounded-lg border border-gray-200 text-sm font-body resize-y"
             placeholder="Tell members what this event is about..."
             value={desc}
             onChange={e => setDesc(e.target.value)}
@@ -281,9 +280,9 @@ export default function CreateEvent() {
   ];
 
   return (
-    <div className="create-event">
-      <button className="create-event__back" onClick={() => navigate('/events')}>← Back to Events</button>
-      <h1>Create Event</h1>
+    <div className="flex flex-col gap-6">
+      <button className="bg-transparent border-none text-forest text-sm cursor-pointer font-medium self-start hover:underline" onClick={() => navigate('/events')}>← Back to Events</button>
+      <h1 className="text-2xl font-extrabold">Create Event</h1>
       <CardFlow cards={cards} />
     </div>
   );

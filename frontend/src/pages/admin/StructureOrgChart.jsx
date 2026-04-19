@@ -7,7 +7,6 @@ import Avatar from '../../components/Avatar';
 import Button from '../../components/Button';
 import Skeleton from '../../components/Skeleton';
 import { useToastStore } from '../../store/toastStore';
-import './StructureOrgChart.css';
 
 const POSITIONS = [
   { value: 'STATE_DIRECTOR', label: 'State Director' },
@@ -138,56 +137,56 @@ export default function StructureOrgChart() {
   };
 
   return (
-    <div className="admin-structure">
-      <div className="admin-structure__header">
-        <h1>Structure & Leaders</h1>
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-extrabold">Structure & Leaders</h1>
         <Button size="sm" onClick={() => setAppointModal(true)}>+ Appoint Leader</Button>
       </div>
-      <div className="admin-structure__selector">
+      <div className="mb-6 max-w-[400px]">
         <SearchableSelect label="Select State" options={states} value={selectedState} onChange={handleStateChange} placeholder="Choose a state to view" />
       </div>
 
       {loading && (
-        <div className="admin-structure__grid">
+        <div className="grid grid-cols-4 max-md:grid-cols-2 gap-4">
           {[...Array(4)].map((_, i) => <Skeleton key={i} variant="card" />)}
         </div>
       )}
 
       {!loading && orgChart && (
-        <div className="admin-structure__tree">
+        <div>
           {leadership.length > 0 ? (
-            <div className="admin-structure__leaders-grid">
+            <div className="grid grid-cols-3 max-md:grid-cols-1 gap-4 mb-6">
               {leadership.map((leader, i) => (
-                <Card key={i} padding="md" className="admin-structure__node">
-                  <div className="admin-structure__node-content">
+                <Card key={i} padding="md">
+                  <div className="flex items-center gap-3">
                     <Avatar name={leader.member_name || '—'} size="md" />
-                    <div className="admin-structure__node-info">
-                      <div className="admin-structure__node-name">{leader.member_name || 'Vacant'}</div>
-                      <div className="admin-structure__node-title">{leader.position_title || leader.position || leader.role}</div>
-                      <div className="admin-structure__node-meta">{leader.level_name || leader.scope || ''}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-bold text-sm truncate">{leader.member_name || 'Vacant'}</div>
+                      <div className="text-xs text-forest font-semibold">{leader.position_title || leader.position || leader.role}</div>
+                      <div className="text-xs text-gray-400">{leader.level_name || leader.scope || ''}</div>
                     </div>
-                    <button className="admin-structure__remove-btn" onClick={() => handleRemove(leader.id || leader.pk)} title="Remove">✕</button>
+                    <button className="bg-transparent border-none text-gray-400 cursor-pointer text-sm hover:text-danger" onClick={() => handleRemove(leader.id || leader.pk)} title="Remove">✕</button>
                   </div>
                 </Card>
               ))}
             </div>
           ) : (
-            <div className="admin-structure__empty">
-              <span className="admin-structure__empty-icon">🏛</span>
-              <p>No leaders assigned for this state</p>
-              <p className="admin-structure__empty-sub">Use "Appoint Leader" to assign positions</p>
+            <div className="text-center py-12 text-gray-400 flex flex-col items-center gap-2">
+              <span className="text-4xl">🏛</span>
+              <p className="text-sm">No leaders assigned for this state</p>
+              <p className="text-xs text-gray-300">Use "Appoint Leader" to assign positions</p>
             </div>
           )}
 
           {orgChart.lgas && orgChart.lgas.length > 0 && (
             <>
-              <h3 className="admin-structure__section-title">LGAs ({orgChart.lgas.length})</h3>
-              <div className="admin-structure__lga-grid">
+              <h3 className="text-base font-bold mb-3 mt-6">LGAs ({orgChart.lgas.length})</h3>
+              <div className="grid grid-cols-4 max-md:grid-cols-2 gap-3">
                 {orgChart.lgas.map((lga, i) => (
-                  <Card key={i} padding="sm" className="admin-structure__lga-node">
-                    <div className="admin-structure__lga-name">{lga.name}</div>
-                    <div className="admin-structure__lga-meta">{lga.member_count || 0} members</div>
-                    {lga.leader_name && <div className="admin-structure__lga-leader">👤 {lga.leader_name}</div>}
+                  <Card key={i} padding="sm">
+                    <div className="font-semibold text-sm">{lga.name}</div>
+                    <div className="text-xs text-gray-400">{lga.member_count || 0} members</div>
+                    {lga.leader_name && <div className="text-xs text-forest mt-1">👤 {lga.leader_name}</div>}
                   </Card>
                 ))}
               </div>
@@ -197,26 +196,26 @@ export default function StructureOrgChart() {
       )}
 
       {!loading && !orgChart && selectedState && (
-        <div className="admin-structure__empty">
-          <p>Could not load structure data</p>
+        <div className="text-center py-12 text-gray-400">
+          <p className="text-sm">Could not load structure data</p>
         </div>
       )}
 
       {!selectedState && !loading && (
-        <div className="admin-structure__empty">
-          <span className="admin-structure__empty-icon">🗺️</span>
-          <p>Select a state to view its structure</p>
+        <div className="text-center py-12 text-gray-400 flex flex-col items-center gap-2">
+          <span className="text-4xl">🗺️</span>
+          <p className="text-sm">Select a state to view its structure</p>
         </div>
       )}
 
       {appointModal && (
-        <div className="admin-structure__modal-overlay" onClick={() => setAppointModal(false)}>
-          <div className="admin-structure__modal" onClick={e => e.stopPropagation()}>
-            <h3>Appoint Leader</h3>
-            <p className="admin-structure__modal-sub">Select a member and assign a leadership position</p>
-            <form onSubmit={handleAppoint} className="admin-structure__appoint-form">
-              <div className="admin-structure__field">
-                <label>Member</label>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[1000]" onClick={() => setAppointModal(false)}>
+          <div className="bg-white rounded-xl p-6 w-full max-w-[480px] shadow-elevated max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-bold mb-1">Appoint Leader</h3>
+            <p className="text-xs text-gray-500 mb-4">Select a member and assign a leadership position</p>
+            <form onSubmit={handleAppoint} className="flex flex-col gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1">Member</label>
                 <SearchableSelect
                   options={memberOptions}
                   value={appointForm.user_id}
@@ -225,8 +224,8 @@ export default function StructureOrgChart() {
                   onSearchChange={setMemberSearch}
                 />
               </div>
-              <div className="admin-structure__field">
-                <label>Position</label>
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1">Position</label>
                 <SearchableSelect
                   options={POSITIONS}
                   value={appointForm.position}
@@ -234,8 +233,8 @@ export default function StructureOrgChart() {
                   placeholder="Select position"
                 />
               </div>
-              <div className="admin-structure__field">
-                <label>State</label>
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1">State</label>
                 <SearchableSelect
                   options={formStates}
                   value={appointForm.state_id}
@@ -244,8 +243,8 @@ export default function StructureOrgChart() {
                 />
               </div>
               {formLGAs.length > 0 && (
-                <div className="admin-structure__field">
-                  <label>LGA</label>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-1">LGA</label>
                   <SearchableSelect
                     options={formLGAs}
                     value={appointForm.lga_id}
@@ -255,8 +254,8 @@ export default function StructureOrgChart() {
                 </div>
               )}
               {formWards.length > 0 && (
-                <div className="admin-structure__field">
-                  <label>Ward</label>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-1">Ward</label>
                   <SearchableSelect
                     options={formWards}
                     value={appointForm.ward_id}
@@ -265,7 +264,7 @@ export default function StructureOrgChart() {
                   />
                 </div>
               )}
-              <div className="admin-structure__modal-actions">
+              <div className="flex justify-end gap-2 mt-2">
                 <Button type="button" variant="ghost" onClick={() => setAppointModal(false)}>Cancel</Button>
                 <Button type="submit" loading={appointLoading} disabled={!appointForm.user_id || !appointForm.position}>Appoint</Button>
               </div>

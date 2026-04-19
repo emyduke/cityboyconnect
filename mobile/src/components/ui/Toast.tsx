@@ -1,15 +1,14 @@
 import React, { useEffect } from 'react';
-import { Text, StyleSheet, Pressable } from 'react-native';
-import Animated, { useSharedValue, useAnimatedStyle, withSpring, withDelay, withTiming, runOnJS } from 'react-native-reanimated';
+import { Text, Pressable } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { colors, spacing, radius, typography, shadows } from '../../theme';
 import { useToastStore } from '../../store/toastStore';
 
-const typeColors: Record<string, { bg: string; text: string }> = {
-  success: { bg: colors.success, text: '#fff' },
-  error: { bg: colors.danger, text: '#fff' },
-  warning: { bg: colors.warning, text: '#fff' },
-  info: { bg: colors.info, text: '#fff' },
+const typeClasses: Record<string, string> = {
+  success: 'bg-success',
+  error: 'bg-danger',
+  warning: 'bg-warning',
+  info: 'bg-info',
 };
 
 export default function Toast() {
@@ -30,31 +29,18 @@ export default function Toast() {
 
   if (!toast) return null;
 
-  const c = typeColors[toast.type] || typeColors.info;
+  const bgClass = typeClasses[toast.type] || typeClasses.info;
 
   return (
-    <Animated.View style={[styles.container, { top: insets.top + spacing.sm, backgroundColor: c.bg }, shadows.md, animStyle]}>
-      <Pressable onPress={() => remove(toast.id)} style={styles.inner}>
-        <Text style={[styles.text, { color: c.text }]}>{toast.message}</Text>
+    <Animated.View
+      className={`absolute left-4 right-4 z-[9999] rounded-md shadow-md ${bgClass}`}
+      style={[{ top: insets.top + 8 }, animStyle]}
+    >
+      <Pressable onPress={() => remove(toast.id)} className="px-4 py-3">
+        <Text className="text-[15px] font-body-medium leading-[22px] text-white text-center">
+          {toast.message}
+        </Text>
       </Pressable>
     </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    left: spacing.md,
-    right: spacing.md,
-    zIndex: 9999,
-    borderRadius: radius.md,
-  },
-  inner: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm + 4,
-  },
-  text: {
-    ...typography.bodyMedium,
-    textAlign: 'center',
-  },
-});

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Pressable, Linking } from 'react-native';
+import { View, Text, ScrollView, Pressable, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { colors, spacing, typography, radius, shadows } from '../../theme';
 import { getOpportunityProfile } from '../../api/opportunities';
 import { unwrap } from '../../api/client';
 import Avatar from '../../components/ui/Avatar';
@@ -25,25 +24,25 @@ export default function ProfessionalDetailScreen() {
     })();
   }, [userId]);
 
-  if (loading) return <SafeAreaView style={styles.safe}><View style={styles.pad}><Skeleton variant="card" /><Skeleton variant="card" style={{ marginTop: spacing.md }} /></View></SafeAreaView>;
+  if (loading) return <SafeAreaView className="flex-1 bg-background"><View className="p-4"><Skeleton variant="card" /><Skeleton variant="card" className="mt-4" /></View></SafeAreaView>;
   if (!profile) return null;
 
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
-      <ScrollView contentContainerStyle={styles.scroll}>
-        <View style={styles.hero}>
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+      <ScrollView contentContainerClassName="pb-12">
+        <View className="items-center py-8 bg-surface shadow-sm">
           <Avatar name={profile.full_name || ''} size="lg" />
-          <Text style={styles.name}>{profile.full_name}</Text>
-          {profile.headline && <Text style={styles.headline}>{profile.headline}</Text>}
+          <Text className="text-2xl font-display-bold text-gray-900 mt-2">{profile.full_name}</Text>
+          {profile.headline && <Text className="text-base font-body-medium text-forest mt-1 text-center px-6">{profile.headline}</Text>}
         </View>
 
         {profile.skills?.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Skills</Text>
-            <View style={styles.skillsRow}>
+          <View className="p-4 bg-surface mt-2 shadow-sm">
+            <Text className="text-lg font-display-semibold text-gray-900 mb-2">Skills</Text>
+            <View className="flex-row flex-wrap gap-1">
               {profile.skills.map((s: any, i: number) => (
-                <View key={i} style={styles.skillBadge}>
-                  <Text style={styles.skillText}>{typeof s === 'string' ? s : s.name}</Text>
+                <View key={i} className="bg-forest/15 px-2 py-1 rounded-full">
+                  <Text className="text-sm font-body text-forest">{typeof s === 'string' ? s : s.name}</Text>
                 </View>
               ))}
             </View>
@@ -51,62 +50,42 @@ export default function ProfessionalDetailScreen() {
         )}
 
         {profile.bio && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>About</Text>
-            <Text style={styles.body}>{profile.bio}</Text>
+          <View className="p-4 bg-surface mt-2 shadow-sm">
+            <Text className="text-lg font-display-semibold text-gray-900 mb-2">About</Text>
+            <Text className="text-base font-body text-gray-500">{profile.bio}</Text>
           </View>
         )}
 
         {profile.work_experience?.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Experience</Text>
+          <View className="p-4 bg-surface mt-2 shadow-sm">
+            <Text className="text-lg font-display-semibold text-gray-900 mb-2">Experience</Text>
             {profile.work_experience.map((w: any, i: number) => (
-              <View key={i} style={styles.expItem}>
-                <Text style={styles.expTitle}>{w.title || w.role}</Text>
-                <Text style={styles.expCompany}>{w.company}{w.years ? ` · ${w.years}` : ''}</Text>
+              <View key={i} className="py-2 border-b border-gray-200">
+                <Text className="text-base font-body-medium text-gray-900">{w.title || w.role}</Text>
+                <Text className="text-sm font-body text-gray-500 mt-0.5">{w.company}{w.years ? ` · ${w.years}` : ''}</Text>
               </View>
             ))}
           </View>
         )}
 
         {profile.education?.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Education</Text>
+          <View className="p-4 bg-surface mt-2 shadow-sm">
+            <Text className="text-lg font-display-semibold text-gray-900 mb-2">Education</Text>
             {profile.education.map((e: any, i: number) => (
-              <View key={i} style={styles.expItem}>
-                <Text style={styles.expTitle}>{e.degree || e.qualification}</Text>
-                <Text style={styles.expCompany}>{e.school || e.institution}{e.year ? ` · ${e.year}` : ''}</Text>
+              <View key={i} className="py-2 border-b border-gray-200">
+                <Text className="text-base font-body-medium text-gray-900">{e.degree || e.qualification}</Text>
+                <Text className="text-sm font-body text-gray-500 mt-0.5">{e.school || e.institution}{e.year ? ` · ${e.year}` : ''}</Text>
               </View>
             ))}
           </View>
         )}
 
         {profile.cv_url && (
-          <Pressable style={styles.cvBtn} onPress={() => Linking.openURL(profile.cv_url)}>
-            <Text style={styles.cvBtnText}>📄 Download CV</Text>
+          <Pressable className="mx-4 mt-4 bg-forest py-4 rounded-md items-center" onPress={() => Linking.openURL(profile.cv_url)}>
+            <Text className="text-sm font-body-bold text-white">📄 Download CV</Text>
           </Pressable>
         )}
       </ScrollView>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  pad: { padding: spacing.md },
-  scroll: { paddingBottom: spacing.xxl },
-  hero: { alignItems: 'center', paddingVertical: spacing.xl, backgroundColor: colors.surface, ...shadows.sm },
-  name: { ...typography.h2, color: colors.text, marginTop: spacing.sm },
-  headline: { ...typography.bodyMedium, color: colors.primary, marginTop: spacing.xs, textAlign: 'center', paddingHorizontal: spacing.lg },
-  section: { padding: spacing.md, backgroundColor: colors.surface, marginTop: spacing.sm, ...shadows.sm },
-  sectionTitle: { ...typography.h4, color: colors.text, marginBottom: spacing.sm },
-  body: { ...typography.body, color: colors.textSecondary },
-  skillsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
-  skillBadge: { backgroundColor: colors.primary + '15', paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, borderRadius: radius.full },
-  skillText: { ...typography.bodySm, color: colors.primary },
-  expItem: { paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.divider },
-  expTitle: { ...typography.bodyMedium, color: colors.text },
-  expCompany: { ...typography.bodySm, color: colors.textSecondary, marginTop: 2 },
-  cvBtn: { margin: spacing.md, backgroundColor: colors.primary, paddingVertical: spacing.md, borderRadius: radius.md, alignItems: 'center' },
-  cvBtnText: { ...typography.button, color: colors.textInverse },
-});

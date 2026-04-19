@@ -1,10 +1,25 @@
-import './Jobs.css';
+import { cn } from '../lib/cn';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { createJobListing, updateJobListing, getJobDetail, getSkills, getStates, changeJobStatus } from '../api/client';
 import { useToastStore } from '../store/toastStore';
 import Button from '../components/Button';
 import Skeleton from '../components/Skeleton';
+
+const JOB_STATUS_COLORS = {
+  applied: 'bg-blue-100 text-blue-700',
+  reviewed: 'bg-indigo-100 text-indigo-700',
+  shortlisted: 'bg-amber-100 text-amber-800',
+  interview: 'bg-emerald-100 text-emerald-800',
+  offered: 'bg-emerald-50 text-emerald-700',
+  hired: 'bg-[#065f46] text-white',
+  rejected: 'bg-red-100 text-red-800',
+  withdrawn: 'bg-gray-100 text-gray-500',
+  draft: 'bg-gray-100 text-gray-500',
+  open: 'bg-emerald-100 text-emerald-800',
+  paused: 'bg-amber-100 text-amber-800',
+  closed: 'bg-red-100 text-red-800',
+};
 
 const JOB_TYPES = [
   { value: 'FULL_TIME', label: 'Full Time' }, { value: 'PART_TIME', label: 'Part Time' },
@@ -107,65 +122,65 @@ export default function CreateJob() {
   if (loading) return <div style={{ padding: '2rem' }}><Skeleton variant="card" /></div>;
 
   return (
-    <div className="job-form">
+    <div className="max-w-[800px] mx-auto">
       <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)', marginBottom: 'var(--space-md)' }}>← Back</button>
       <h1>{isEdit ? 'Edit Job Listing' : 'Post a New Job'}</h1>
-      {isEdit && <p style={{ color: '#6b7280', marginBottom: 'var(--space-md)' }}>Status: <span className={`status-badge status-badge--${currentStatus.toLowerCase()}`}>{currentStatus}</span></p>}
+      {isEdit && <p style={{ color: '#6b7280', marginBottom: 'var(--space-md)' }}>Status: <span className={cn('px-2.5 py-0.5 rounded-xl text-xs font-semibold', JOB_STATUS_COLORS[currentStatus.toLowerCase()])}>{currentStatus}</span></p>}
 
-      <div className="job-form__field">
-        <label>Title *</label>
-        <input value={form.title} onChange={e => update('title', e.target.value)} placeholder="e.g. Frontend Developer" />
+      <div className="mb-4">
+        <label className="block font-semibold mb-1">Title *</label>
+        <input className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.title} onChange={e => update('title', e.target.value)} placeholder="e.g. Frontend Developer" />
       </div>
-      <div className="job-form__field">
-        <label>Company Name *</label>
-        <input value={form.company_name} onChange={e => update('company_name', e.target.value)} placeholder="Company or organization name" />
+      <div className="mb-4">
+        <label className="block font-semibold mb-1">Company Name *</label>
+        <input className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.company_name} onChange={e => update('company_name', e.target.value)} placeholder="Company or organization name" />
       </div>
-      <div className="job-form__field">
-        <label>Description *</label>
-        <textarea value={form.description} onChange={e => update('description', e.target.value)} rows={6} maxLength={5000} placeholder="Full job description..." />
+      <div className="mb-4">
+        <label className="block font-semibold mb-1">Description *</label>
+        <textarea className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem] resize-y min-h-[100px]" value={form.description} onChange={e => update('description', e.target.value)} rows={6} maxLength={5000} placeholder="Full job description..." />
       </div>
-      <div className="job-form__field">
-        <label>Requirements</label>
-        <textarea value={form.requirements} onChange={e => update('requirements', e.target.value)} rows={4} maxLength={3000} placeholder="Required qualifications..." />
+      <div className="mb-4">
+        <label className="block font-semibold mb-1">Requirements</label>
+        <textarea className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem] resize-y min-h-[100px]" value={form.requirements} onChange={e => update('requirements', e.target.value)} rows={4} maxLength={3000} placeholder="Required qualifications..." />
       </div>
 
-      <div className="job-form__row">
-        <div className="job-form__field">
-          <label>Job Type *</label>
-          <select value={form.job_type} onChange={e => update('job_type', e.target.value)}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div className="mb-4">
+          <label className="block font-semibold mb-1">Job Type *</label>
+          <select className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.job_type} onChange={e => update('job_type', e.target.value)}>
             {JOB_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
           </select>
         </div>
-        <div className="job-form__field">
-          <label>Work Mode</label>
-          <select value={form.work_mode} onChange={e => update('work_mode', e.target.value)}>
+        <div className="mb-4">
+          <label className="block font-semibold mb-1">Work Mode</label>
+          <select className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.work_mode} onChange={e => update('work_mode', e.target.value)}>
             {WORK_MODES.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
           </select>
         </div>
       </div>
 
-      <div className="job-form__row">
-        <div className="job-form__field">
-          <label>Experience Level</label>
-          <select value={form.experience_level} onChange={e => update('experience_level', e.target.value)}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div className="mb-4">
+          <label className="block font-semibold mb-1">Experience Level</label>
+          <select className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.experience_level} onChange={e => update('experience_level', e.target.value)}>
             {EXP_LEVELS.map(l => <option key={l.value} value={l.value}>{l.label}</option>)}
           </select>
         </div>
-        <div className="job-form__field">
-          <label>Location</label>
-          <input value={form.location} onChange={e => update('location', e.target.value)} placeholder="e.g. Ikeja, Lagos" />
+        <div className="mb-4">
+          <label className="block font-semibold mb-1">Location</label>
+          <input className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.location} onChange={e => update('location', e.target.value)} placeholder="e.g. Ikeja, Lagos" />
         </div>
       </div>
 
-      <div className="job-form__row">
-        <div className="job-form__field">
-          <label>State</label>
-          <select value={form.state} onChange={e => update('state', e.target.value)}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div className="mb-4">
+          <label className="block font-semibold mb-1">State</label>
+          <select className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.state} onChange={e => update('state', e.target.value)}>
             <option value="">Select</option>
             {states.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
           </select>
         </div>
-        <div className="job-form__field" style={{ display: 'flex', alignItems: 'flex-end' }}>
+        <div className="mb-4" style={{ display: 'flex', alignItems: 'flex-end' }}>
           <label style={{ display: 'flex', alignItems: 'center', gap: 8, paddingBottom: 8 }}>
             <input type="checkbox" checked={form.is_remote} onChange={e => update('is_remote', e.target.checked)} />
             Remote Position
@@ -174,24 +189,24 @@ export default function CreateJob() {
       </div>
 
       <h3>Compensation</h3>
-      <div className="job-form__row">
-        <div className="job-form__field">
-          <label>Salary Min</label>
-          <input type="number" value={form.salary_min} onChange={e => update('salary_min', e.target.value)} placeholder="e.g. 200000" />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div className="mb-4">
+          <label className="block font-semibold mb-1">Salary Min</label>
+          <input className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" type="number" value={form.salary_min} onChange={e => update('salary_min', e.target.value)} placeholder="e.g. 200000" />
         </div>
-        <div className="job-form__field">
-          <label>Salary Max</label>
-          <input type="number" value={form.salary_max} onChange={e => update('salary_max', e.target.value)} placeholder="e.g. 500000" />
+        <div className="mb-4">
+          <label className="block font-semibold mb-1">Salary Max</label>
+          <input className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" type="number" value={form.salary_max} onChange={e => update('salary_max', e.target.value)} placeholder="e.g. 500000" />
         </div>
       </div>
-      <div className="job-form__row">
-        <div className="job-form__field">
-          <label>Period</label>
-          <select value={form.salary_period} onChange={e => update('salary_period', e.target.value)}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div className="mb-4">
+          <label className="block font-semibold mb-1">Period</label>
+          <select className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.salary_period} onChange={e => update('salary_period', e.target.value)}>
             {PERIODS.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
           </select>
         </div>
-        <div className="job-form__field" style={{ display: 'flex', alignItems: 'flex-end' }}>
+        <div className="mb-4" style={{ display: 'flex', alignItems: 'flex-end' }}>
           <label style={{ display: 'flex', alignItems: 'center', gap: 8, paddingBottom: 8 }}>
             <input type="checkbox" checked={form.hide_salary} onChange={e => update('hide_salary', e.target.checked)} />
             Show as "Competitive"
@@ -199,21 +214,21 @@ export default function CreateJob() {
         </div>
       </div>
 
-      <div className="job-form__field">
-        <label>Skills</label>
+      <div className="mb-4">
+        <label className="block font-semibold mb-1">Skills</label>
         <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
           <input value={skillInput} onChange={e => setSkillInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addSkill())} list="job-skill-list" placeholder="Type a skill..." style={{ flex: 1, padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: 8 }} />
           <Button size="sm" type="button" onClick={addSkill}>Add</Button>
         </div>
         <datalist id="job-skill-list">{skills.map(s => <option key={s.id} value={s.name} />)}</datalist>
-        <div className="opportunity-card__badges">
-          {form.skills.map(s => <span key={s} className="opportunity-card__badge" style={{ cursor: 'pointer' }} onClick={() => update('skills', form.skills.filter(x => x !== s))}>{s} ✕</span>)}
+        <div className="flex gap-1.5 flex-wrap">
+          {form.skills.map(s => <span key={s} className="px-2 py-0.5 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800" style={{ cursor: 'pointer' }} onClick={() => update('skills', form.skills.filter(x => x !== s))}>{s} ✕</span>)}
         </div>
       </div>
 
-      <div className="job-form__field">
-        <label>Application Deadline</label>
-        <input type="date" value={form.application_deadline} onChange={e => update('application_deadline', e.target.value)} />
+      <div className="mb-4">
+        <label className="block font-semibold mb-1">Application Deadline</label>
+        <input className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" type="date" value={form.application_deadline} onChange={e => update('application_deadline', e.target.value)} />
       </div>
 
       <div style={{ display: 'flex', gap: 12, marginTop: 'var(--space-lg)', flexWrap: 'wrap' }}>

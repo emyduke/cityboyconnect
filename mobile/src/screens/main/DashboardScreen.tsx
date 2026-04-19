@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, RefreshControl, StyleSheet, Pressable } from 'react-native';
+import { View, Text, ScrollView, RefreshControl, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { colors, spacing, typography, shadows, radius } from '../../theme';
 import { getDashboardOverview } from '../../api/dashboard';
 import { getAnnouncements } from '../../api/announcements';
 import { unwrap } from '../../api/client';
@@ -50,9 +49,9 @@ export default function DashboardScreen() {
   const isAdmin = user?.role && ['SUPER_ADMIN', 'NATIONAL_OFFICER', 'STATE_DIRECTOR'].includes(user.role);
 
   const stats = [
-    { icon: '👥', label: 'Members', value: data?.total_members ?? 0, color: colors.primary },
+    { icon: '👥', label: 'Members', value: data?.total_members ?? 0, color: '#1a472a' },
     { icon: '✅', label: 'Verified', value: data?.verified_members ?? 0, color: '#16a34a' },
-    { icon: '🔗', label: 'Referrals', value: data?.my_referrals ?? 0, color: colors.accent },
+    { icon: '🔗', label: 'Referrals', value: data?.my_referrals ?? 0, color: '#d4a017' },
     { icon: '⭐', label: 'Score', value: data?.my_score ?? 0, color: '#d97706' },
   ];
 
@@ -68,32 +67,32 @@ export default function DashboardScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.safe} edges={['top']}>
-        <View style={styles.loadWrap}>
+      <SafeAreaView className="flex-1 bg-background" edges={['top']}>
+        <View className="p-6">
           <Skeleton variant="text" width="60%" />
-          <Skeleton variant="card" style={{ marginTop: spacing.md }} />
-          <Skeleton variant="card" style={{ marginTop: spacing.md }} />
-          <Skeleton variant="card" style={{ marginTop: spacing.md }} />
+          <Skeleton variant="card" className="mt-4" />
+          <Skeleton variant="card" className="mt-4" />
+          <Skeleton variant="card" className="mt-4" />
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <View style={styles.safe}>
+    <View className="flex-1 bg-background">
       <ScrollView
-        contentContainerStyle={styles.scroll}
+        contentContainerStyle={{ paddingBottom: 64 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#fff" />}
         bounces
       >
         {/* Green Header */}
-        <LinearGradient colors={[colors.primaryDark, colors.primary]} style={styles.header}>
+        <LinearGradient colors={['#0d2416', '#1a472a']} className="pb-16 px-6">
           <SafeAreaView edges={['top']}>
-            <View style={styles.headerContent}>
-              <View style={styles.greetingRow}>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.greetingText}>{greeting()},</Text>
-                  <Text style={styles.nameText}>{firstName} 👋</Text>
+            <View className="pt-4">
+              <View className="flex-row items-center justify-between">
+                <View className="flex-1">
+                  <Text className="text-base font-body text-white/80">{greeting()},</Text>
+                  <Text className="text-2xl font-display-bold text-white mt-0.5">{firstName} 👋</Text>
                 </View>
                 <Pressable onPress={() => navigation.navigate('MoreTab', { screen: 'Profile' })}>
                   <Avatar name={user?.full_name || ''} size="md" />
@@ -104,32 +103,35 @@ export default function DashboardScreen() {
         </LinearGradient>
 
         {/* Membership Card - overlapping header */}
-        <Animated.View entering={FadeInDown.delay(100).duration(400)} style={styles.cardWrap}>
+        <Animated.View entering={FadeInDown.delay(100).duration(400)} className="-mt-10 px-6 mb-4">
           {user && <MembershipCard user={user} compact onPress={() => navigation.navigate('MoreTab', { screen: 'Profile' })} />}
         </Animated.View>
 
-        <View style={styles.body}>
+        <View className="px-6">
           {/* Stats Grid 2x2 */}
-          <Animated.View entering={FadeInDown.delay(200).duration(400)} style={styles.statsGrid}>
+          <Animated.View entering={FadeInDown.delay(200).duration(400)} className="flex-row flex-wrap gap-2 mb-6">
             {stats.map((s, i) => (
-              <View key={s.label} style={styles.statCard}>
-                <View style={[styles.statIconBg, { backgroundColor: s.color + '15' }]}>
+              <View key={s.label} className="w-[48%] bg-surface rounded-xl p-4 shadow-sm grow">
+                <View
+                  className="w-9 h-9 rounded-full justify-center items-center mb-1"
+                  style={{ backgroundColor: s.color + '15' }}
+                >
                   <Text style={{ fontSize: 20 }}>{s.icon}</Text>
                 </View>
-                <Text style={styles.statValue}>{s.value}</Text>
-                <Text style={styles.statLabel}>{s.label}</Text>
+                <Text className="text-2xl font-display-bold text-gray-900">{s.value}</Text>
+                <Text className="text-xs font-body text-gray-500 mt-0.5">{s.label}</Text>
               </View>
             ))}
           </Animated.View>
 
           {/* Quick Actions */}
           <Animated.View entering={FadeInDown.delay(300).duration(400)}>
-            <Text style={styles.sectionTitle}>Quick Actions</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsRow}>
+            <Text className="text-lg font-display-semibold text-gray-900 mb-2">Quick Actions</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingBottom: 24 }}>
               {quickActions.map((item) => (
                 <Pressable
                   key={item.label}
-                  style={styles.chip}
+                  className="flex-row items-center bg-surface rounded-full px-4 py-2 shadow-sm gap-1"
                   onPress={() => {
                     if (item.screen) {
                       navigation.navigate(item.tab, { screen: item.screen });
@@ -138,8 +140,8 @@ export default function DashboardScreen() {
                     }
                   }}
                 >
-                  <Text style={styles.chipIcon}>{item.icon}</Text>
-                  <Text style={styles.chipLabel}>{item.label}</Text>
+                  <Text style={{ fontSize: 16 }}>{item.icon}</Text>
+                  <Text className="text-sm font-body-medium text-gray-900">{item.label}</Text>
                 </Pressable>
               ))}
             </ScrollView>
@@ -148,28 +150,31 @@ export default function DashboardScreen() {
           {/* Recent Announcements */}
           {announcements.length > 0 && (
             <Animated.View entering={FadeInDown.delay(400).duration(400)}>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Recent Announcements</Text>
+              <View className="flex-row justify-between items-center mb-2">
+                <Text className="text-lg font-display-semibold text-gray-900">Recent Announcements</Text>
                 <Pressable onPress={() => navigation.navigate('MoreTab', { screen: 'Announcements' })}>
-                  <Text style={styles.seeAll}>See all →</Text>
+                  <Text className="text-sm font-body-semibold text-forest">See all →</Text>
                 </Pressable>
               </View>
               {announcements.map((ann) => (
                 <Pressable
                   key={ann.id}
-                  style={styles.annCard}
+                  className="flex-row items-center bg-surface rounded-lg p-4 mb-2 gap-2 shadow-sm"
                   onPress={() => navigation.navigate('MoreTab', { screen: 'AnnouncementDetail', params: { id: ann.id } })}
                 >
-                  <View style={[styles.annPriority, {
-                    backgroundColor: ann.priority === 'URGENT' ? colors.danger + '20' : ann.priority === 'IMPORTANT' ? colors.accent + '20' : colors.primaryLight + '15',
-                  }]}>
+                  <View
+                    className="w-8 h-8 rounded-full justify-center items-center"
+                    style={{
+                      backgroundColor: ann.priority === 'URGENT' ? '#dc262620' : ann.priority === 'IMPORTANT' ? '#d4a01720' : '#2d6a4f15',
+                    }}
+                  >
                     <Text style={{ fontSize: 12 }}>
                       {ann.priority === 'URGENT' ? '🔴' : ann.priority === 'IMPORTANT' ? '🟡' : '🟢'}
                     </Text>
                   </View>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.annTitle} numberOfLines={1}>{ann.title}</Text>
-                    <Text style={styles.annDate}>
+                  <View className="flex-1">
+                    <Text className="text-base font-body-medium text-gray-900" numberOfLines={1}>{ann.title}</Text>
+                    <Text className="text-xs font-body text-gray-400 mt-0.5">
                       {ann.published_at ? new Date(ann.published_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : ''}
                     </Text>
                   </View>
@@ -181,11 +186,11 @@ export default function DashboardScreen() {
           {/* City Boys Bubbles */}
           <Animated.View entering={FadeInDown.delay(450).duration(400)}>
             <Pressable
-              style={[styles.bubblesCard, shadows.sm]}
+              className="bg-surface rounded-xl p-6 mt-4 shadow-sm"
               onPress={() => navigation.navigate('MoreTab', { screen: 'Bubbles' })}
             >
-              <Text style={styles.bubblesTitle}>🫧 City Boys Bubbles</Text>
-              <Text style={styles.bubblesSub}>Local support for your community</Text>
+              <Text className="text-lg font-display-semibold text-forest">🫧 City Boys Bubbles</Text>
+              <Text className="text-sm font-body text-gray-500 mt-0.5">Local support for your community</Text>
             </Pressable>
           </Animated.View>
 
@@ -193,11 +198,11 @@ export default function DashboardScreen() {
           {isAdmin && (
             <Animated.View entering={FadeInDown.delay(500).duration(400)}>
               <Pressable
-                style={[styles.adminCard, shadows.md]}
+                className="bg-forest rounded-xl p-6 mt-6 shadow-md"
                 onPress={() => navigation.navigate('MoreTab', { screen: 'AdminDashboard' })}
               >
-                <Text style={styles.adminText}>🛡️ Admin Panel →</Text>
-                <Text style={styles.adminSub}>Manage members, verifications & more</Text>
+                <Text className="text-lg font-display-semibold text-gold">🛡️ Admin Panel →</Text>
+                <Text className="text-sm font-body text-white opacity-80 mt-0.5">Manage members, verifications & more</Text>
               </Pressable>
             </Animated.View>
           )}
@@ -206,94 +211,3 @@ export default function DashboardScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  loadWrap: { padding: spacing.lg },
-  scroll: { paddingBottom: spacing.xxxl },
-  header: {
-    paddingBottom: spacing.xxl + spacing.lg,
-    paddingHorizontal: spacing.lg,
-  },
-  headerContent: {
-    paddingTop: spacing.md,
-  },
-  greetingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  greetingText: { ...typography.body, color: 'rgba(255,255,255,0.8)' },
-  nameText: { ...typography.h2, color: '#fff', marginTop: 2 },
-  cardWrap: {
-    marginTop: -spacing.xl - spacing.md,
-    paddingHorizontal: spacing.lg,
-    marginBottom: spacing.md,
-  },
-  body: { paddingHorizontal: spacing.lg },
-  statsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-    marginBottom: spacing.lg,
-  },
-  statCard: {
-    width: '48%',
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    padding: spacing.md,
-    ...shadows.sm,
-    flexGrow: 1,
-  },
-  statIconBg: {
-    width: 36, height: 36, borderRadius: 18,
-    justifyContent: 'center', alignItems: 'center',
-    marginBottom: spacing.xs,
-  },
-  statValue: { ...typography.h2, color: colors.text },
-  statLabel: { ...typography.caption, color: colors.textSecondary, marginTop: 2 },
-  sectionTitle: { ...typography.h4, color: colors.text, marginBottom: spacing.sm },
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.sm },
-  seeAll: { ...typography.bodySm, color: colors.primary, fontFamily: 'PlusJakartaSans-SemiBold' },
-  chipsRow: { gap: spacing.sm, paddingBottom: spacing.lg },
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderRadius: radius.full,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    ...shadows.sm,
-    gap: spacing.xs,
-  },
-  chipIcon: { fontSize: 16 },
-  chipLabel: { ...typography.bodySm, color: colors.text, fontFamily: 'PlusJakartaSans-Medium' },
-  annCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    marginBottom: spacing.sm,
-    gap: spacing.sm,
-    ...shadows.sm,
-  },
-  annPriority: {
-    width: 32, height: 32, borderRadius: 16,
-    justifyContent: 'center', alignItems: 'center',
-  },
-  annTitle: { ...typography.bodyMedium, color: colors.text },
-  annDate: { ...typography.caption, color: colors.textTertiary, marginTop: 2 },
-  adminCard: {
-    backgroundColor: colors.primary, borderRadius: radius.lg, padding: spacing.lg,
-    marginTop: spacing.lg,
-  },
-  adminText: { ...typography.h4, color: colors.accent },
-  adminSub: { ...typography.bodySm, color: colors.textInverse, opacity: 0.8, marginTop: 2 },
-  bubblesCard: {
-    backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.lg,
-    marginTop: spacing.md,
-  },
-  bubblesTitle: { ...typography.h4, color: colors.primary },
-  bubblesSub: { ...typography.bodySm, color: colors.textSecondary, marginTop: 2 },
-});

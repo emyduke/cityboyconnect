@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, Pressable, TextInput } from 'react-native';
+import { View, Text, FlatList, Pressable, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute } from '@react-navigation/native';
-import { colors, spacing, typography, radius, shadows } from '../../theme';
 import { getJobApplications, updateApplicationStatus } from '../../api/opportunities';
 import { unwrap } from '../../api/client';
 import { useToastStore } from '../../store/toastStore';
@@ -47,42 +46,43 @@ export default function JobApplicationsScreen() {
 
   const statusColor = (s: string) => {
     const map: Record<string, string> = {
-      APPLIED: colors.info, REVIEWED: colors.warning, SHORTLISTED: colors.primary,
-      ACCEPTED: colors.success, REJECTED: colors.danger,
+      APPLIED: '#2563eb', REVIEWED: '#d97706', SHORTLISTED: '#1a472a',
+      ACCEPTED: '#16a34a', REJECTED: '#dc2626',
     };
-    return map[s] || colors.textSecondary;
+    return map[s] || '#6b7280';
   };
 
   const renderItem = ({ item }: { item: any }) => {
     const expanded = expandedId === item.id;
     return (
-      <Pressable style={styles.card} onPress={() => { setExpandedId(expanded ? null : item.id); setNotes(item.recruiter_notes || ''); }}>
-        <View style={styles.cardHeader}>
+      <Pressable className="bg-surface rounded-md p-4 mb-2 shadow-sm" onPress={() => { setExpandedId(expanded ? null : item.id); setNotes(item.recruiter_notes || ''); }}>
+        <View className="flex-row items-center">
           <Avatar name={item.applicant_name || item.applicant?.full_name || 'User'} size={40} />
-          <View style={{ flex: 1, marginLeft: spacing.sm }}>
-            <Text style={styles.name}>{item.applicant_name || item.applicant?.full_name || 'Applicant'}</Text>
-            <Text style={styles.date}>Applied {new Date(item.created_at || item.applied_at).toLocaleDateString()}</Text>
+          <View className="flex-1 ml-2">
+            <Text className="font-body-medium text-base text-gray-900">{item.applicant_name || item.applicant?.full_name || 'Applicant'}</Text>
+            <Text className="font-body text-xs text-gray-500">Applied {new Date(item.created_at || item.applied_at).toLocaleDateString()}</Text>
           </View>
-          <View style={[styles.statusBadge, { backgroundColor: statusColor(item.status) + '20' }]}>
-            <Text style={[styles.statusText, { color: statusColor(item.status) }]}>{item.status}</Text>
+          <View className="px-2 py-0.5 rounded-full" style={{ backgroundColor: statusColor(item.status) + '20' }}>
+            <Text className="font-body text-xs" style={{ color: statusColor(item.status) }}>{item.status}</Text>
           </View>
         </View>
-        {item.cover_letter && <Text style={styles.coverLetter} numberOfLines={expanded ? undefined : 3}>{item.cover_letter}</Text>}
+        {item.cover_letter && <Text className="font-body text-sm text-gray-500 mt-2" numberOfLines={expanded ? undefined : 3}>{item.cover_letter}</Text>}
 
         {expanded && (
-          <View style={styles.expandedSection}>
+          <View className="mt-4 pt-2 border-t border-gray-100">
             <TextInput
-              style={styles.notesInput}
+              className="bg-background rounded-sm p-2 font-body text-sm text-gray-900 min-h-[60px] border border-gray-200"
               placeholder="Recruiter notes..."
-              placeholderTextColor={colors.textTertiary}
+              placeholderTextColor="#9ca3af"
               value={notes}
               onChangeText={setNotes}
               multiline
+              textAlignVertical="top"
             />
-            <View style={styles.statusActions}>
+            <View className="flex-row flex-wrap gap-1 mt-2">
               {STATUS_OPTIONS.map((s) => (
-                <Pressable key={s} style={[styles.statusBtn, { borderColor: statusColor(s) }]} onPress={() => handleStatusChange(item.id, s)}>
-                  <Text style={[styles.statusBtnText, { color: statusColor(s) }]}>{s}</Text>
+                <Pressable key={s} className="px-2 py-1 rounded-sm border" style={{ borderColor: statusColor(s) }} onPress={() => handleStatusChange(item.id, s)}>
+                  <Text className="font-body text-xs" style={{ color: statusColor(s) }}>{s}</Text>
                 </Pressable>
               ))}
             </View>
@@ -93,47 +93,26 @@ export default function JobApplicationsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
-      <View style={styles.tabs}>
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+      <View className="flex-row px-1 py-1 bg-surface shadow-sm flex-wrap">
         {STATUS_TABS.map((t) => (
-          <Pressable key={t} style={[styles.tab, tab === t && styles.tabActive]} onPress={() => setTab(t)}>
-            <Text style={[styles.tabText, tab === t && styles.tabTextActive]}>{t}</Text>
+          <Pressable key={t} className={`px-2 py-1 rounded-full mr-1 mb-1 ${tab === t ? 'bg-forest' : ''}`} onPress={() => setTab(t)}>
+            <Text className={`font-body text-xs ${tab === t ? 'text-white' : 'text-gray-500'}`}>{t}</Text>
           </Pressable>
         ))}
       </View>
       {loading ? (
-        <View style={{ padding: spacing.md }}><Skeleton variant="card" /><Skeleton variant="card" style={{ marginTop: spacing.sm }} /></View>
+        <View className="p-4"><Skeleton variant="card" /><Skeleton variant="card" className="mt-2" /></View>
       ) : (
         <FlatList
           data={filtered}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
-          contentContainerStyle={{ padding: spacing.md, paddingBottom: spacing.xxl }}
-          ListEmptyComponent={<Text style={styles.empty}>No applications yet</Text>}
+          contentContainerClassName="p-4 pb-12"
+          ListEmptyComponent={<Text className="font-body text-base text-gray-500 text-center mt-12">No applications yet</Text>}
         />
       )}
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  tabs: { flexDirection: 'row', paddingHorizontal: spacing.xs, paddingVertical: spacing.xs, backgroundColor: colors.surface, ...shadows.sm, flexWrap: 'wrap' },
-  tab: { paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, borderRadius: radius.full, marginRight: spacing.xs, marginBottom: spacing.xs },
-  tabActive: { backgroundColor: colors.primary },
-  tabText: { ...typography.caption, color: colors.textSecondary },
-  tabTextActive: { color: colors.textInverse },
-  card: { backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.md, marginBottom: spacing.sm, ...shadows.sm },
-  cardHeader: { flexDirection: 'row', alignItems: 'center' },
-  name: { ...typography.bodyMedium, color: colors.text },
-  date: { ...typography.caption, color: colors.textSecondary },
-  statusBadge: { paddingHorizontal: spacing.sm, paddingVertical: 2, borderRadius: radius.full },
-  statusText: { ...typography.caption },
-  coverLetter: { ...typography.bodySm, color: colors.textSecondary, marginTop: spacing.sm },
-  expandedSection: { marginTop: spacing.md, paddingTop: spacing.sm, borderTopWidth: 1, borderTopColor: colors.divider },
-  notesInput: { backgroundColor: colors.background, borderRadius: radius.sm, padding: spacing.sm, ...typography.bodySm, color: colors.text, minHeight: 60, borderWidth: 1, borderColor: colors.border, textAlignVertical: 'top' },
-  statusActions: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs, marginTop: spacing.sm },
-  statusBtn: { paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, borderRadius: radius.sm, borderWidth: 1 },
-  statusBtnText: { ...typography.caption },
-  empty: { ...typography.body, color: colors.textSecondary, textAlign: 'center', marginTop: spacing.xxl },
-});

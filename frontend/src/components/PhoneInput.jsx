@@ -1,5 +1,5 @@
-import './PhoneInput.css';
 import { useState, forwardRef } from 'react';
+import { cn } from '../lib/cn';
 
 const formatPhone = (value) => {
   const digits = value.replace(/\D/g, '');
@@ -33,14 +33,18 @@ const PhoneInput = forwardRef(function PhoneInput({ value = '', onChange, error,
   };
 
   return (
-    <div className={`phone-input ${error ? 'phone-input--error' : ''} ${focused ? 'phone-input--focused' : ''}`}>
-      {label && <label className="phone-input__label">{label}</label>}
-      <div className="phone-input__wrapper">
-        <span className="phone-input__flag">🇳🇬</span>
+    <div className="flex flex-col gap-1">
+      {label && <label className="text-sm font-medium text-gray-700">{label}</label>}
+      <div className={cn(
+        'flex items-center gap-2 border-[1.5px] border-gray-300 rounded-[10px] px-4 h-12 bg-white transition-colors',
+        focused && 'border-forest shadow-[0_0_0_3px_rgba(26,71,42,0.1)]',
+        error && 'border-danger',
+      )}>
+        <span className="text-xl shrink-0">🇳🇬</span>
         <input
           ref={ref}
           type="tel"
-          className="phone-input__field"
+          className="flex-1 border-none outline-none text-base font-body bg-transparent tracking-wide"
           value={value}
           onChange={handleChange}
           onFocus={() => setFocused(true)}
@@ -51,9 +55,9 @@ const PhoneInput = forwardRef(function PhoneInput({ value = '', onChange, error,
           aria-invalid={!!error}
           {...props}
         />
-        {carrier && <span className="phone-input__carrier">{carrier}</span>}
+        {carrier && <span className="text-[0.7rem] font-semibold text-forest bg-gray-100 px-2 py-0.5 rounded-full shrink-0">{carrier}</span>}
       </div>
-      {error && <span className="phone-input__error">{error}</span>}
+      {error && <span className="text-[0.8rem] text-danger">{error}</span>}
     </div>
   );
 });

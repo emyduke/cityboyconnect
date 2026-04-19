@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, FlatList, TextInput, StyleSheet, RefreshControl, Pressable, Text } from 'react-native';
+import { View, FlatList, TextInput, RefreshControl, Pressable, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { colors, spacing, radius, typography, shadows } from '../../theme';
+import { colors } from '../../theme';
 import { getMembers } from '../../api/members';
 import { unwrap } from '../../api/client';
 import { useAuthStore } from '../../store/authStore';
@@ -49,27 +49,27 @@ export default function MembersScreen() {
 
   if (loading) {
     return (
-      <View style={styles.container}>
+      <View className="flex-1 bg-background p-4">
         {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} variant="list" style={{ marginBottom: spacing.sm }} />
+          <Skeleton key={i} variant="list" className="mb-2" />
         ))}
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 bg-background p-4">
       {canAdd && (
-        <Pressable style={styles.addBtn} onPress={() => navigation.navigate('MoreTab', { screen: 'AddMember' })}>
-          <Text style={styles.addBtnText}>+ Add Member</Text>
+        <Pressable className="bg-forest rounded-lg py-2 items-center mb-2" onPress={() => navigation.navigate('MoreTab', { screen: 'AddMember' })}>
+          <Text className="text-base font-body-semibold text-white">+ Add Member</Text>
         </Pressable>
       )}
-      <View style={styles.searchRow}>
-        <Text style={styles.searchIcon}>🔍</Text>
+      <View className="flex-row items-center bg-surface rounded-xl px-4 border border-gray-200 mb-2">
+        <Text className="text-base mr-1">🔍</Text>
         <TextInput
-          style={styles.search}
+          className="flex-1 py-2.5 text-base font-body text-gray-900"
           placeholder="Search by name, phone, or ID..."
-          placeholderTextColor={colors.textTertiary}
+          placeholderTextColor="#9ca3af"
           value={search}
           onChangeText={setSearch}
           returnKeyType="search"
@@ -77,15 +77,15 @@ export default function MembersScreen() {
         />
       </View>
 
-      <View style={styles.filterRow}>
+      <View className="flex-row gap-1 mb-4">
         {FILTERS.map((f) => (
           <Pressable
             key={f.key}
-            style={[styles.filterChip, filter === f.key && styles.filterChipActive]}
+            className={`flex-row items-center px-2.5 py-1.5 rounded-full border gap-1 ${filter === f.key ? 'bg-forest border-forest' : 'bg-surface border-gray-200'}`}
             onPress={() => { setFilter(f.key); setLoading(true); }}
           >
-            <Text style={styles.filterIcon}>{f.icon}</Text>
-            <Text style={[styles.filterLabel, filter === f.key && styles.filterLabelActive]}>{f.label}</Text>
+            <Text className="text-xs">{f.icon}</Text>
+            <Text className={`text-xs font-body ${filter === f.key ? 'text-white font-body-semibold' : 'text-gray-500'}`}>{f.label}</Text>
           </Pressable>
         ))}
       </View>
@@ -101,54 +101,8 @@ export default function MembersScreen() {
         )}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
         ListEmptyComponent={<EmptyState icon="👥" title="No Members Found" description="Try adjusting your search or filter" />}
-        contentContainerStyle={{ paddingBottom: spacing.xxl }}
+        contentContainerStyle={{ paddingBottom: 48 }}
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background, padding: spacing.md },
-  addBtn: { backgroundColor: colors.primary, borderRadius: radius.md, paddingVertical: spacing.sm, alignItems: 'center', marginBottom: spacing.sm },
-  addBtnText: { ...typography.button, color: colors.textInverse },
-  searchRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    paddingHorizontal: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    marginBottom: spacing.sm,
-  },
-  searchIcon: { fontSize: 16, marginRight: spacing.xs },
-  search: {
-    flex: 1,
-    paddingVertical: spacing.sm + 2,
-    ...typography.body,
-    color: colors.text,
-  },
-  filterRow: {
-    flexDirection: 'row',
-    gap: spacing.xs,
-    marginBottom: spacing.md,
-  },
-  filterChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: spacing.sm + 2,
-    paddingVertical: spacing.xs + 2,
-    borderRadius: radius.full,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    gap: 4,
-  },
-  filterChipActive: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  filterIcon: { fontSize: 12 },
-  filterLabel: { ...typography.caption, color: colors.textSecondary },
-  filterLabelActive: { color: '#fff', fontFamily: 'PlusJakartaSans-SemiBold' },
-});

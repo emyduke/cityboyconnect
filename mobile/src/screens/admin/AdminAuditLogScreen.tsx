@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, RefreshControl, StyleSheet } from 'react-native';
+import { View, Text, FlatList, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, spacing, typography, radius, shadows } from '../../theme';
 import { adminApi } from '../../api/admin';
 import Skeleton from '../../components/ui/Skeleton';
 import EmptyState from '../../components/EmptyState';
@@ -26,47 +25,37 @@ export default function AdminAuditLogScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.safe} edges={['bottom']}>
-        <View style={styles.container}>
+      <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+        <View className="flex-1 p-4">
           <Skeleton variant="card" />
-          <Skeleton variant="card" style={{ marginTop: spacing.sm }} />
+          <Skeleton variant="card" className="mt-2" />
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
-      <View style={styles.container}>
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+      <View className="flex-1 p-4">
         <FlatList
           data={logs}
           keyExtractor={(item, idx) => String(item.id || idx)}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1a472a" />}
           ListEmptyComponent={<EmptyState title="No audit logs" />}
           renderItem={({ item }) => (
-            <View style={styles.row}>
-              <View style={styles.dot} />
-              <View style={styles.rowContent}>
-                <Text style={styles.action}>{item.action || item.description || '-'}</Text>
-                <Text style={styles.actor}>{item.actor_name || item.user || ''}</Text>
-                <Text style={styles.time}>{item.created_at ? new Date(item.created_at).toLocaleString() : ''}</Text>
+            <View className="flex-row mb-2 gap-2">
+              <View className="w-2 h-2 rounded-full bg-forest mt-1.5" />
+              <View className="flex-1 bg-surface rounded-lg p-2 shadow-sm">
+                <Text className="text-sm font-body text-gray-900">{item.action || item.description || '-'}</Text>
+                <Text className="text-xs font-body text-gray-500 mt-0.5">{item.actor_name || item.user || ''}</Text>
+                <Text className="text-xs font-body text-gray-400 mt-0.5">{item.created_at ? new Date(item.created_at).toLocaleString() : ''}</Text>
               </View>
             </View>
           )}
-          contentContainerStyle={{ paddingBottom: spacing.xxl }}
+          contentContainerClassName="pb-12"
         />
       </View>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  container: { flex: 1, padding: spacing.md },
-  row: { flexDirection: 'row', marginBottom: spacing.sm, gap: spacing.sm },
-  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.primary, marginTop: 6 },
-  rowContent: { flex: 1, backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.sm, ...shadows.sm },
-  action: { ...typography.bodySm, color: colors.text },
-  actor: { ...typography.caption, color: colors.textSecondary, marginTop: 2 },
-  time: { ...typography.caption, color: colors.textTertiary, marginTop: 2 },
-});

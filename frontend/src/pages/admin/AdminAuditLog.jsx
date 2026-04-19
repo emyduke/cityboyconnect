@@ -3,7 +3,7 @@ import { adminApi } from '../../api/admin';
 import Button from '../../components/Button';
 import Skeleton from '../../components/Skeleton';
 import { useToastStore } from '../../store/toastStore';
-import './AdminAuditLog.css';
+import { cn } from '../../lib/cn';
 
 export default function AdminAuditLog() {
   const [logs, setLogs] = useState([]);
@@ -34,15 +34,15 @@ export default function AdminAuditLog() {
   const toggleExpand = (idx) => setExpanded(prev => prev === idx ? null : idx);
 
   return (
-    <div className="admin-audit-log">
-      <h1>Audit Log</h1>
+    <div>
+      <h1 className="text-2xl font-extrabold mb-4">Audit Log</h1>
 
-      <div className="admin-audit-log__filters">
-        <form onSubmit={e => { e.preventDefault(); setPage(1); load(); }} className="admin-audit-log__search">
-          <input placeholder="Search by admin, action, or target..." value={search} onChange={e => setSearch(e.target.value)} />
+      <div className="flex gap-4 mb-4 flex-wrap">
+        <form onSubmit={e => { e.preventDefault(); setPage(1); load(); }} className="flex gap-2 flex-1 min-w-[200px] max-w-[500px]">
+          <input className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm" placeholder="Search by admin, action, or target..." value={search} onChange={e => setSearch(e.target.value)} />
           <Button type="submit" size="sm">Search</Button>
         </form>
-        <select value={actionFilter} onChange={e => { setActionFilter(e.target.value); setPage(1); }}>
+        <select className="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white" value={actionFilter} onChange={e => { setActionFilter(e.target.value); setPage(1); }}>
           <option value="">All Actions</option>
           <option value="verify_member">Verify Member</option>
           <option value="reject_member">Reject Member</option>
@@ -59,48 +59,48 @@ export default function AdminAuditLog() {
       </div>
 
       {loading ? (
-        <div className="admin-audit-log__skeleton">
+        <div className="flex flex-col gap-2">
           {[...Array(8)].map((_, i) => <Skeleton key={i} variant="text" />)}
         </div>
       ) : logs.length === 0 ? (
-        <div className="admin-audit-log__empty">
+        <div className="text-center text-gray-400 py-12 flex flex-col items-center gap-2 text-3xl">
           <span>📜</span>
-          <p>No audit entries found</p>
+          <p className="text-sm">No audit entries found</p>
         </div>
       ) : (
-        <div className="admin-audit-log__table-wrap">
-          <table className="admin-audit-log__table">
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-sm">
             <thead>
               <tr>
-                <th></th>
-                <th>Timestamp</th>
-                <th>Admin</th>
-                <th>Action</th>
-                <th>Target</th>
-                <th>IP Address</th>
+                <th className="text-left px-3 py-2 border-b-2 border-gray-200 font-semibold text-gray-500 text-xs uppercase"></th>
+                <th className="text-left px-3 py-2 border-b-2 border-gray-200 font-semibold text-gray-500 text-xs uppercase">Timestamp</th>
+                <th className="text-left px-3 py-2 border-b-2 border-gray-200 font-semibold text-gray-500 text-xs uppercase">Admin</th>
+                <th className="text-left px-3 py-2 border-b-2 border-gray-200 font-semibold text-gray-500 text-xs uppercase">Action</th>
+                <th className="text-left px-3 py-2 border-b-2 border-gray-200 font-semibold text-gray-500 text-xs uppercase">Target</th>
+                <th className="text-left px-3 py-2 border-b-2 border-gray-200 font-semibold text-gray-500 text-xs uppercase">IP Address</th>
               </tr>
             </thead>
             <tbody>
               {logs.map((log, i) => (
                 <>
-                  <tr key={log.id || i} className={`admin-audit-log__row ${expanded === i ? 'admin-audit-log__row--expanded' : ''}`} onClick={() => toggleExpand(i)}>
-                    <td className="admin-audit-log__expand-btn">{expanded === i ? '▼' : '▶'}</td>
-                    <td className="admin-audit-log__timestamp">{log.created_at ? new Date(log.created_at).toLocaleString() : '—'}</td>
-                    <td>{log.performed_by_name || log.user_name || '—'}</td>
-                    <td><span className="admin-audit-log__action-badge">{log.action}</span></td>
-                    <td>{log.target_type ? `${log.target_type} #${log.target_id}` : '—'}</td>
-                    <td className="admin-audit-log__ip">{log.ip_address || '—'}</td>
+                  <tr key={log.id || i} className={cn('cursor-pointer transition-colors hover:bg-gray-50', expanded === i && 'bg-off-white')} onClick={() => toggleExpand(i)}>
+                    <td className="w-6 text-gray-400 text-[0.7rem] px-3 py-2 border-b border-gray-100">{expanded === i ? '▼' : '▶'}</td>
+                    <td className="text-xs text-gray-500 whitespace-nowrap px-3 py-2 border-b border-gray-100">{log.created_at ? new Date(log.created_at).toLocaleString() : '—'}</td>
+                    <td className="px-3 py-2 border-b border-gray-100">{log.performed_by_name || log.user_name || '—'}</td>
+                    <td className="px-3 py-2 border-b border-gray-100"><span className="inline-block px-2 py-0.5 bg-gray-100 rounded text-xs font-semibold font-mono text-gray-700">{log.action}</span></td>
+                    <td className="px-3 py-2 border-b border-gray-100">{log.target_type ? `${log.target_type} #${log.target_id}` : '—'}</td>
+                    <td className="font-mono text-xs text-gray-400 px-3 py-2 border-b border-gray-100">{log.ip_address || '—'}</td>
                   </tr>
                   {expanded === i && (
-                    <tr key={`detail-${i}`} className="admin-audit-log__detail-row">
-                      <td colSpan={6}>
-                        <div className="admin-audit-log__detail">
+                    <tr key={`detail-${i}`}>
+                      <td colSpan={6} className="p-0">
+                        <div className="px-4 py-3 bg-gray-50 border-l-[3px] border-l-forest">
                           {log.details && Object.keys(log.details).length > 0 ? (
-                            <pre className="admin-audit-log__json">{JSON.stringify(log.details, null, 2)}</pre>
+                            <pre className="font-mono text-xs text-gray-700 bg-white p-3 rounded overflow-x-auto whitespace-pre-wrap border border-gray-200">{JSON.stringify(log.details, null, 2)}</pre>
                           ) : (
-                            <p className="admin-audit-log__no-details">No additional details</p>
+                            <p className="text-xs text-gray-400">No additional details</p>
                           )}
-                          {log.notes && <p className="admin-audit-log__notes"><strong>Notes:</strong> {log.notes}</p>}
+                          {log.notes && <p className="text-xs mt-2"><strong>Notes:</strong> {log.notes}</p>}
                         </div>
                       </td>
                     </tr>
@@ -113,7 +113,7 @@ export default function AdminAuditLog() {
       )}
 
       {total > 30 && (
-        <div className="admin-audit-log__pagination">
+        <div className="flex justify-center items-center gap-4 p-4 text-sm">
           <Button variant="secondary" size="sm" disabled={page <= 1} onClick={() => setPage(p => p - 1)}>Previous</Button>
           <span>Page {page} of {Math.ceil(total / 30)}</span>
           <Button variant="secondary" size="sm" disabled={logs.length < 30} onClick={() => setPage(p => p + 1)}>Next</Button>

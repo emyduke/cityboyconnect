@@ -1,4 +1,3 @@
-import './AdminAnalytics.css';
 import { useState, useEffect } from 'react';
 import { getDashboardOverview, getMembershipGrowth, getStructureHealth } from '../api/client';
 import StatCard from '../components/StatCard';
@@ -30,23 +29,23 @@ export default function AdminAnalytics() {
     load();
   }, []);
 
-  if (loading) return <div><h1>Analytics</h1><Skeleton variant="card" /></div>;
+  if (loading) return <div><h1 className="text-2xl font-extrabold mb-6">Analytics</h1><Skeleton variant="card" /></div>;
 
   const stats = overview || {};
 
   return (
-    <div className="admin-analytics">
-      <h1>National Analytics</h1>
-      <div className="admin-analytics__stats">
+    <div>
+      <h1 className="text-2xl font-extrabold mb-6">National Analytics</h1>
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 mb-8">
         <StatCard label="Total Members" value={stats.total_members || 0} icon="👥" />
         <StatCard label="Verified" value={stats.verified_members || 0} icon="✅" />
         <StatCard label="Active States" value={stats.active_states || 0} icon="🗺️" />
         <StatCard label="Active LGAs" value={stats.active_lgas || 0} icon="📍" />
       </div>
 
-      <div className="admin-analytics__charts">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <Card padding="md">
-          <h3 className="admin-analytics__card-title">Membership Growth (12 months)</h3>
+          <h3 className="text-base font-bold mb-4">Membership Growth (12 months)</h3>
           {growth.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={growth}>
@@ -58,12 +57,12 @@ export default function AdminAnalytics() {
               </LineChart>
             </ResponsiveContainer>
           ) : (
-            <p className="admin-analytics__empty">No data</p>
+            <p className="text-gray-400 text-center py-8">No data</p>
           )}
         </Card>
 
         <Card padding="md">
-          <h3 className="admin-analytics__card-title">Structure Health</h3>
+          <h3 className="text-base font-bold mb-4">Structure Health</h3>
           {health.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={health.slice(0, 10)}>
@@ -75,14 +74,14 @@ export default function AdminAnalytics() {
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <p className="admin-analytics__empty">No data</p>
+            <p className="text-gray-400 text-center py-8">No data</p>
           )}
         </Card>
       </div>
 
       {health.length > 0 && (
         <Card padding="md">
-          <h3 className="admin-analytics__card-title">Structure Breakdown</h3>
+          <h3 className="text-base font-bold mb-4">Structure Breakdown</h3>
           <DataTable
             columns={[
               { key: 'name', label: 'Area' },

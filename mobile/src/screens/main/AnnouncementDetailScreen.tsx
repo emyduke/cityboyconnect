@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
-import { colors, spacing, typography } from '../../theme';
 import { getAnnouncement, markAnnouncementRead } from '../../api/announcements';
 import { unwrap } from '../../api/client';
 import Badge from '../../components/ui/Badge';
@@ -25,28 +24,19 @@ export default function AnnouncementDetailScreen() {
     })();
   }, [params.id]);
 
-  if (loading) return <View style={styles.container}><Skeleton variant="text" /><Skeleton variant="card" style={{ marginTop: spacing.md }} /></View>;
-  if (!item) return <View style={styles.container}><Text style={styles.error}>Not found</Text></View>;
+  if (loading) return <View className="flex-1 bg-background p-4"><Skeleton variant="text" /><Skeleton variant="card" className="mt-4" /></View>;
+  if (!item) return <View className="flex-1 bg-background p-4"><Text className="text-base font-body text-danger text-center mt-12">Not found</Text></View>;
 
   const priorityVariant = item.priority === 'URGENT' ? 'danger' : item.priority === 'IMPORTANT' ? 'warning' : 'default';
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: spacing.xxl }}>
-      <Text style={styles.title}>{item.title}</Text>
-      <View style={styles.meta}>
+    <ScrollView className="flex-1 bg-background p-4" contentContainerStyle={{ paddingBottom: 48 }}>
+      <Text className="text-2xl font-display-bold text-gray-900">{item.title}</Text>
+      <View className="flex-row items-center gap-2 mt-1 mb-6">
         {item.priority && item.priority !== 'NORMAL' && <Badge label={item.priority} variant={priorityVariant} />}
-        <Text style={styles.date}>{item.published_at ? new Date(item.published_at).toLocaleDateString() : ''}</Text>
+        <Text className="text-xs font-body text-gray-500">{item.published_at ? new Date(item.published_at).toLocaleDateString() : ''}</Text>
       </View>
-      <Text style={styles.body}>{item.body}</Text>
+      <Text className="text-base font-body text-gray-900 leading-6">{item.body}</Text>
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background, padding: spacing.md },
-  title: { ...typography.h2, color: colors.text },
-  meta: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: spacing.xs, marginBottom: spacing.lg },
-  date: { ...typography.caption, color: colors.textSecondary },
-  body: { ...typography.body, color: colors.text, lineHeight: 24 },
-  error: { ...typography.body, color: colors.danger, textAlign: 'center', marginTop: spacing.xxl },
-});

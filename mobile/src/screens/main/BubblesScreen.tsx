@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, FlatList, StyleSheet, RefreshControl, Text, Pressable } from 'react-native';
+import { View, FlatList, RefreshControl, Text, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { colors, spacing, radius, typography, shadows } from '../../theme';
 import { getBubbles, Bubble } from '../../api/bubbles';
 import { unwrap } from '../../api/client';
 import Skeleton from '../../components/ui/Skeleton';
@@ -62,20 +61,20 @@ export default function BubblesScreen() {
   const renderCard = ({ item }: { item: Bubble }) => {
     const sc = STATUS_COLORS[item.status] || STATUS_COLORS.PENDING;
     return (
-      <Pressable style={styles.card} onPress={() => navigation.navigate('BubbleDetail', { id: item.id })}>
-        <View style={styles.cardTop}>
-          <View style={[styles.catBadge, { backgroundColor: CAT_COLORS[item.category] || '#6b7280' }]}>
-            <Text style={styles.catBadgeText}>{item.category_display}</Text>
+      <Pressable className="bg-surface rounded-lg p-5 mb-2 shadow-sm" onPress={() => navigation.navigate('BubbleDetail', { id: item.id })}>
+        <View className="flex-row gap-2 mb-2">
+          <View className="px-2.5 py-0.5 rounded-full" style={{ backgroundColor: CAT_COLORS[item.category] || '#6b7280' }}>
+            <Text className="text-white text-xs font-body-semibold">{item.category_display}</Text>
           </View>
-          <View style={[styles.statusBadge, { backgroundColor: sc.bg }]}>
-            <Text style={[styles.statusBadgeText, { color: sc.text }]}>{item.status_display}</Text>
+          <View className="px-2.5 py-0.5 rounded-full" style={{ backgroundColor: sc.bg }}>
+            <Text className="text-xs font-body-semibold" style={{ color: sc.text }}>{item.status_display}</Text>
           </View>
         </View>
-        <Text style={styles.cardTitle} numberOfLines={1}>{item.title}</Text>
-        <Text style={styles.cardDesc} numberOfLines={2}>{item.description}</Text>
-        <View style={styles.cardMeta}>
-          <Text style={styles.cardLocation}>📍 {[item.ward_name, item.lga_name].filter(Boolean).join(', ') || 'N/A'}</Text>
-          <Text style={styles.cardDate}>{new Date(item.created_at).toLocaleDateString()}</Text>
+        <Text className="text-base font-bold text-gray-900 mb-1" numberOfLines={1}>{item.title}</Text>
+        <Text className="text-[13px] text-gray-500 mb-2" numberOfLines={2}>{item.description}</Text>
+        <View className="flex-row justify-between items-center">
+          <Text className="text-xs text-gray-400">📍 {[item.ward_name, item.lga_name].filter(Boolean).join(', ') || 'N/A'}</Text>
+          <Text className="text-xs text-gray-400">{new Date(item.created_at).toLocaleDateString()}</Text>
         </View>
       </Pressable>
     );
@@ -83,26 +82,26 @@ export default function BubblesScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.safe} edges={['bottom']}>
-        <View style={styles.container}>
-          {[1, 2, 3].map((k) => <Skeleton key={k} variant="card" style={{ marginBottom: spacing.sm }} />)}
+      <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+        <View className="p-4">
+          {[1, 2, 3].map((k) => <Skeleton key={k} variant="card" className="mb-2" />)}
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
       <FlatList
         data={bubbles}
         keyExtractor={(item) => String(item.id)}
         renderItem={renderCard}
-        contentContainerStyle={styles.container}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetch(); }} tintColor={colors.primary} />}
+        contentContainerClassName="p-4"
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetch(); }} tintColor="#1a472a" />}
         ListHeaderComponent={
           <View>
             {canCreate && (
-              <Button variant="primary" size="sm" onPress={() => navigation.navigate('CreateBubble')} style={{ marginBottom: spacing.md }}>
+              <Button variant="primary" size="sm" onPress={() => navigation.navigate('CreateBubble')} className="mb-4">
                 + Create Bubble
               </Button>
             )}
@@ -111,13 +110,13 @@ export default function BubblesScreen() {
               data={CATEGORIES}
               keyExtractor={(c) => c || 'all'}
               showsHorizontalScrollIndicator={false}
-              style={{ marginBottom: spacing.md }}
+              className="mb-4"
               renderItem={({ item: c }) => (
                 <Pressable
-                  style={[styles.chip, category === c && styles.chipActive]}
+                  className={`px-3.5 py-1.5 rounded-full border-[1.5px] mr-2 ${category === c ? 'bg-forest border-forest' : 'bg-surface border-gray-200'}`}
                   onPress={() => setCategory(c)}
                 >
-                  <Text style={[styles.chipText, category === c && styles.chipTextActive]}>
+                  <Text className={`text-[13px] font-body-medium ${category === c ? 'text-white' : 'text-gray-500'}`}>
                     {CAT_LABELS[c]}
                   </Text>
                 </Pressable>
@@ -131,29 +130,4 @@ export default function BubblesScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  container: { padding: spacing.md },
-  card: {
-    backgroundColor: colors.surface, borderRadius: 16, padding: 20,
-    marginBottom: spacing.sm, ...shadows.sm,
-  },
-  cardTop: { flexDirection: 'row', gap: 8, marginBottom: 8 },
-  catBadge: { paddingHorizontal: 10, paddingVertical: 2, borderRadius: 100 },
-  catBadgeText: { color: '#fff', fontSize: 12, fontWeight: '600' },
-  statusBadge: { paddingHorizontal: 10, paddingVertical: 2, borderRadius: 100 },
-  statusBadgeText: { fontSize: 12, fontWeight: '600' },
-  cardTitle: { fontSize: 16, fontWeight: '700', color: colors.text, marginBottom: 4 },
-  cardDesc: { fontSize: 13, color: colors.textSecondary, marginBottom: 8 },
-  cardMeta: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  cardLocation: { fontSize: 12, color: colors.textTertiary },
-  cardDate: { fontSize: 12, color: colors.textTertiary },
-  chip: {
-    paddingHorizontal: 14, paddingVertical: 6, borderRadius: 100,
-    borderWidth: 1.5, borderColor: colors.border, backgroundColor: colors.surface,
-    marginRight: 8,
-  },
-  chipActive: { backgroundColor: colors.primary, borderColor: colors.primary },
-  chipText: { fontSize: 13, fontWeight: '500', color: colors.textSecondary },
-  chipTextActive: { color: '#fff' },
-});
+

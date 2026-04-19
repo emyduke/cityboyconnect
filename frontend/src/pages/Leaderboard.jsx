@@ -1,4 +1,4 @@
-import './Leaderboard.css';
+import { cn } from '../lib/cn';
 import { useState, useEffect } from 'react';
 import { getLeaderboardScores, getMyRank } from '../api/client';
 import { useAuthStore } from '../store/authStore';
@@ -20,7 +20,7 @@ function CircularProgress({ value, max = 100, size = 64 }) {
   const circ = 2 * Math.PI * r;
   const offset = circ - (pct / 100) * circ;
   return (
-    <svg width={size} height={size} className="circular-progress">
+    <svg width={size} height={size} className="block">
       <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--color-gray-200)" strokeWidth="6" />
       <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--color-forest)" strokeWidth="6"
         strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round"
@@ -32,29 +32,29 @@ function CircularProgress({ value, max = 100, size = 64 }) {
 function ScoreDimension({ label, score, weight, detail, tip, color }) {
   const colors = { forest: 'var(--color-forest)', gold: 'var(--color-gold)', blue: 'var(--color-info)', amber: 'var(--color-warning)' };
   return (
-    <div className="score-dimension">
-      <div className="score-dimension__header">
-        <span className="score-dimension__label">{label}</span>
-        <span className="score-dimension__weight">{weight}% weight</span>
+    <div className="flex flex-col gap-1">
+      <div className="flex justify-between">
+        <span className="text-[0.85rem] font-semibold">{label}</span>
+        <span className="text-[0.7rem] text-gray-400">{weight}% weight</span>
       </div>
-      <div className="score-dimension__bar-track">
-        <div className="score-dimension__bar-fill" style={{ width: `${score}%`, background: colors[color] || colors.forest }} />
+      <div className="h-2.5 bg-gray-100 rounded-[5px] overflow-hidden">
+        <div className="h-full rounded-[5px] transition-[width] duration-500 ease-out min-w-[2px]" style={{ width: `${score}%`, background: colors[color] || colors.forest }} />
       </div>
-      <div className="score-dimension__footer">
-        <span className="score-dimension__detail">{detail}</span>
-        <span className="score-dimension__score">{score?.toFixed(0)}/100</span>
+      <div className="flex justify-between">
+        <span className="text-xs text-gray-500">{detail}</span>
+        <span className="text-xs font-semibold">{score?.toFixed(0)}/100</span>
       </div>
-      {tip && <p className="score-dimension__tip">{tip}</p>}
+      {tip && <p className="text-[0.7rem] text-forest-light italic -mt-0.5">{tip}</p>}
     </div>
   );
 }
 
 function BadgeCard({ badge, earned }) {
   return (
-    <div className={`badge-card ${earned ? 'badge-card--earned' : 'badge-card--locked'}`}>
-      <span className="badge-card__icon">{badge.icon}</span>
-      <span className="badge-card__label">{badge.label}</span>
-      <span className="badge-card__desc">{badge.description}</span>
+    <div className={cn('flex flex-col items-center gap-1 p-4 border border-gray-200 rounded-lg text-center transition-all', earned ? 'bg-forest/5 border-forest-light' : 'opacity-45 grayscale')}>
+      <span className="text-2xl">{badge.icon}</span>
+      <span className="text-xs font-bold">{badge.label}</span>
+      <span className="text-[0.65rem] text-gray-400">{badge.description}</span>
     </div>
   );
 }
@@ -84,35 +84,38 @@ export default function Leaderboard() {
   }, [scope]);
 
   return (
-    <div className="leaderboard-page">
-      <h1>Leaderboard</h1>
+    <div>
+      <h1 className="text-2xl font-extrabold mb-6">Leaderboard</h1>
 
       {myRank && (
-        <div className="my-rank-card">
+        <div className="flex items-center gap-4 bg-white border border-gray-200 rounded-xl px-6 py-4 mb-6 sticky top-[68px] z-10 max-sm:flex-wrap">
           <Avatar name={user?.full_name || ''} size="md" />
-          <div className="my-rank-card__info">
-            <span className="my-rank-card__rank">#{myRank.national_rank || '—'}</span>
-            <span className="my-rank-card__label">Your national rank</span>
+          <div className="flex flex-col">
+            <span className="text-2xl font-extrabold font-display text-forest-dark">#{myRank.national_rank || '—'}</span>
+            <span className="text-xs text-gray-400">Your national rank</span>
           </div>
-          <div className="my-rank-card__score">
+          <div className="relative flex items-center justify-center ml-auto">
             <CircularProgress value={myRank.total_score || 0} />
-            <span className="my-rank-card__score-num">{(myRank.total_score || 0).toFixed(1)}</span>
+            <span className="absolute text-[0.85rem] font-bold text-forest">{(myRank.total_score || 0).toFixed(1)}</span>
           </div>
-          <button className="my-rank-card__details" onClick={() => setScope('my-score')}>See breakdown →</button>
+          <button className="bg-transparent border-none text-forest text-[0.8rem] cursor-pointer font-medium whitespace-nowrap" onClick={() => setScope('my-score')}>See breakdown →</button>
         </div>
       )}
 
-      <div className="leaderboard-tabs">
+      <div className="flex gap-1 mb-6 bg-gray-100 rounded-lg p-[3px]">
         {TABS.map(t => (
-          <button key={t.key} className={`leaderboard-tab ${scope === t.key ? 'leaderboard-tab--active' : ''}`} onClick={() => setScope(t.key)}>
+          <button key={t.key} className={cn(
+            'flex-1 py-2 border-none bg-transparent rounded text-[0.8rem] font-medium cursor-pointer text-gray-500 transition-all',
+            scope === t.key && 'bg-white shadow-sm text-forest font-semibold'
+          )} onClick={() => setScope(t.key)}>
             {t.label}
           </button>
         ))}
       </div>
 
       {loading ? <Skeleton variant="table" /> : scope === 'my-score' && myRank ? (
-        <div className="score-breakdown">
-          <h3>Your Score Breakdown</h3>
+        <div className="flex flex-col gap-6">
+          <h3 className="text-lg mb-2">Your Score Breakdown</h3>
           <ScoreDimension label="Members Onboarded" score={myRank.score_onboarding} weight={40}
             detail={`${myRank.members_onboarded_direct || 0} direct · ${myRank.members_onboarded_network || 0} total network`}
             tip="Share your QR code at events to grow your network" color="forest" />
@@ -127,9 +130,9 @@ export default function Leaderboard() {
             tip="Encourage your recruits to also recruit" color="amber" />
 
           {myRank.badges_detail && (
-            <div className="badges-section">
-              <h4>Your Badges</h4>
-              <div className="badges-grid">
+            <div className="mt-4">
+              <h4 className="text-base mb-4">Your Badges</h4>
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] gap-2 max-sm:grid-cols-2">
                 {myRank.badges_detail.filter(b => b.earned).map(b => <BadgeCard key={b.key} badge={b} earned />)}
                 {myRank.badges_detail.filter(b => !b.earned).map(b => <BadgeCard key={b.key} badge={b} earned={false} />)}
               </div>
@@ -139,21 +142,25 @@ export default function Leaderboard() {
       ) : entries.length === 0 ? (
         <EmptyState title="No leaderboard data" description="Data will appear as members participate" icon="🏆" />
       ) : (
-        <div className="leaderboard-list">
+        <div className="flex flex-col">
           {entries.map((entry, i) => (
-            <div key={entry.member_id || i} className={`leaderboard-item ${i < 3 ? 'leaderboard-item--top' : ''} ${entry.member_id === user?.profile_id ? 'leaderboard-item--me' : ''}`}>
-              <span className="leaderboard-item__rank">
+            <div key={entry.member_id || i} className={cn(
+              'flex items-center gap-4 py-4 border-b border-gray-100 last:border-none',
+              i < 3 && 'font-semibold',
+              entry.member_id === user?.profile_id && 'bg-forest/5 rounded px-2'
+            )}>
+              <span className="text-base min-w-[32px] text-center">
                 {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${entry.rank || i + 1}`}
               </span>
               <Avatar name={entry.member_name || entry.full_name || ''} size="sm" />
-              <div className="leaderboard-item__info">
-                <span className="leaderboard-item__name">{entry.member_name || entry.full_name}</span>
-                <span className="leaderboard-item__state">{entry.state_name || ''}</span>
+              <div className="flex-[0_0_120px]">
+                <span className="block text-[0.85rem] font-semibold">{entry.member_name || entry.full_name}</span>
+                <span className="block text-[0.7rem] text-gray-400">{entry.state_name || ''}</span>
               </div>
-              <div className="leaderboard-item__bar-wrap">
-                <div className="leaderboard-item__bar" style={{ width: `${Math.min(100, (entry.total_score / Math.max(entries[0]?.total_score || 1, 1)) * 100)}%` }} />
+              <div className="flex-1 h-2 bg-gray-100 rounded overflow-hidden">
+                <div className="h-full bg-forest rounded transition-[width] duration-500 ease-out" style={{ width: `${Math.min(100, (entry.total_score / Math.max(entries[0]?.total_score || 1, 1)) * 100)}%` }} />
               </div>
-              <span className="leaderboard-item__count">{(entry.total_score || 0).toFixed(1)}</span>
+              <span className="text-[0.85rem] font-bold text-forest min-w-[48px] text-right">{(entry.total_score || 0).toFixed(1)}</span>
             </div>
           ))}
         </div>

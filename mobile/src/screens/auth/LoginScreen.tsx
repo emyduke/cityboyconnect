@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Pressable, TextInput } from 'react-native';
+import { View, Text, KeyboardAvoidingView, Platform, ScrollView, Pressable, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import Animated, { FadeIn, SlideInRight } from 'react-native-reanimated';
-import { colors, spacing, radius, typography, shadows } from '../../theme';
 import { getAuthMethods, requestOTP, verifyOTP, loginWithPassword, getMe } from '../../api/auth';
 import { unwrap } from '../../api/client';
 import { useAuthStore } from '../../store/authStore';
@@ -166,39 +165,40 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={styles.root}>
-      <View style={styles.heroSection}>
+    <View className="flex-1 bg-background">
+      <View className="bg-forest pb-16">
         <SafeAreaView edges={['top']}>
-          <View style={styles.heroContent}>
+          <View className="items-center pt-8 px-6">
             <Image
               source={require('../../../assets/files/02_primary_transparent.png')}
-              style={styles.logo}
+              style={{ width: 180, height: 72 }}
+              className="mb-2"
               contentFit="contain"
             />
-            <Text style={styles.heroSubtitle}>Welcome back</Text>
+            <Text className="font-body-medium text-base text-gold">Welcome back</Text>
           </View>
         </SafeAreaView>
       </View>
 
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.flex}>
-        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" bounces={false}>
-          <View style={[styles.card, shadows.md]}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
+        <ScrollView contentContainerClassName="grow px-6 -mt-8" keyboardShouldPersistTaps="handled" bounces={false}>
+          <View className="bg-surface rounded-xl p-6 pt-8 shadow-md">
 
             {/* PHONE */}
             {stage === 'phone' && (
               <Animated.View entering={FadeIn.duration(300)} key="phone-step">
-                <Text style={styles.heading}>Enter your phone number</Text>
+                <Text className="font-display-bold text-lg text-gray-900 mb-4 text-center">Enter your phone number</Text>
                 <PhoneInput value={phone} onChangeText={setPhone} error={error} />
-                <Button onPress={handlePhoneSubmit} loading={loading} size="lg" style={styles.btn}>
+                <Button onPress={handlePhoneSubmit} loading={loading} size="lg" className="mt-2">
                   Continue
                 </Button>
-                <View style={styles.divider}>
-                  <View style={styles.line} />
-                  <Text style={styles.dividerText}>or</Text>
-                  <View style={styles.line} />
+                <View className="flex-row items-center my-6">
+                  <View className="flex-1 h-px bg-gray-200" />
+                  <Text className="font-body text-sm text-gray-400 mx-4">or</Text>
+                  <View className="flex-1 h-px bg-gray-200" />
                 </View>
                 <Pressable onPress={() => navigation.navigate('Join', {})}>
-                  <Text style={styles.linkText}>New here? <Text style={styles.linkBold}>Create account →</Text></Text>
+                  <Text className="font-body text-base text-gray-500 text-center">New here? <Text className="text-forest font-body-semibold">Create account →</Text></Text>
                 </Pressable>
               </Animated.View>
             )}
@@ -207,51 +207,51 @@ export default function LoginScreen() {
             {stage === 'method' && (
               <Animated.View entering={SlideInRight.duration(300)} key="method-step">
                 <Pressable onPress={() => { setStage('phone'); setError(''); }}>
-                  <Text style={styles.backLink}>← Back</Text>
+                  <Text className="font-body-medium text-base text-forest mb-4">← Back</Text>
                 </Pressable>
-                <Text style={styles.heading}>How would you like to sign in?</Text>
-                {error ? <Text style={styles.error}>{error}</Text> : null}
+                <Text className="font-display-bold text-lg text-gray-900 mb-4 text-center">How would you like to sign in?</Text>
+                {error ? <Text className="font-body text-xs text-danger text-center mt-2">{error}</Text> : null}
 
                 {methods.includes('sms') && (
                   <Pressable
-                    style={({ pressed }) => [styles.methodCard, pressed && styles.methodCardPressed]}
+                    className="flex-row items-center gap-[14px] p-4 border-[1.5px] border-gray-200 rounded-lg bg-surface mb-2 active:bg-forest-light/[0.08] active:border-forest"
                     onPress={() => handleMethodSelect('sms')}
                     disabled={loading}
                   >
-                    <Text style={styles.methodIcon}>💬</Text>
-                    <View style={styles.methodTextWrap}>
-                      <Text style={styles.methodTitle}>Text message (SMS)</Text>
-                      <Text style={styles.methodDesc}>6-digit code to your phone</Text>
+                    <Text className="text-[22px]">💬</Text>
+                    <View className="flex-1">
+                      <Text className="font-body-medium text-base text-gray-900 mb-0.5">Text message (SMS)</Text>
+                      <Text className="font-body text-sm text-gray-500">6-digit code to your phone</Text>
                     </View>
-                    <Text style={styles.methodArrow}>→</Text>
+                    <Text className="font-body text-base text-gray-400">→</Text>
                   </Pressable>
                 )}
                 {methods.includes('email') && (
                   <Pressable
-                    style={({ pressed }) => [styles.methodCard, pressed && styles.methodCardPressed]}
+                    className="flex-row items-center gap-[14px] p-4 border-[1.5px] border-gray-200 rounded-lg bg-surface mb-2 active:bg-forest-light/[0.08] active:border-forest"
                     onPress={() => handleMethodSelect('email')}
                     disabled={loading}
                   >
-                    <Text style={styles.methodIcon}>✉️</Text>
-                    <View style={styles.methodTextWrap}>
-                      <Text style={styles.methodTitle}>Email</Text>
-                      <Text style={styles.methodDesc}>6-digit code to your email</Text>
+                    <Text className="text-[22px]">✉️</Text>
+                    <View className="flex-1">
+                      <Text className="font-body-medium text-base text-gray-900 mb-0.5">Email</Text>
+                      <Text className="font-body text-sm text-gray-500">6-digit code to your email</Text>
                     </View>
-                    <Text style={styles.methodArrow}>→</Text>
+                    <Text className="font-body text-base text-gray-400">→</Text>
                   </Pressable>
                 )}
                 {methods.includes('password') && userHasPwd && (
                   <Pressable
-                    style={({ pressed }) => [styles.methodCard, pressed && styles.methodCardPressed]}
+                    className="flex-row items-center gap-[14px] p-4 border-[1.5px] border-gray-200 rounded-lg bg-surface mb-2 active:bg-forest-light/[0.08] active:border-forest"
                     onPress={() => handleMethodSelect('password')}
                     disabled={loading}
                   >
-                    <Text style={styles.methodIcon}>🔑</Text>
-                    <View style={styles.methodTextWrap}>
-                      <Text style={styles.methodTitle}>Password</Text>
-                      <Text style={styles.methodDesc}>Sign in with your password</Text>
+                    <Text className="text-[22px]">🔑</Text>
+                    <View className="flex-1">
+                      <Text className="font-body-medium text-base text-gray-900 mb-0.5">Password</Text>
+                      <Text className="font-body text-sm text-gray-500">Sign in with your password</Text>
                     </View>
-                    <Text style={styles.methodArrow}>→</Text>
+                    <Text className="font-body text-base text-gray-400">→</Text>
                   </Pressable>
                 )}
               </Animated.View>
@@ -261,22 +261,22 @@ export default function LoginScreen() {
             {stage === 'enter-email' && (
               <Animated.View entering={SlideInRight.duration(300)} key="email-step">
                 <Pressable onPress={() => setStage('method')}>
-                  <Text style={styles.backLink}>← Back</Text>
+                  <Text className="font-body-medium text-base text-forest mb-4">← Back</Text>
                 </Pressable>
-                <Text style={styles.heading}>Enter your email</Text>
-                <Text style={styles.subheading}>We'll send your code there</Text>
+                <Text className="font-display-bold text-lg text-gray-900 mb-4 text-center">Enter your email</Text>
+                <Text className="font-body text-base text-gray-500 text-center mb-6">We'll send your code there</Text>
                 <TextInput
-                  style={[styles.input, error ? styles.inputError : null]}
+                  className={`border rounded-md p-4 font-body text-base text-gray-900 bg-surface mb-2 ${error ? 'border-danger' : 'border-gray-200'}`}
                   placeholder="you@example.com"
-                  placeholderTextColor={colors.textTertiary}
+                  placeholderTextColor="#9ca3af"
                   value={email}
                   onChangeText={setEmail}
                   keyboardType="email-address"
                   autoCapitalize="none"
                   autoCorrect={false}
                 />
-                {error ? <Text style={styles.error}>{error}</Text> : null}
-                <Button onPress={handleEmailSubmit} loading={loading} size="lg" style={styles.btn}>
+                {error ? <Text className="font-body text-xs text-danger text-center mt-2">{error}</Text> : null}
+                <Button onPress={handleEmailSubmit} loading={loading} size="lg" className="mt-2">
                   Send code
                 </Button>
               </Animated.View>
@@ -286,33 +286,33 @@ export default function LoginScreen() {
             {stage === 'otp' && (
               <Animated.View entering={SlideInRight.duration(300)} key="otp-step">
                 <Pressable onPress={() => setStage(methods.length > 1 ? 'method' : 'phone')}>
-                  <Text style={styles.backLink}>← Back</Text>
+                  <Text className="font-body-medium text-base text-forest mb-4">← Back</Text>
                 </Pressable>
-                <Text style={styles.heading}>Enter your code</Text>
-                <View style={styles.phonePill}>
-                  <Text style={styles.phonePillText}>
+                <Text className="font-display-bold text-lg text-gray-900 mb-4 text-center">Enter your code</Text>
+                <View className="bg-forest-light/[0.08] self-center px-4 py-1 rounded-full mb-6">
+                  <Text className="font-body text-sm text-forest text-center">
                     {otpChannel === 'sms' ? `Sent via SMS to ${otpSentTo}` : `Sent to ${otpSentTo}`}
                   </Text>
                 </View>
-                <View style={styles.otpWrap}>
+                <View className="mb-4">
                   <OTPInput onComplete={handleOTPComplete} />
                 </View>
-                {error ? <Text style={styles.error}>{error}</Text> : null}
-                {loading && <Text style={styles.verifying}>Verifying...</Text>}
+                {error ? <Text className="font-body text-xs text-danger text-center mt-2">{error}</Text> : null}
+                {loading && <Text className="font-body text-sm text-gray-500 text-center mt-2">Verifying...</Text>}
 
-                <View style={styles.resendRow}>
+                <View className="items-center mt-6">
                   {countdown > 0 ? (
-                    <Text style={styles.countdown}>Resend in 0:{countdown.toString().padStart(2, '0')}</Text>
+                    <Text className="font-body text-sm text-gray-400">Resend in 0:{countdown.toString().padStart(2, '0')}</Text>
                   ) : (
                     <Pressable onPress={handleResend}>
-                      <Text style={styles.resendLink}>Resend Code</Text>
+                      <Text className="font-body-medium text-base text-forest">Resend Code</Text>
                     </Pressable>
                   )}
                 </View>
 
                 {methods.length > 1 && (
                   <Pressable onPress={() => setStage('method')}>
-                    <Text style={styles.switchLink}>Try a different method</Text>
+                    <Text className="font-body text-sm text-gray-500 text-center mt-4 underline">Try a different method</Text>
                   </Pressable>
                 )}
               </Animated.View>
@@ -322,31 +322,31 @@ export default function LoginScreen() {
             {stage === 'password' && (
               <Animated.View entering={SlideInRight.duration(300)} key="pwd-step">
                 <Pressable onPress={() => setStage(methods.length > 1 ? 'method' : 'phone')}>
-                  <Text style={styles.backLink}>← Back</Text>
+                  <Text className="font-body-medium text-base text-forest mb-4">← Back</Text>
                 </Pressable>
-                <Text style={styles.heading}>Enter your password</Text>
-                <View style={styles.pwdRow}>
+                <Text className="font-display-bold text-lg text-gray-900 mb-4 text-center">Enter your password</Text>
+                <View className="relative">
                   <TextInput
-                    style={[styles.input, styles.pwdInput, error ? styles.inputError : null]}
+                    className={`border rounded-md p-4 pr-[60px] font-body text-base text-gray-900 bg-surface mb-2 ${error ? 'border-danger' : 'border-gray-200'}`}
                     placeholder="Your password"
-                    placeholderTextColor={colors.textTertiary}
+                    placeholderTextColor="#9ca3af"
                     value={password}
                     onChangeText={setPassword}
                     secureTextEntry={!showPwd}
                     autoCapitalize="none"
                     autoCorrect={false}
                   />
-                  <Pressable onPress={() => setShowPwd((v) => !v)} style={styles.showHideBtn}>
-                    <Text style={styles.showHideText}>{showPwd ? 'Hide' : 'Show'}</Text>
+                  <Pressable onPress={() => setShowPwd((v) => !v)} className="absolute right-4 top-4">
+                    <Text className="font-body text-sm text-gray-400">{showPwd ? 'Hide' : 'Show'}</Text>
                   </Pressable>
                 </View>
-                {error ? <Text style={styles.error}>{error}</Text> : null}
-                <Button onPress={handlePasswordSubmit} loading={loading} size="lg" style={styles.btn}>
+                {error ? <Text className="font-body text-xs text-danger text-center mt-2">{error}</Text> : null}
+                <Button onPress={handlePasswordSubmit} loading={loading} size="lg" className="mt-2">
                   Sign in
                 </Button>
                 {(methods.includes('sms') || methods.includes('email')) && (
                   <Pressable onPress={() => setStage('method')}>
-                    <Text style={styles.switchLink}>Sign in with a code instead</Text>
+                    <Text className="font-body text-sm text-gray-500 text-center mt-4 underline">Sign in with a code instead</Text>
                   </Pressable>
                 )}
               </Animated.View>
@@ -358,84 +358,3 @@ export default function LoginScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.background },
-  flex: { flex: 1 },
-  heroSection: {
-    backgroundColor: colors.primary,
-    paddingBottom: spacing.xxl + spacing.md,
-  },
-  heroContent: {
-    alignItems: 'center',
-    paddingTop: spacing.xl,
-    paddingHorizontal: spacing.lg,
-  },
-  logo: { width: 180, height: 72, marginBottom: spacing.sm },
-  heroSubtitle: { ...typography.body, color: colors.accent, fontFamily: 'PlusJakartaSans-Medium' },
-  scroll: { flexGrow: 1, paddingHorizontal: spacing.lg, marginTop: -spacing.xl },
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.xl,
-    padding: spacing.lg,
-    paddingTop: spacing.xl,
-  },
-  heading: { ...typography.h4, color: colors.text, marginBottom: spacing.md, textAlign: 'center' },
-  subheading: { ...typography.body, color: colors.textSecondary, textAlign: 'center', marginBottom: spacing.lg },
-  btn: { marginTop: spacing.sm },
-  backLink: { ...typography.bodyMedium, color: colors.primary, marginBottom: spacing.md },
-  divider: { flexDirection: 'row', alignItems: 'center', marginVertical: spacing.lg },
-  line: { flex: 1, height: 1, backgroundColor: colors.divider },
-  dividerText: { ...typography.bodySm, color: colors.textTertiary, marginHorizontal: spacing.md },
-  linkText: { ...typography.body, color: colors.textSecondary, textAlign: 'center' },
-  linkBold: { color: colors.primary, fontFamily: 'PlusJakartaSans-SemiBold' },
-  methodCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-    padding: spacing.md,
-    borderWidth: 1.5,
-    borderColor: colors.divider,
-    borderRadius: radius.lg,
-    backgroundColor: colors.surface,
-    marginBottom: spacing.sm,
-  },
-  methodCardPressed: { backgroundColor: (colors as any).primaryLight + '15', borderColor: colors.primary },
-  methodIcon: { fontSize: 22 },
-  methodTextWrap: { flex: 1 },
-  methodTitle: { ...typography.bodyMedium, color: colors.text, marginBottom: 2 },
-  methodDesc: { ...typography.bodySm, color: colors.textSecondary },
-  methodArrow: { ...typography.body, color: colors.textTertiary },
-  input: {
-    borderWidth: 1,
-    borderColor: colors.divider,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    ...typography.body,
-    color: colors.text,
-    backgroundColor: colors.surface,
-    marginBottom: spacing.sm,
-  },
-  inputError: { borderColor: colors.danger },
-  pwdRow: { position: 'relative' as const },
-  pwdInput: { paddingRight: 60 },
-  showHideBtn: { position: 'absolute' as const, right: spacing.md, top: spacing.md },
-  showHideText: { ...typography.bodySm, color: colors.textTertiary },
-  phonePill: {
-    backgroundColor: (colors as any).primaryLight + '15',
-    alignSelf: 'center',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.full,
-    marginBottom: spacing.lg,
-  },
-  phonePillText: { ...typography.bodySm, color: colors.primary, textAlign: 'center' },
-  otpWrap: { marginBottom: spacing.md },
-  error: { ...typography.caption, color: colors.danger, textAlign: 'center', marginTop: spacing.sm },
-  verifying: { ...typography.bodySm, color: colors.textSecondary, textAlign: 'center', marginTop: spacing.sm },
-  resendRow: { alignItems: 'center', marginTop: spacing.lg },
-  countdown: { ...typography.bodySm, color: colors.textTertiary },
-  resendLink: { ...typography.bodyMedium, color: colors.primary },
-  switchLink: { ...typography.bodySm, color: colors.textSecondary, textAlign: 'center', marginTop: spacing.md, textDecorationLine: 'underline' },
-  changeLink: { ...typography.body, color: colors.textSecondary, textAlign: 'center', marginTop: spacing.md },
-});

@@ -1,4 +1,3 @@
-import './Jobs.css';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { adminCreateAnnouncement, getStates, getLGAs, getWards } from '../api/client';
@@ -46,31 +45,31 @@ export default function CreateAnnouncement() {
   };
 
   return (
-    <div className="job-form">
+    <div className="max-w-[800px] mx-auto">
       <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)', marginBottom: 'var(--space-md)' }}>← Back</button>
       <h1>Create Announcement</h1>
 
       <Card padding="md">
-        <div className="job-form__field">
-          <label>Title *</label>
-          <input value={form.title} onChange={e => update('title', e.target.value)} placeholder="Announcement title" />
+        <div className="mb-4">
+          <label className="block font-semibold mb-1">Title *</label>
+          <input className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.title} onChange={e => update('title', e.target.value)} placeholder="Announcement title" />
         </div>
-        <div className="job-form__field">
-          <label>Body *</label>
-          <textarea value={form.body} onChange={e => update('body', e.target.value)} rows={6} placeholder="Announcement content..." />
+        <div className="mb-4">
+          <label className="block font-semibold mb-1">Body *</label>
+          <textarea className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem] resize-y min-h-[100px]" value={form.body} onChange={e => update('body', e.target.value)} rows={6} placeholder="Announcement content..." />
         </div>
-        <div className="job-form__row">
-          <div className="job-form__field">
-            <label>Target Scope</label>
-            <select value={form.target_scope} onChange={e => update('target_scope', e.target.value)}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">Target Scope</label>
+            <select className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.target_scope} onChange={e => update('target_scope', e.target.value)}>
               <option value="ALL">All Members</option>
               <option value="STATE">State</option>
               <option value="LGA">LGA</option>
               <option value="WARD">Ward</option>
             </select>
           </div>
-          <div className="job-form__field">
-            <label>Priority</label>
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">Priority</label>
             <div style={{ display: 'flex', gap: 12, paddingTop: 8 }}>
               {['NORMAL', 'IMPORTANT', 'URGENT'].map(p => (
                 <label key={p} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -83,27 +82,27 @@ export default function CreateAnnouncement() {
         </div>
 
         {form.target_scope !== 'ALL' && (
-          <div className="job-form__row">
-            <div className="job-form__field">
-              <label>State</label>
-              <select value={form.target_state} onChange={e => { update('target_state', e.target.value); update('target_lga', ''); update('target_ward', ''); }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div className="mb-4">
+              <label className="block font-semibold mb-1">State</label>
+              <select className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.target_state} onChange={e => { update('target_state', e.target.value); update('target_lga', ''); update('target_ward', ''); }}>
                 <option value="">Select</option>
                 {states.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
             </div>
             {(form.target_scope === 'LGA' || form.target_scope === 'WARD') && (
-              <div className="job-form__field">
-                <label>LGA</label>
-                <select value={form.target_lga} onChange={e => { update('target_lga', e.target.value); update('target_ward', ''); }}>
+              <div className="mb-4">
+                <label className="block font-semibold mb-1">LGA</label>
+                <select className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.target_lga} onChange={e => { update('target_lga', e.target.value); update('target_ward', ''); }}>
                   <option value="">Select</option>
                   {lgas.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
                 </select>
               </div>
             )}
             {form.target_scope === 'WARD' && (
-              <div className="job-form__field">
-                <label>Ward</label>
-                <select value={form.target_ward} onChange={e => update('target_ward', e.target.value)}>
+              <div className="mb-4">
+                <label className="block font-semibold mb-1">Ward</label>
+                <select className="w-full py-2 px-4 border border-gray-200 rounded-lg text-[0.95rem]" value={form.target_ward} onChange={e => update('target_ward', e.target.value)}>
                   <option value="">Select</option>
                   {wards.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
                 </select>

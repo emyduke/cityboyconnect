@@ -1,4 +1,3 @@
-import './Join.css';
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import PhoneInput from '../components/PhoneInput';
@@ -212,54 +211,54 @@ export default function Join() {
   };
 
   return (
-    <div className="join-page">
-      <div className="join-card">
-        <Link to="/" className="join-brand">City Boy Connect</Link>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-forest-dark to-forest p-6">
+      <div className="bg-white rounded-2xl px-10 py-8 w-full max-w-[540px] shadow-heavy animate-slide-up">
+        <Link to="/" className="block font-display font-extrabold text-[1.1rem] text-forest no-underline text-center mb-6">City Boy Connect</Link>
 
         {referrer && (
-          <div className="join-referral-banner">
-            <span className="join-referral-banner__label">You&apos;re joining under</span>
-            <span className="join-referral-banner__name">{referrer.full_name}</span>
-            {referrer.state_name && <span className="join-referral-banner__meta">{referrer.state_name}</span>}
+          <div className="bg-gradient-to-br from-forest to-forest-dark text-white rounded-xl px-4 py-3 text-center mb-4 flex flex-col gap-0.5">
+            <span className="text-xs opacity-85 uppercase tracking-wide">You&apos;re joining under</span>
+            <span className="font-bold text-[1.05rem]">{referrer.full_name}</span>
+            {referrer.state_name && <span className="text-[0.8rem] opacity-70">{referrer.state_name}</span>}
           </div>
         )}
 
         <StepIndicator steps={STEPS} current={step} />
 
-        <div className="join-step-content">
+        <div className="mt-8">
           {step === 0 && (
             <>
               {authSubStep === 'phone' && (
-                <form onSubmit={handlePhoneSubmit} className="join-form">
-                  <h2>Join the Movement</h2>
-                  <p className="join-form__sub">Enter your Nigerian phone number to get started</p>
+                <form onSubmit={handlePhoneSubmit} className="flex flex-col gap-4">
+                  <h2 className="text-[1.3rem] font-extrabold text-gray-900 text-center">Join the Movement</h2>
+                  <p className="text-center text-gray-500 text-sm mb-2">Enter your Nigerian phone number to get started</p>
                   <PhoneInput value={phone} onChange={setPhone} label="Phone Number" error={error} />
-                  <Button type="submit" loading={loading} size="lg" className="join-full-btn">Continue</Button>
+                  <Button type="submit" loading={loading} size="lg" className="w-full">Continue</Button>
                 </form>
               )}
 
               {authSubStep === 'method' && (
-                <div className="join-form">
-                  <button className="join-back" onClick={() => { setAuthSubStep('phone'); setError(''); }}>← Change number</button>
-                  <h2>Choose verification method</h2>
-                  <p className="join-form__sub">How would you like to verify your phone?</p>
-                  {error && <p className="join-error">{error}</p>}
-                  <div className="method-options">
+                <div className="flex flex-col gap-4">
+                  <button className="bg-transparent border-none text-forest text-[0.85rem] cursor-pointer text-center font-medium hover:underline" onClick={() => { setAuthSubStep('phone'); setError(''); }}>← Change number</button>
+                  <h2 className="text-[1.3rem] font-extrabold text-gray-900 text-center">Choose verification method</h2>
+                  <p className="text-center text-gray-500 text-sm mb-2">How would you like to verify your phone?</p>
+                  {error && <p className="text-danger text-[0.85rem] text-center">{error}</p>}
+                  <div className="flex flex-col gap-2.5 mt-1">
                     {methods.includes('sms') && (
-                      <button className="method-card" onClick={() => handleMethodSelect('sms')} disabled={loading}>
-                        <span className="method-icon">💬</span>
-                        <div className="method-text">
-                          <p className="method-title">Text message (SMS)</p>
-                          <p className="method-desc">Get a 6-digit code sent to your phone</p>
+                      <button className="flex items-center gap-3.5 px-[18px] py-4 border-[1.5px] border-gray-200 rounded-[14px] bg-white cursor-pointer text-left transition-all duration-150 w-full hover:border-forest hover:bg-gray-50" onClick={() => handleMethodSelect('sms')} disabled={loading}>
+                        <span className="text-2xl">💬</span>
+                        <div className="flex-1">
+                          <p className="font-semibold text-[0.95rem] m-0">Text message (SMS)</p>
+                          <p className="text-[0.8rem] text-gray-500 mt-0.5">Get a 6-digit code sent to your phone</p>
                         </div>
                       </button>
                     )}
                     {methods.includes('email') && (
-                      <button className="method-card" onClick={() => handleMethodSelect('email')} disabled={loading}>
-                        <span className="method-icon">✉️</span>
-                        <div className="method-text">
-                          <p className="method-title">Email</p>
-                          <p className="method-desc">Get a code sent to your email address</p>
+                      <button className="flex items-center gap-3.5 px-[18px] py-4 border-[1.5px] border-gray-200 rounded-[14px] bg-white cursor-pointer text-left transition-all duration-150 w-full hover:border-forest hover:bg-gray-50" onClick={() => handleMethodSelect('email')} disabled={loading}>
+                        <span className="text-2xl">✉️</span>
+                        <div className="flex-1">
+                          <p className="font-semibold text-[0.95rem] m-0">Email</p>
+                          <p className="text-[0.8rem] text-gray-500 mt-0.5">Get a code sent to your email address</p>
                         </div>
                       </button>
                     )}
@@ -268,32 +267,32 @@ export default function Join() {
               )}
 
               {authSubStep === 'enter-email' && (
-                <div className="join-form">
-                  <button className="join-back" onClick={() => setAuthSubStep(methods.length > 1 ? 'method' : 'phone')}>← Back</button>
-                  <h2>Enter your email</h2>
-                  <p className="join-form__sub">We&apos;ll send your verification code there</p>
+                <div className="flex flex-col gap-4">
+                  <button className="bg-transparent border-none text-forest text-[0.85rem] cursor-pointer text-center font-medium hover:underline" onClick={() => setAuthSubStep(methods.length > 1 ? 'method' : 'phone')}>← Back</button>
+                  <h2 className="text-[1.3rem] font-extrabold text-gray-900 text-center">Enter your email</h2>
+                  <p className="text-center text-gray-500 text-sm mb-2">We&apos;ll send your verification code there</p>
                   <Input
                     type="email" label="Email address" placeholder="you@example.com"
                     value={email} onChange={(e) => setEmail(e.target.value)} error={error}
                     onKeyDown={(e) => e.key === 'Enter' && handleEmailSubmit()}
                   />
-                  <Button onClick={handleEmailSubmit} loading={loading} size="lg" className="join-full-btn">Send code</Button>
+                  <Button onClick={handleEmailSubmit} loading={loading} size="lg" className="w-full">Send code</Button>
                 </div>
               )}
             </>
           )}
 
           {step === 1 && (
-            <div className="join-form">
-              <button className="join-back" onClick={() => { setStep(0); setAuthSubStep(methods.length > 1 ? 'method' : 'phone'); setError(''); }}>← Back</button>
-              <h2>Verify Your Phone</h2>
-              <p className="join-form__sub">
+            <div className="flex flex-col gap-4">
+              <button className="bg-transparent border-none text-forest text-[0.85rem] cursor-pointer text-center font-medium hover:underline" onClick={() => { setStep(0); setAuthSubStep(methods.length > 1 ? 'method' : 'phone'); setError(''); }}>← Back</button>
+              <h2 className="text-[1.3rem] font-extrabold text-gray-900 text-center">Verify Your Phone</h2>
+              <p className="text-center text-gray-500 text-sm mb-2">
                 {otpChannel === 'sms' ? `Enter the 6-digit code sent to ${otpSentTo}` : `Enter the code sent to ${otpSentTo}`}
               </p>
               <OTPInput onComplete={handleVerifyOTP} error={error} disabled={loading} />
-              {error && <p className="join-error">{error}</p>}
+              {error && <p className="text-danger text-[0.85rem] text-center">{error}</p>}
               {methods.length > 1 && (
-                <button className="join-back" onClick={() => { setStep(0); setAuthSubStep('method'); setError(''); }}>
+                <button className="bg-transparent border-none text-forest text-[0.85rem] cursor-pointer text-center font-medium hover:underline" onClick={() => { setStep(0); setAuthSubStep('method'); setError(''); }}>
                   Try a different method
                 </button>
               )}
@@ -301,9 +300,9 @@ export default function Join() {
           )}
 
           {step === 2 && (
-            <form onSubmit={handleProfile} className="join-form">
-              <h2>Your Profile</h2>
-              <p className="join-form__sub">Tell us about yourself</p>
+            <form onSubmit={handleProfile} className="flex flex-col gap-4">
+              <h2 className="text-[1.3rem] font-extrabold text-gray-900 text-center">Your Profile</h2>
+              <p className="text-center text-gray-500 text-sm mb-2">Tell us about yourself</p>
               <Input label="Full Name" placeholder="e.g. Abubakar Tafawa Balewa" value={profile.full_name} onChange={e => setProfile(p => ({ ...p, full_name: e.target.value }))} required />
               <Input label="Date of Birth" type="date" value={profile.date_of_birth} onChange={e => setProfile(p => ({ ...p, date_of_birth: e.target.value }))} required />
               <SearchableSelect
@@ -314,44 +313,44 @@ export default function Join() {
               />
               <Input label="Occupation" placeholder="e.g. Software Engineer" value={profile.occupation} onChange={e => setProfile(p => ({ ...p, occupation: e.target.value }))} required />
               <FileUpload label="Profile Photo (optional)" accept="image/*" onChange={setProfilePhoto} />
-              {error && <p className="join-error">{error}</p>}
-              <Button type="submit" loading={loading} size="lg" className="join-full-btn">Continue</Button>
+              {error && <p className="text-danger text-[0.85rem] text-center">{error}</p>}
+              <Button type="submit" loading={loading} size="lg" className="w-full">Continue</Button>
             </form>
           )}
 
           {step === 3 && (
-            <form onSubmit={handlePlacement} className="join-form">
-              <h2>Political Placement</h2>
-              <p className="join-form__sub">Where are you located?</p>
+            <form onSubmit={handlePlacement} className="flex flex-col gap-4">
+              <h2 className="text-[1.3rem] font-extrabold text-gray-900 text-center">Political Placement</h2>
+              <p className="text-center text-gray-500 text-sm mb-2">Where are you located?</p>
               <SearchableSelect label="State" options={states} value={placement.state} onChange={handleStateChange} placeholder="Select State" />
               <SearchableSelect label="LGA" options={lgas} value={placement.lga} onChange={handleLgaChange} placeholder={placement.state ? 'Select LGA' : 'Select State first'} disabled={!placement.state} />
               <SearchableSelect label="Ward" options={wards} value={placement.ward} onChange={val => setPlacement(p => ({ ...p, ward: val }))} placeholder={placement.lga ? 'Select Ward' : 'Select LGA first'} disabled={!placement.lga} />
               <Input label="Residential Address" placeholder="Your residential address" value={placement.residential_address} onChange={e => setPlacement(p => ({ ...p, residential_address: e.target.value }))} />
-              {error && <p className="join-error">{error}</p>}
-              <Button type="submit" loading={loading} size="lg" className="join-full-btn">Continue</Button>
+              {error && <p className="text-danger text-[0.85rem] text-center">{error}</p>}
+              <Button type="submit" loading={loading} size="lg" className="w-full">Continue</Button>
             </form>
           )}
 
           {step === 4 && (
-            <form onSubmit={handleVoterCard} className="join-form">
-              <h2>Voter Card Verification</h2>
-              <p className="join-form__sub">This helps verify your identity (can be done later)</p>
+            <form onSubmit={handleVoterCard} className="flex flex-col gap-4">
+              <h2 className="text-[1.3rem] font-extrabold text-gray-900 text-center">Voter Card Verification</h2>
+              <p className="text-center text-gray-500 text-sm mb-2">This helps verify your identity (can be done later)</p>
               <Input label="Voter Card Number (VIN)" placeholder="19-character VIN" value={voterCard.voter_card_number} onChange={e => setVoterCard(p => ({ ...p, voter_card_number: e.target.value.toUpperCase().slice(0, 19) }))} maxLength={19} />
               <FileUpload label="Voter Card Photo (front)" accept="image/*" onChange={setVoterCardImage} />
               <Input label="APC Membership Number (optional)" placeholder="If you have one" value={voterCard.apc_membership_number} onChange={e => setVoterCard(p => ({ ...p, apc_membership_number: e.target.value }))} />
-              {error && <p className="join-error">{error}</p>}
-              <div className="join-actions">
-                <Button type="submit" loading={loading} size="lg" className="join-full-btn">Continue</Button>
-                <button type="button" className="join-skip" onClick={() => setStep(5)}>Skip for now</button>
+              {error && <p className="text-danger text-[0.85rem] text-center">{error}</p>}
+              <div className="flex flex-col gap-2 items-center">
+                <Button type="submit" loading={loading} size="lg" className="w-full">Continue</Button>
+                <button type="button" className="bg-transparent border-none text-gray-400 text-[0.85rem] cursor-pointer text-center font-medium hover:underline" onClick={() => setStep(5)}>Skip for now</button>
               </div>
             </form>
           )}
 
           {step === 5 && (
-            <div className="join-form">
-              <h2>Set a Password</h2>
-              <p className="join-form__sub">Create a password so you can sign in easily, even if SMS or email isn&apos;t available.</p>
-              <div className="password-field">
+            <div className="flex flex-col gap-4">
+              <h2 className="text-[1.3rem] font-extrabold text-gray-900 text-center">Set a Password</h2>
+              <p className="text-center text-gray-500 text-sm mb-2">Create a password so you can sign in easily, even if SMS or email isn&apos;t available.</p>
+              <div className="relative">
                 <Input
                   type={showPwd ? 'text' : 'password'}
                   label="New Password"
@@ -359,7 +358,7 @@ export default function Join() {
                   value={newPwd}
                   onChange={(e) => setNewPwd(e.target.value)}
                 />
-                <button type="button" className="pwd-toggle" onClick={() => setShowPwd((v) => !v)}>
+                <button type="button" className="absolute right-3 top-[34px] bg-transparent border-none text-forest text-[0.8rem] cursor-pointer font-semibold" onClick={() => setShowPwd((v) => !v)}>
                   {showPwd ? 'Hide' : 'Show'}
                 </button>
               </div>
@@ -370,11 +369,11 @@ export default function Join() {
                 value={confirmPwd}
                 onChange={(e) => setConfirmPwd(e.target.value)}
               />
-              {error && <p className="join-error">{error}</p>}
+              {error && <p className="text-danger text-[0.85rem] text-center">{error}</p>}
               <Button
                 loading={loading}
                 size="lg"
-                className="join-full-btn"
+                className="w-full"
                 onClick={async () => {
                   if (newPwd.length < 8) { setError('Password must be at least 8 characters'); return; }
                   if (newPwd !== confirmPwd) { setError('Passwords do not match'); return; }
@@ -398,29 +397,29 @@ export default function Join() {
           )}
 
           {step === 6 && (
-            <div className="join-form join-complete">
-              <div className="join-complete__icon">🎉</div>
-              <h2>Welcome to City Boy Connect!</h2>
-              <p className="join-form__sub">You are now part of Nigeria's most organized youth movement.</p>
+            <div className="flex flex-col gap-4 items-center text-center">
+              <div className="text-5xl mb-4 animate-count-up">🎉</div>
+              <h2 className="text-[1.3rem] font-extrabold text-gray-900 text-center">Welcome to City Boy Connect!</h2>
+              <p className="text-center text-gray-500 text-sm mb-2">You are now part of Nigeria's most organized youth movement.</p>
               {completionData?.membership_id && (
-                <div className="join-complete__id">
-                  <span className="join-complete__id-label">Your Membership ID</span>
-                  <span className="join-complete__id-value">{completionData.membership_id}</span>
+                <div className="flex flex-col items-center gap-1 p-4 bg-gray-50 rounded-xl border-2 border-dashed border-forest">
+                  <span className="text-xs text-gray-500 uppercase tracking-widest">Your Membership ID</span>
+                  <span className="font-mono text-xl font-bold text-forest">{completionData.membership_id}</span>
                 </div>
               )}
               {completionData?.referral_code && (
-                <div className="join-complete__referral">
-                  <span>Share your referral code: <strong>{completionData.referral_code}</strong></span>
+                <div className="text-[0.85rem] text-gray-500 px-4 py-2 bg-gray-50 rounded-lg">
+                  <span>Share your referral code: <strong className="text-gold-dark">{completionData.referral_code}</strong></span>
                 </div>
               )}
-              <p className="join-complete__status">Status: Pending Verification</p>
-              <Button onClick={() => navigate('/dashboard')} size="lg" className="join-full-btn">Go to Dashboard</Button>
+              <p className="text-[0.85rem] text-warning font-semibold">Status: Pending Verification</p>
+              <Button onClick={() => navigate('/dashboard')} size="lg" className="w-full">Go to Dashboard</Button>
             </div>
           )}
         </div>
 
         {step < 2 && (
-          <p className="join-footer">Already a member? <Link to="/login">Sign In</Link></p>
+          <p className="text-center text-[0.85rem] text-gray-500 mt-8">Already a member? <Link to="/login" className="text-forest font-semibold">Sign In</Link></p>
         )}
       </div>
     </div>

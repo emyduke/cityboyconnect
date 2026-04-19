@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, RefreshControl, StyleSheet } from 'react-native';
+import { View, Text, FlatList, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, spacing, typography, radius, shadows } from '../../theme';
 import { adminApi } from '../../api/admin';
 import { useToastStore } from '../../store/toastStore';
 import Badge from '../../components/ui/Badge';
@@ -53,43 +52,43 @@ export default function AdminReportsScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.safe} edges={['bottom']}>
-        <View style={styles.container}>
+      <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+        <View className="flex-1 p-4">
           <Skeleton variant="card" />
-          <Skeleton variant="card" style={{ marginTop: spacing.sm }} />
+          <Skeleton variant="card" className="mt-2" />
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
-      <View style={styles.container}>
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+      <View className="flex-1 p-4">
         <FlatList
           data={reports}
           keyExtractor={(item) => String(item.id || item.pk)}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1a472a" />}
           ListEmptyComponent={<EmptyState title="No reports" />}
           renderItem={({ item }) => {
             const pk = item.id || item.pk;
             const status = item.status || 'SUBMITTED';
             return (
-              <View style={styles.card}>
-                <View style={styles.cardHeader}>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.title}>Report #{pk}</Text>
-                    <Text style={styles.meta}>{item.author_name || ''} · {item.report_period || ''}</Text>
+              <View className="bg-surface rounded-lg p-4 mb-2 shadow-sm">
+                <View className="flex-row justify-between items-start">
+                  <View className="flex-1">
+                    <Text className="text-base font-body-medium text-gray-900">Report #{pk}</Text>
+                    <Text className="text-xs font-body text-gray-500 mt-0.5">{item.author_name || ''} · {item.report_period || ''}</Text>
                   </View>
                   <Badge label={status} variant={statusVariant(status)} />
                 </View>
-                <View style={styles.actions}>
+                <View className="flex-row gap-2 mt-2">
                   {status === 'SUBMITTED' && (
-                    <Button size="sm" onPress={() => handleAction(pk, 'acknowledge')} loading={actionLoading === pk} style={{ flex: 1 }}>
+                    <Button size="sm" onPress={() => handleAction(pk, 'acknowledge')} loading={actionLoading === pk} className="flex-1">
                       Acknowledge
                     </Button>
                   )}
                   {(status === 'SUBMITTED' || status === 'ACKNOWLEDGED') && (
-                    <Button size="sm" variant="secondary" onPress={() => handleAction(pk, 'review')} loading={actionLoading === pk} style={{ flex: 1 }}>
+                    <Button size="sm" variant="secondary" onPress={() => handleAction(pk, 'review')} loading={actionLoading === pk} className="flex-1">
                       Review
                     </Button>
                   )}
@@ -97,19 +96,10 @@ export default function AdminReportsScreen() {
               </View>
             );
           }}
-          contentContainerStyle={{ paddingBottom: spacing.xxl }}
+          contentContainerClassName="pb-12"
         />
       </View>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  container: { flex: 1, padding: spacing.md },
-  card: { backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.md, marginBottom: spacing.sm, ...shadows.sm },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  title: { ...typography.bodyMedium, color: colors.text },
-  meta: { ...typography.caption, color: colors.textSecondary, marginTop: 2 },
-  actions: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.sm },
-});

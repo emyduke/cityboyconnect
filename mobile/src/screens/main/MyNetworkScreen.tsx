@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, RefreshControl, Pressable, StyleSheet } from 'react-native';
+import { View, Text, FlatList, RefreshControl, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, spacing, typography, radius, shadows } from '../../theme';
 import { getMyNetwork, getMyNetworkTree, getMyNetworkRecent } from '../../api/members';
 import { unwrap } from '../../api/client';
 import Avatar from '../../components/ui/Avatar';
@@ -49,29 +48,29 @@ export default function MyNetworkScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.safe} edges={['bottom']}>
-        <View style={styles.container}>
+      <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+        <View className="flex-1 p-4">
           <Skeleton variant="card" />
-          <Skeleton variant="card" style={{ marginTop: spacing.sm }} />
+          <Skeleton variant="card" className="mt-2" />
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
-      <View style={styles.container}>
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+      <View className="flex-1 p-4">
         {data?.network_size != null && (
-          <View style={styles.statBar}>
-            <Text style={styles.statLabel}>Network Size</Text>
-            <Text style={styles.statValue}>{data.network_size}</Text>
+          <View className="flex-row justify-between items-center bg-forest-dark rounded-md p-4 mb-4">
+            <Text className="text-base font-body-medium text-gold-light">Network Size</Text>
+            <Text className="text-2xl font-display-bold text-white">{data.network_size}</Text>
           </View>
         )}
 
-        <View style={styles.tabs}>
+        <View className="flex-row mb-4 bg-gray-100 rounded-md p-0.5">
           {tabs.map((t) => (
-            <Pressable key={t.key} style={[styles.tab, tab === t.key && styles.tabActive]} onPress={() => setTab(t.key)}>
-              <Text style={[styles.tabLabel, tab === t.key && styles.tabLabelActive]}>{t.label}</Text>
+            <Pressable key={t.key} className={`flex-1 py-2 items-center rounded-sm ${tab === t.key ? 'bg-surface shadow-sm' : ''}`} onPress={() => setTab(t.key)}>
+              <Text className={`${tab === t.key ? 'text-base font-body-medium text-forest' : 'text-sm font-body text-gray-500'}`}>{t.label}</Text>
             </Pressable>
           ))}
         </View>
@@ -79,14 +78,14 @@ export default function MyNetworkScreen() {
         <FlatList
           data={items}
           keyExtractor={(item, idx) => String(item.id || idx)}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1a472a" />}
           ListEmptyComponent={<EmptyState title="No members yet" />}
           renderItem={({ item }) => (
-            <View style={styles.row}>
+            <View className="flex-row items-center py-2 border-b border-gray-200 gap-2">
               <Avatar name={item.full_name || ''} size="sm" />
-              <View style={styles.rowInfo}>
-                <Text style={styles.rowName}>{item.full_name || 'Member'}</Text>
-                <Text style={styles.rowMeta}>{item.state_name || ''}{item.joined_at ? ` · ${new Date(item.joined_at).toLocaleDateString()}` : ''}</Text>
+              <View className="flex-1">
+                <Text className="text-base font-body-medium text-gray-900">{item.full_name || 'Member'}</Text>
+                <Text className="text-xs font-body text-gray-500">{item.state_name || ''}{item.joined_at ? ` · ${new Date(item.joined_at).toLocaleDateString()}` : ''}</Text>
               </View>
               {item.added_by_leader ? (
                 <Badge label="Added" variant="success" />
@@ -97,26 +96,9 @@ export default function MyNetworkScreen() {
               )}
             </View>
           )}
-          contentContainerStyle={{ paddingBottom: spacing.xxl }}
+          contentContainerClassName="pb-12"
         />
       </View>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  container: { flex: 1, padding: spacing.md },
-  statBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.primaryDark, borderRadius: radius.md, padding: spacing.md, marginBottom: spacing.md },
-  statLabel: { ...typography.bodyMedium, color: colors.accentLight },
-  statValue: { ...typography.h2, color: colors.textInverse },
-  tabs: { flexDirection: 'row', marginBottom: spacing.md, backgroundColor: colors.borderLight, borderRadius: radius.md, padding: 2 },
-  tab: { flex: 1, paddingVertical: spacing.sm, alignItems: 'center', borderRadius: radius.sm },
-  tabActive: { backgroundColor: colors.surface, ...shadows.sm },
-  tabLabel: { ...typography.bodySm, color: colors.textSecondary },
-  tabLabelActive: { ...typography.bodyMedium, color: colors.primary },
-  row: { flexDirection: 'row', alignItems: 'center', paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.divider, gap: spacing.sm },
-  rowInfo: { flex: 1 },
-  rowName: { ...typography.bodyMedium, color: colors.text },
-  rowMeta: { ...typography.caption, color: colors.textSecondary },
-});

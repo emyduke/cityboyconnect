@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, RefreshControl } from 'react-native';
+import { View, Text, FlatList, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { colors, spacing, typography } from '../../theme';
 import { getReports } from '../../api/reports';
 import { unwrap } from '../../api/client';
 import Card from '../../components/ui/Card';
@@ -27,40 +26,33 @@ export default function ReportsScreen() {
 
   useEffect(() => { fetch(); }, [fetch]);
 
-  if (loading) return <View style={styles.container}>{Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} variant="card" style={{ marginBottom: spacing.sm }} />)}</View>;
+  if (loading) return <View className="flex-1 bg-background p-4">{Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} variant="card" className="mb-2" />)}</View>;
 
   const statusVariant = (s: string) => s === 'SUBMITTED' ? 'info' : s === 'ACKNOWLEDGED' ? 'success' : s === 'REVIEWED' ? 'success' : 'warning';
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 bg-background p-4">
       <FlatList
         data={reports}
         keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => (
-          <Card style={{ marginBottom: spacing.sm }}>
-            <View style={styles.row}>
-              <Text style={styles.period}>{item.report_period}</Text>
+          <Card className="mb-2">
+            <View className="flex-row justify-between items-center">
+              <Text className="text-base font-body-medium text-gray-900">{item.report_period}</Text>
               <Badge label={item.status || 'DRAFT'} variant={statusVariant(item.status)} />
             </View>
-            <Text style={styles.summary} numberOfLines={2}>{item.summary_of_activities}</Text>
+            <Text className="text-sm font-body text-gray-500 mt-1" numberOfLines={2}>{item.summary_of_activities}</Text>
           </Card>
         )}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetch(); }} tintColor={colors.primary} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetch(); }} tintColor="#1a472a" />}
         ListEmptyComponent={<EmptyState icon="📋" title="No Reports" description="Submit your first grassroots report" actionLabel="New Report" onAction={() => navigation.navigate('NewReport')} />}
         ListHeaderComponent={
-          <Button variant="secondary" size="sm" onPress={() => navigation.navigate('NewReport')} style={{ marginBottom: spacing.md, alignSelf: 'flex-end' }}>
+          <Button variant="secondary" size="sm" onPress={() => navigation.navigate('NewReport')} className="mb-4 self-end">
             + New Report
           </Button>
         }
-        contentContainerStyle={{ paddingBottom: spacing.xxl }}
+        contentContainerClassName="pb-12"
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background, padding: spacing.md },
-  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  period: { ...typography.bodyMedium, color: colors.text },
-  summary: { ...typography.bodySm, color: colors.textSecondary, marginTop: spacing.xs },
-});

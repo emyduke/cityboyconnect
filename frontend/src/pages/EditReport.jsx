@@ -1,4 +1,3 @@
-import './NewReport.css';
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getReport, updateReport, submitReport } from '../api/client';
@@ -102,7 +101,7 @@ export default function EditReport() {
 
   if (loading) {
     return (
-      <div className="new-report" style={{ padding: '2rem' }}>
+      <div className="flex flex-col gap-6" style={{ padding: '2rem' }}>
         <p style={{ color: 'var(--color-gray-400)' }}>Loading report...</p>
       </div>
     );
@@ -110,8 +109,8 @@ export default function EditReport() {
 
   if (!report) {
     return (
-      <div className="new-report">
-        <button className="new-report__back" onClick={() => navigate('/reports')}>← Back</button>
+      <div className="flex flex-col gap-6">
+        <button className="bg-transparent border-none text-forest text-[0.9rem] cursor-pointer font-medium self-start hover:underline" onClick={() => navigate('/reports')}>← Back</button>
         <p>Report not found.</p>
       </div>
     );
@@ -120,8 +119,8 @@ export default function EditReport() {
   const isDraft = report.status === 'DRAFT';
 
   return (
-    <div className="new-report">
-      <button className="new-report__back" onClick={() => navigate('/reports')}>← Back to Reports</button>
+    <div className="flex flex-col gap-6">
+      <button className="bg-transparent border-none text-forest text-[0.9rem] cursor-pointer font-medium self-start hover:underline" onClick={() => navigate('/reports')}>← Back to Reports</button>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
         <h1 style={{ margin: 0 }}>{isDraft ? 'Edit Report' : 'View Report'}</h1>
         <span style={{
@@ -164,7 +163,7 @@ export default function EditReport() {
             <span style={{ fontSize: '0.75rem', color: 'var(--color-gray-400)', fontWeight: 400, marginLeft: '4px' }}>Required before submitting</span>
           </label>
           <textarea
-            className="new-report__textarea"
+            className="w-full min-h-[120px] border border-gray-200 rounded-lg p-4 font-body text-[0.95rem] resize-y transition-colors focus:outline-none focus:border-forest"
             placeholder="What did your team do this period?"
             value={summary}
             onChange={e => setSummary(e.target.value)}
@@ -183,21 +182,21 @@ export default function EditReport() {
           <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-gray-700)', display: 'block', marginBottom: '0.5rem' }}>
             Challenges <span style={{ fontSize: '0.75rem', color: 'var(--color-gray-400)', fontWeight: 400 }}>(optional)</span>
           </label>
-          <textarea className="new-report__textarea" placeholder="Any obstacles?" value={challenges} onChange={e => setChallenges(e.target.value)} rows={3} disabled={!isDraft} />
+          <textarea className="w-full min-h-[120px] border border-gray-200 rounded-lg p-4 font-body text-[0.95rem] resize-y transition-colors focus:outline-none focus:border-forest" placeholder="Any obstacles?" value={challenges} onChange={e => setChallenges(e.target.value)} rows={3} disabled={!isDraft} />
         </div>
 
         <div>
           <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-gray-700)', display: 'block', marginBottom: '0.5rem' }}>
             Plans for next period <span style={{ fontSize: '0.75rem', color: 'var(--color-gray-400)', fontWeight: 400 }}>(optional)</span>
           </label>
-          <textarea className="new-report__textarea" placeholder="What are you planning?" value={plans} onChange={e => setPlans(e.target.value)} rows={3} disabled={!isDraft} />
+          <textarea className="w-full min-h-[120px] border border-gray-200 rounded-lg p-4 font-body text-[0.95rem] resize-y transition-colors focus:outline-none focus:border-forest" placeholder="What are you planning?" value={plans} onChange={e => setPlans(e.target.value)} rows={3} disabled={!isDraft} />
         </div>
 
         <div>
           <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-gray-700)', display: 'block', marginBottom: '0.5rem' }}>
             Support needed <span style={{ fontSize: '0.75rem', color: 'var(--color-gray-400)', fontWeight: 400 }}>(optional)</span>
           </label>
-          <textarea className="new-report__textarea" placeholder="Resources, guidance, or clarification?" value={support} onChange={e => setSupport(e.target.value)} rows={3} disabled={!isDraft} />
+          <textarea className="w-full min-h-[120px] border border-gray-200 rounded-lg p-4 font-body text-[0.95rem] resize-y transition-colors focus:outline-none focus:border-forest" placeholder="Resources, guidance, or clarification?" value={support} onChange={e => setSupport(e.target.value)} rows={3} disabled={!isDraft} />
         </div>
 
         {isDraft && (

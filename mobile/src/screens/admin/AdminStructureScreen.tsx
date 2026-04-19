@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, RefreshControl, StyleSheet, Pressable } from 'react-native';
+import { View, Text, FlatList, RefreshControl, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, spacing, typography, radius, shadows } from '../../theme';
 import { adminApi } from '../../api/admin';
 import Card from '../../components/ui/Card';
 import Skeleton from '../../components/ui/Skeleton';
@@ -28,49 +27,36 @@ export default function AdminStructureScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.safe} edges={['bottom']}>
-        <View style={styles.container}>
+      <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+        <View className="flex-1 p-4">
           <Skeleton variant="card" />
-          <Skeleton variant="card" style={{ marginTop: spacing.sm }} />
+          <Skeleton variant="card" className="mt-2" />
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
-      <View style={styles.container}>
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+      <View className="flex-1 p-4">
         <FlatList
           data={states}
           keyExtractor={(item) => String(item.id || item.pk)}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1a472a" />}
           ListEmptyComponent={<EmptyState title="No states found" />}
           renderItem={({ item }) => (
-            <Pressable style={styles.row} onPress={() => setSelected(selected?.id === item.id ? null : item)}>
-              <Text style={styles.stateName}>{item.name}</Text>
-              <View style={styles.rowRight}>
-                <Text style={styles.count}>{item.total_members ?? item.member_count ?? '-'} members</Text>
-                <Text style={styles.chevron}>{selected?.id === item.id ? '▼' : '›'}</Text>
+            <Pressable className="flex-row items-center justify-between bg-surface rounded-lg p-4 mb-1 shadow-sm" onPress={() => setSelected(selected?.id === item.id ? null : item)}>
+              <Text className="text-base font-body-medium text-gray-900">{item.name}</Text>
+              <View className="flex-row items-center gap-2">
+                <Text className="text-xs font-body text-gray-500">{item.total_members ?? item.member_count ?? '-'} members</Text>
+                <Text className="text-base text-gray-400">{selected?.id === item.id ? '▼' : '›'}</Text>
               </View>
             </Pressable>
           )}
-          contentContainerStyle={{ paddingBottom: spacing.xxl }}
+          contentContainerClassName="pb-12"
         />
       </View>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  container: { flex: 1, padding: spacing.md },
-  row: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.md,
-    marginBottom: spacing.xs, ...shadows.sm,
-  },
-  stateName: { ...typography.bodyMedium, color: colors.text },
-  rowRight: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  count: { ...typography.caption, color: colors.textSecondary },
-  chevron: { fontSize: 16, color: colors.textTertiary },
-});

@@ -1,4 +1,3 @@
-import './NewReport.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CardFlow from '../components/CardFlow/CardFlow';
@@ -68,9 +67,9 @@ export default function NewReport() {
 
   if (submitted) {
     return (
-      <div className="new-report">
-        <div className="new-report__success">
-          <div className="new-report__confetti">🎉</div>
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col items-center gap-6 text-center px-6 py-12 animate-[fadeIn_400ms_ease]">
+          <div className="text-[4rem] animate-[countUp_500ms_ease]">🎉</div>
           <h2>Report submitted!</h2>
           <p>Your supervisor has been notified.</p>
           <Button onClick={() => navigate('/reports')} size="lg">Back to Reports</Button>
@@ -130,7 +129,7 @@ export default function NewReport() {
           <h2>What happened? (the highlights)</h2>
           <p className="subtitle">Aim for at least a paragraph</p>
           <textarea
-            className="new-report__textarea"
+            className="w-full min-h-[120px] border border-gray-200 rounded-lg p-4 font-body text-[0.95rem] resize-y transition-colors focus:outline-none focus:border-forest"
             placeholder="Tell us what your team did this month. Rallies, outreaches, registrations, wins — anything worth noting."
             value={text}
             onChange={e => setText(e.target.value)}
@@ -153,7 +152,7 @@ export default function NewReport() {
         <>
           <h2>Any challenges?</h2>
           <textarea
-            className="new-report__textarea"
+            className="w-full min-h-[120px] border border-gray-200 rounded-lg p-4 font-body text-[0.95rem] resize-y transition-colors focus:outline-none focus:border-forest"
             placeholder="Any obstacles, conflicts, low turnout, resource gaps?"
             value={text}
             onChange={e => setText(e.target.value)}
@@ -174,7 +173,7 @@ export default function NewReport() {
         <>
           <h2>Plans for next period?</h2>
           <textarea
-            className="new-report__textarea"
+            className="w-full min-h-[120px] border border-gray-200 rounded-lg p-4 font-body text-[0.95rem] resize-y transition-colors focus:outline-none focus:border-forest"
             placeholder="What are you working on next month?"
             value={text}
             onChange={e => setText(e.target.value)}
@@ -195,7 +194,7 @@ export default function NewReport() {
         <>
           <h2>Need anything from National?</h2>
           <textarea
-            className="new-report__textarea"
+            className="w-full min-h-[120px] border border-gray-200 rounded-lg p-4 font-body text-[0.95rem] resize-y transition-colors focus:outline-none focus:border-forest"
             placeholder="Resources, support, clarification, funds?"
             value={text}
             onChange={e => setText(e.target.value)}
@@ -256,9 +255,9 @@ export default function NewReport() {
   ];
 
   return (
-    <div className="new-report">
-      <button className="new-report__back" onClick={() => navigate('/reports')}>← Back</button>
-      <h1>New Grassroots Report</h1>
+    <div className="flex flex-col gap-6">
+      <button className="bg-transparent border-none text-forest text-[0.9rem] cursor-pointer font-medium self-start hover:underline" onClick={() => navigate('/reports')}>← Back</button>
+      <h1 className="text-2xl font-extrabold">New Grassroots Report</h1>
       <CardFlow cards={cards} />
     </div>
   );

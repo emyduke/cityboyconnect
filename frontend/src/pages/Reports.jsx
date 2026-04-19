@@ -1,4 +1,3 @@
-import './Reports.css';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getReports, submitReport } from '../api/client';
@@ -43,33 +42,33 @@ export default function Reports() {
   };
 
   return (
-    <div className="reports-page">
-      <div className="reports-page__header">
-        <h1>Reports</h1>
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-extrabold">Reports</h1>
         <Button size="sm" onClick={() => navigate('/reports/new')}>+ New Report</Button>
       </div>
       {loading ? (
-        <div className="reports-grid"><Skeleton variant="card" /><Skeleton variant="card" /></div>
+        <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4"><Skeleton variant="card" /><Skeleton variant="card" /></div>
       ) : reports.length === 0 ? (
         <EmptyState title="No reports" description="Submit your first grassroots report" icon="📋" action={<Button size="sm" onClick={() => navigate('/reports/new')}>Create Report</Button>} />
       ) : (
-        <div className="reports-grid">
+        <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4">
           {reports.map(r => (
             <Card key={r.id} padding="md" className="report-item">
-              <div className="report-item__header">
+              <div className="flex items-center justify-between mb-2">
                 <Badge variant={statusVariant[r.status] || 'default'}>{r.status}</Badge>
-                <span className="report-item__period">{r.report_period}</span>
+                <span className="text-[0.8rem] text-gray-400 font-mono">{r.report_period}</span>
               </div>
-              <h3 className="report-item__level">{r.report_level} Report</h3>
-              <p className="report-item__summary">
+              <h3 className="text-base font-bold mb-1">{r.report_level} Report</h3>
+              <p className="text-[0.85rem] text-gray-500 leading-relaxed mb-2">
                 {r.summary_of_activities ? r.summary_of_activities.slice(0, 100) + '...' : <span style={{ color: 'var(--color-gray-400)' }}>No summary yet</span>}
               </p>
-              <div className="report-item__stats">
+              <div className="flex gap-4 text-[0.8rem] text-gray-400">
                 <span>New: {r.membership_new}</span>
                 <span>Total: {r.membership_total}</span>
                 <span>Events: {r.events_held}</span>
               </div>
-              <div className="report-item__actions" style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem' }}>
                 {r.status === 'DRAFT' ? (
                   <>
                     <Button size="sm" variant="secondary" onClick={() => navigate(`/reports/${r.id}/edit`)}>Edit Draft</Button>

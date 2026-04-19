@@ -1,10 +1,9 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
+import { View, Text, ScrollView, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { colors, spacing, typography, radius, shadows } from '../../theme';
 import { useAuthStore } from '../../store/authStore';
 import Avatar from '../../components/ui/Avatar';
 
@@ -38,13 +37,13 @@ export default function ProfileScreen() {
   ];
 
   const renderGroup = (title: string, rows: { label: string; value: string }[], delay: number) => (
-    <Animated.View entering={FadeInDown.delay(delay).duration(400)} style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      <View style={styles.card}>
+    <Animated.View entering={FadeInDown.delay(delay).duration(400)} className="mb-4">
+      <Text className="text-sm font-body-semibold text-gray-500 uppercase tracking-wide mb-1 pl-1">{title}</Text>
+      <View className="bg-surface rounded-xl p-4 shadow-sm">
         {rows.map((row, i) => (
-          <View key={row.label} style={[styles.row, i < rows.length - 1 && styles.rowBorder]}>
-            <Text style={styles.rowLabel}>{row.label}</Text>
-            <Text style={styles.rowValue}>{row.value}</Text>
+          <View key={row.label} className={`flex-row justify-between py-2 ${i < rows.length - 1 ? 'border-b border-gray-100' : ''}`}>
+            <Text className="text-sm font-body text-gray-500">{row.label}</Text>
+            <Text className="text-base font-body-medium text-gray-900 max-w-[55%] text-right">{row.value}</Text>
           </View>
         ))}
       </View>
@@ -52,90 +51,44 @@ export default function ProfileScreen() {
   );
 
   return (
-    <View style={styles.safe}>
-      <ScrollView contentContainerStyle={styles.scroll} bounces>
+    <View className="flex-1 bg-background">
+      <ScrollView contentContainerStyle={{ paddingBottom: 64 }} bounces>
         {/* Hero Header */}
-        <LinearGradient colors={[colors.primaryDark, colors.primary, colors.primaryLight || '#2d6a4f']} style={styles.hero}>
+        <LinearGradient colors={['#0d2416', '#1a472a', '#2d6a4f']} className="pb-10 px-6">
           <SafeAreaView edges={['top']}>
-            <View style={styles.heroContent}>
+            <View className="items-center pt-8">
               <Avatar name={user?.full_name || ''} size="xl" />
-              <Text style={styles.heroName}>{user?.full_name}</Text>
+              <Text className="text-2xl font-display-bold text-white mt-2">{user?.full_name}</Text>
               {user?.role && (
-                <View style={styles.roleBadge}>
-                  <Text style={styles.roleBadgeText}>{user.role.replace(/_/g, ' ')}</Text>
+                <View className="bg-gold px-4 py-1 rounded-full mt-1">
+                  <Text className="text-xs font-body-bold text-forest-dark capitalize">{user.role.replace(/_/g, ' ')}</Text>
                 </View>
               )}
-              <Text style={styles.heroLocation}>{[user?.state_name, user?.lga_name].filter(Boolean).join(' • ')}</Text>
+              <Text className="text-sm font-body text-white/70 mt-1">{[user?.state_name, user?.lga_name].filter(Boolean).join(' • ')}</Text>
             </View>
           </SafeAreaView>
         </LinearGradient>
 
-        <View style={styles.body}>
+        <View className="px-6 -mt-4">
           {renderGroup('Identity', identityRows, 100)}
           {renderGroup('Location', locationRows, 200)}
           {renderGroup('Membership', membershipRows, 300)}
 
-          <Animated.View entering={FadeInDown.delay(400).duration(400)} style={styles.actionsSection}>
-            <Pressable style={styles.editBtn} onPress={() => navigation.navigate('EditProfile')}>
-              <Text style={styles.editBtnText}>✏️ Edit Profile</Text>
+          <Animated.View entering={FadeInDown.delay(400).duration(400)} className="mt-4">
+            <Pressable className="bg-surface rounded-xl py-4 items-center border border-forest/20 mb-2 shadow-sm" onPress={() => navigation.navigate('EditProfile')}>
+              <Text className="text-base font-body-semibold text-forest">✏️ Edit Profile</Text>
             </Pressable>
-            <Pressable style={styles.editBtn} onPress={() => navigation.navigate('MyOpportunities')}>
-              <Text style={styles.editBtnText}>💼 My Opportunity Profiles</Text>
+            <Pressable className="bg-surface rounded-xl py-4 items-center border border-forest/20 mb-2 shadow-sm" onPress={() => navigation.navigate('MyOpportunities')}>
+              <Text className="text-base font-body-semibold text-forest">💼 My Opportunity Profiles</Text>
             </Pressable>
-            <Pressable style={styles.logoutBtn} onPress={logout}>
-              <Text style={styles.logoutText}>Log Out</Text>
+            <Pressable className="bg-danger/10 rounded-xl py-4 items-center border border-danger/20" onPress={logout}>
+              <Text className="text-base font-body-semibold text-danger">Log Out</Text>
             </Pressable>
           </Animated.View>
 
-          <Text style={styles.version}>City Boy Connect v1.0.0</Text>
+          <Text className="text-xs font-body text-gray-400 text-center mt-6">City Boy Connect v1.0.0</Text>
         </View>
       </ScrollView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  scroll: { paddingBottom: spacing.xxxl },
-  hero: {
-    paddingBottom: spacing.xl + spacing.md,
-    paddingHorizontal: spacing.lg,
-  },
-  heroContent: {
-    alignItems: 'center',
-    paddingTop: spacing.xl,
-  },
-  heroName: { ...typography.h2, color: '#fff', marginTop: spacing.sm },
-  roleBadge: {
-    backgroundColor: colors.accent,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.full,
-    marginTop: spacing.xs,
-  },
-  roleBadgeText: { ...typography.caption, color: colors.primaryDark, fontFamily: 'PlusJakartaSans-Bold', textTransform: 'capitalize' },
-  heroLocation: { ...typography.bodySm, color: 'rgba(255,255,255,0.7)', marginTop: spacing.xs },
-  body: { paddingHorizontal: spacing.lg, marginTop: -spacing.md },
-  section: { marginBottom: spacing.md },
-  sectionTitle: { ...typography.bodySm, color: colors.textSecondary, fontFamily: 'PlusJakartaSans-SemiBold', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: spacing.xs, paddingLeft: spacing.xs },
-  card: { backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.md, ...shadows.sm },
-  row: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: spacing.sm },
-  rowBorder: { borderBottomWidth: 1, borderBottomColor: colors.divider },
-  rowLabel: { ...typography.bodySm, color: colors.textSecondary },
-  rowValue: { ...typography.bodyMedium, color: colors.text, maxWidth: '55%', textAlign: 'right' },
-  actionsSection: { marginTop: spacing.md },
-  editBtn: {
-    backgroundColor: colors.surface, borderRadius: radius.lg,
-    paddingVertical: spacing.md, alignItems: 'center',
-    borderWidth: 1, borderColor: colors.primary + '30',
-    marginBottom: spacing.sm, ...shadows.sm,
-  },
-  editBtnText: { ...typography.button, color: colors.primary },
-  logoutBtn: {
-    backgroundColor: colors.dangerLight, borderRadius: radius.lg,
-    paddingVertical: spacing.md, alignItems: 'center',
-    borderWidth: 1, borderColor: colors.danger + '30',
-  },
-  logoutText: { ...typography.button, color: colors.danger },
-  version: { ...typography.caption, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.lg },
-});

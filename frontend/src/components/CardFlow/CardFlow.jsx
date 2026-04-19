@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './CardFlow.css';
+import { cn } from '../../lib/cn';
 import ProgressBar from '../ProgressBar';
 
 function CardRenderer({ card, data, goNext, goBack, goTo, current, total }) {
@@ -36,9 +36,16 @@ export default function CardFlow({ cards, onComplete }) {
   };
 
   return (
-    <div className="card-flow">
+    <div className="max-w-[560px] mx-auto px-4 py-8">
       <ProgressBar value={current + 1} max={cards.length} />
-      <div className={`flow-card card-enter-${direction}`} key={current}>
+      <div
+        className={cn(
+          'bg-white border border-gray-200 rounded-2xl p-8 min-h-[320px] flex flex-col gap-5 my-5',
+          direction === 'forward' && 'animate-slide-in-right',
+          direction === 'backward' && 'animate-slide-in-left',
+        )}
+        key={current}
+      >
         <CardRenderer
           card={cards[current]}
           data={data}
@@ -49,8 +56,8 @@ export default function CardFlow({ cards, onComplete }) {
           total={cards.length}
         />
       </div>
-      <div className="card-flow__footer">
-        <span className="card-flow__step">
+      <div className="text-center">
+        <span className="text-xs text-gray-400">
           Step {current + 1} of {cards.length}
         </span>
       </div>

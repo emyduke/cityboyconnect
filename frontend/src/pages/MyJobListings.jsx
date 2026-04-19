@@ -1,4 +1,4 @@
-import './Jobs.css';
+import { cn } from '../lib/cn';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getMyJobListings, deleteJobListing, changeJobStatus } from '../api/client';
@@ -8,6 +8,21 @@ import EmptyState from '../components/EmptyState';
 import Button from '../components/Button';
 
 const STATUS_TABS = ['All', 'DRAFT', 'OPEN', 'PAUSED', 'CLOSED'];
+
+const JOB_STATUS_COLORS = {
+  applied: 'bg-blue-100 text-blue-700',
+  reviewed: 'bg-indigo-100 text-indigo-700',
+  shortlisted: 'bg-amber-100 text-amber-800',
+  interview: 'bg-emerald-100 text-emerald-800',
+  offered: 'bg-emerald-50 text-emerald-700',
+  hired: 'bg-[#065f46] text-white',
+  rejected: 'bg-red-100 text-red-800',
+  withdrawn: 'bg-gray-100 text-gray-500',
+  draft: 'bg-gray-100 text-gray-500',
+  open: 'bg-emerald-100 text-emerald-800',
+  paused: 'bg-amber-100 text-amber-800',
+  closed: 'bg-red-100 text-red-800',
+};
 
 export default function MyJobListings() {
   const navigate = useNavigate();
@@ -44,17 +59,17 @@ export default function MyJobListings() {
   };
 
   return (
-    <div className="jobs-page">
-      <div className="jobs-page__header">
+    <div className="max-w-[1200px] mx-auto">
+      <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
         <h1>My Job Listings</h1>
         <Button size="sm" onClick={() => navigate('/jobs/create')}>Post New Job</Button>
       </div>
 
-      <div className="job-tabs">
+      <div className="flex gap-1 mb-6 border-b-2 border-gray-200 overflow-x-auto">
         {STATUS_TABS.map(t => (
-          <button key={t} className={`job-tabs__tab ${tab === t ? 'job-tabs__tab--active' : ''}`} onClick={() => setTab(t)}>
+          <button key={t} className={cn('py-2 px-4 border-none bg-transparent cursor-pointer font-semibold text-gray-500 border-b-2 border-transparent -mb-[2px] whitespace-nowrap transition-colors', tab === t && 'text-forest border-b-forest')} onClick={() => setTab(t)}>
             {t === 'All' ? 'All' : t}
-            {t !== 'All' && <span className="badge-count">{jobs.filter(j => j.status === t).length}</span>}
+            {t !== 'All' && <span className="inline-block bg-forest text-white rounded-[10px] px-1.5 text-[0.7rem] ml-1">{jobs.filter(j => j.status === t).length}</span>}
           </button>
         ))}
       </div>
@@ -65,14 +80,14 @@ export default function MyJobListings() {
         <EmptyState title="No job listings" description={tab === 'All' ? 'Post your first job to get started' : `No ${tab.toLowerCase()} jobs`} icon="📋" />
       ) : (
         filtered.map(job => (
-          <div key={job.id} className="app-card">
+          <div key={job.id} className="bg-white border border-gray-200 rounded-lg p-4 mb-2">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8 }}>
               <div style={{ flex: 1, minWidth: 200, cursor: 'pointer' }} onClick={() => navigate(`/jobs/${job.id}`)}>
                 <h3 style={{ margin: 0 }}>{job.title}</h3>
                 <p style={{ color: '#6b7280', margin: '2px 0' }}>{job.company_name}</p>
-                <div className="job-card__badges" style={{ marginTop: 8 }}>
-                  <span className={`status-badge status-badge--${job.status?.toLowerCase()}`}>{job.status}</span>
-                  <span className="job-card__badge">{job.application_count || 0} applications</span>
+                <div className="flex gap-1.5 flex-wrap my-2" style={{ marginTop: 8 }}>
+                  <span className={cn('px-2.5 py-0.5 rounded-xl text-xs font-semibold', JOB_STATUS_COLORS[job.status?.toLowerCase()])}>{job.status}</span>
+                  <span className="px-2 py-0.5 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800">{job.application_count || 0} applications</span>
                 </div>
               </div>
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>

@@ -1,4 +1,3 @@
-import './MemberDetail.css';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getMember } from '../api/client';
@@ -31,27 +30,27 @@ export default function MemberDetail() {
   const statusVariant = { VERIFIED: 'success', PENDING: 'warning', REJECTED: 'danger' };
 
   return (
-    <div className="member-detail">
-      <button className="member-detail__back" onClick={() => navigate('/members')}>← Back</button>
+    <div className="flex flex-col gap-6">
+      <button className="bg-transparent border-none text-forest text-sm cursor-pointer font-medium self-start hover:underline" onClick={() => navigate('/members')}>← Back</button>
       <Card padding="lg">
-        <div className="member-detail__top">
+        <div className="flex items-center gap-6 mb-8">
           <Avatar src={member.profile_photo} name={member.full_name} size="lg" />
           <div>
-            <h1 className="member-detail__name">{member.full_name}</h1>
+            <h1 className="text-2xl font-extrabold mb-1">{member.full_name}</h1>
             <Badge variant={statusVariant[member.voter_verification_status] || 'default'}>
               {member.voter_verification_status || 'Pending'}
             </Badge>
           </div>
         </div>
-        <div className="member-detail__grid">
-          <div className="member-detail__field"><label>Membership ID</label><span>{member.membership_id || '—'}</span></div>
-          <div className="member-detail__field"><label>Role</label><span>{member.role?.replace(/_/g, ' ') || 'Member'}</span></div>
-          <div className="member-detail__field"><label>State</label><span>{member.state_name || '—'}</span></div>
-          <div className="member-detail__field"><label>LGA</label><span>{member.lga_name || '—'}</span></div>
-          <div className="member-detail__field"><label>Ward</label><span>{member.ward_name || '—'}</span></div>
-          <div className="member-detail__field"><label>Occupation</label><span>{member.occupation || '—'}</span></div>
-          <div className="member-detail__field"><label>APC Membership</label><span>{member.apc_membership_number || '—'}</span></div>
-          <div className="member-detail__field"><label>Joined</label><span>{member.joined_at ? new Date(member.joined_at).toLocaleDateString('en-NG') : '—'}</span></div>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
+          <div className="flex flex-col gap-0.5"><label className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Membership ID</label><span className="text-[0.95rem] text-gray-700 font-medium">{member.membership_id || '—'}</span></div>
+          <div className="flex flex-col gap-0.5"><label className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Role</label><span className="text-[0.95rem] text-gray-700 font-medium">{member.role?.replace(/_/g, ' ') || 'Member'}</span></div>
+          <div className="flex flex-col gap-0.5"><label className="text-xs text-gray-400 uppercase tracking-wider font-semibold">State</label><span className="text-[0.95rem] text-gray-700 font-medium">{member.state_name || '—'}</span></div>
+          <div className="flex flex-col gap-0.5"><label className="text-xs text-gray-400 uppercase tracking-wider font-semibold">LGA</label><span className="text-[0.95rem] text-gray-700 font-medium">{member.lga_name || '—'}</span></div>
+          <div className="flex flex-col gap-0.5"><label className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Ward</label><span className="text-[0.95rem] text-gray-700 font-medium">{member.ward_name || '—'}</span></div>
+          <div className="flex flex-col gap-0.5"><label className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Occupation</label><span className="text-[0.95rem] text-gray-700 font-medium">{member.occupation || '—'}</span></div>
+          <div className="flex flex-col gap-0.5"><label className="text-xs text-gray-400 uppercase tracking-wider font-semibold">APC Membership</label><span className="text-[0.95rem] text-gray-700 font-medium">{member.apc_membership_number || '—'}</span></div>
+          <div className="flex flex-col gap-0.5"><label className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Joined</label><span className="text-[0.95rem] text-gray-700 font-medium">{member.joined_at ? new Date(member.joined_at).toLocaleDateString('en-NG') : '—'}</span></div>
         </div>
 
         {(member.has_professional_profile || member.has_talent_profile || member.business_listings_count > 0) && (

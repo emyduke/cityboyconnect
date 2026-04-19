@@ -1,4 +1,3 @@
-import './Jobs.css';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getSavedJobs, saveJob } from '../api/client';
@@ -33,8 +32,8 @@ export default function SavedJobs() {
   };
 
   return (
-    <div className="jobs-page">
-      <div className="jobs-page__header">
+    <div className="max-w-[1200px] mx-auto">
+      <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
         <h1>Saved Jobs</h1>
         <Button size="sm" variant="secondary" onClick={() => navigate('/jobs')}>Browse Jobs</Button>
       </div>
@@ -53,14 +52,14 @@ export default function SavedJobs() {
           const job = item.job || item;
           const jobId = job.id || item.job_id;
           return (
-            <div key={item.id || jobId} className="app-card">
+            <div key={item.id || jobId} className="bg-white border border-gray-200 rounded-lg p-4 mb-2">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8 }}>
                 <div style={{ flex: 1, cursor: 'pointer' }} onClick={() => navigate(`/jobs/${jobId}`)}>
                   <h3 style={{ margin: 0 }}>{job.title || 'Job'}</h3>
                   <p style={{ color: '#6b7280', margin: '2px 0' }}>{job.company_name || job.company}</p>
-                  <div className="job-card__badges" style={{ marginTop: 4 }}>
-                    {job.job_type && <span className="job-card__badge job-card__badge--type">{(job.job_type || '').replace('_', ' ')}</span>}
-                    {job.location && <span className="job-card__badge">📍 {job.location}</span>}
+                  <div className="flex gap-1.5 flex-wrap my-2" style={{ marginTop: 4 }}>
+                    {job.job_type && <span className="px-2 py-0.5 rounded-xl text-xs font-medium bg-blue-100 text-blue-700">{(job.job_type || '').replace('_', ' ')}</span>}
+                    {job.location && <span className="px-2 py-0.5 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800">📍 {job.location}</span>}
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: 8 }}>

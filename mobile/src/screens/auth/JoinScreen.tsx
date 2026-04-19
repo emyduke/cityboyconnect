@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Pressable, Alert } from 'react-native';
+import { View, Text, ScrollView, KeyboardAvoidingView, Platform, Pressable, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -8,7 +8,6 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Clipboard from 'expo-clipboard';
 import { Share } from 'react-native';
 import Animated, { FadeIn, SlideInRight, SlideOutLeft } from 'react-native-reanimated';
-import { colors, spacing, radius, typography, shadows } from '../../theme';
 import { requestOTP, verifyOTP, getMe } from '../../api/auth';
 import { onboardingProfile, onboardingPlacement, onboardingVoterCard } from '../../api/onboarding';
 import { getStates, getLGAs, getWards } from '../../api/structure';
@@ -281,31 +280,31 @@ export default function JoinScreen() {
   const pickerTitle = pickerType === 'state' ? 'Select State' : pickerType === 'lga' ? 'Select LGA' : 'Select Ward';
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+    <SafeAreaView className="flex-1 bg-background">
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
         {/* Top Bar */}
         {step < 5 && (
-          <View style={styles.topBar}>
+          <View className="flex-row items-center justify-between px-4 py-2">
             {step > 0 && step < 5 ? (
-              <Pressable onPress={goBack} hitSlop={12}><Text style={styles.backBtn}>← Back</Text></Pressable>
-            ) : <View style={{ width: 60 }} />}
+              <Pressable onPress={goBack} hitSlop={12}><Text className="font-body text-base text-forest">← Back</Text></Pressable>
+            ) : <View className="w-[60px]" />}
             <Image
               source={require('../../../assets/files/08_horizontal_dark.png')}
-              style={styles.topLogo}
+              style={{ width: 120, height: 32 }}
               contentFit="contain"
             />
-            <Text style={styles.stepLabel}>Step {step + 1} of {TOTAL_STEPS}</Text>
+            <Text className="font-body text-xs text-gray-400">Step {step + 1} of {TOTAL_STEPS}</Text>
           </View>
         )}
 
         {/* Progress Bar */}
         {step < 5 && (
-          <View style={styles.progressWrap}>
+          <View className="px-6 mb-4">
             <StepProgressBar current={step} total={TOTAL_STEPS} />
           </View>
         )}
 
-        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" bounces={false}>
+        <ScrollView contentContainerClassName="grow px-6 pb-12" keyboardShouldPersistTaps="handled" bounces={false}>
           {/* Referral Banner */}
           {showReferral && step < 5 && referralToken && (
             <ReferralBanner referrerName={referralToken} onDismiss={() => setShowReferral(false)} />
@@ -313,65 +312,65 @@ export default function JoinScreen() {
 
           {/* Step 0: Phone */}
           {step === 0 && (
-            <Animated.View entering={FadeIn.duration(300)} style={styles.stepContainer}>
-              <View style={styles.iconCircle}>
-                <Text style={{ fontSize: 32 }}>📱</Text>
+            <Animated.View entering={FadeIn.duration(300)} className="flex-1">
+              <View className="w-[72px] h-[72px] rounded-full bg-forest-light/[0.08] justify-center items-center self-center mb-6">
+                <Text className="text-[32px]">📱</Text>
               </View>
-              <Text style={styles.heading}>Join the Movement</Text>
-              <Text style={styles.subtitle}>Enter your Nigerian phone number</Text>
+              <Text className="font-display text-2xl text-gray-900 mb-1 text-center">Join the Movement</Text>
+              <Text className="font-body text-base text-gray-500 text-center mb-6">Enter your Nigerian phone number</Text>
               <PhoneInput value={phone} onChangeText={setPhone} error={error} />
-              <Button onPress={handleSendOTP} loading={loading} size="lg" style={styles.btn}>
+              <Button onPress={handleSendOTP} loading={loading} size="lg" className="mt-4">
                 Send Verification Code
               </Button>
-              <View style={styles.divider}>
-                <View style={styles.line} /><Text style={styles.divText}>or</Text><View style={styles.line} />
+              <View className="flex-row items-center my-6">
+                <View className="flex-1 h-px bg-gray-200" /><Text className="font-body text-sm text-gray-400 mx-4">or</Text><View className="flex-1 h-px bg-gray-200" />
               </View>
               <Pressable onPress={() => navigation.navigate('Login')}>
-                <Text style={styles.linkText}>Already a member? <Text style={styles.linkBold}>Log In</Text></Text>
+                <Text className="font-body text-base text-gray-500 text-center">Already a member? <Text className="text-forest font-body-semibold">Log In</Text></Text>
               </Pressable>
             </Animated.View>
           )}
 
           {/* Step 1: OTP */}
           {step === 1 && (
-            <Animated.View entering={SlideInRight.duration(300)} style={styles.stepContainer}>
-              <View style={styles.iconCircle}>
-                <Text style={{ fontSize: 32 }}>✅</Text>
+            <Animated.View entering={SlideInRight.duration(300)} className="flex-1">
+              <View className="w-[72px] h-[72px] rounded-full bg-forest-light/[0.08] justify-center items-center self-center mb-6">
+                <Text className="text-[32px]">✅</Text>
               </View>
-              <Text style={styles.heading}>Code sent to</Text>
-              <View style={styles.phonePill}>
-                <Text style={styles.phonePillText}>+234 {phone.replace(/^0/, '')}</Text>
+              <Text className="font-display text-2xl text-gray-900 mb-1 text-center">Code sent to</Text>
+              <View className="bg-forest-light/[0.08] self-center px-4 py-1 rounded-full mb-6">
+                <Text className="font-body-medium text-base text-forest">+234 {phone.replace(/^0/, '')}</Text>
               </View>
               <OTPInput onComplete={handleVerifyOTP} />
-              {error ? <Text style={styles.error}>{error}</Text> : null}
-              {loading && <Text style={styles.verifying}>Verifying...</Text>}
-              <View style={styles.resendRow}>
+              {error ? <Text className="font-body text-xs text-danger text-center mt-2">{error}</Text> : null}
+              {loading && <Text className="font-body text-sm text-gray-500 text-center mt-2">Verifying...</Text>}
+              <View className="items-center mt-6">
                 {countdown > 0 ? (
-                  <Text style={styles.countdown}>Resend code in 0:{countdown.toString().padStart(2, '0')}</Text>
+                  <Text className="font-body text-sm text-gray-400">Resend code in 0:{countdown.toString().padStart(2, '0')}</Text>
                 ) : (
-                  <Pressable onPress={handleResend}><Text style={styles.resendLink}>Resend Code</Text></Pressable>
+                  <Pressable onPress={handleResend}><Text className="font-body-medium text-base text-forest">Resend Code</Text></Pressable>
                 )}
               </View>
               <Pressable onPress={() => { setStep(0); setError(''); }}>
-                <Text style={styles.changeLink}>← Change number</Text>
+                <Text className="font-body text-base text-gray-500 text-center mt-4">← Change number</Text>
               </Pressable>
             </Animated.View>
           )}
 
           {/* Step 2: Profile */}
           {step === 2 && (
-            <Animated.View entering={SlideInRight.duration(300)} style={styles.stepContainer}>
-              <Text style={styles.heading}>Tell us about yourself</Text>
-              <Text style={styles.subtitle}>Step 3 • Profile</Text>
+            <Animated.View entering={SlideInRight.duration(300)} className="flex-1">
+              <Text className="font-display text-2xl text-gray-900 mb-1 text-center">Tell us about yourself</Text>
+              <Text className="font-body text-base text-gray-500 text-center mb-6">Step 3 • Profile</Text>
 
-              <Pressable style={styles.photoCircle} onPress={pickProfilePhoto}>
+              <Pressable className="w-[100px] h-[100px] rounded-full border-2 border-dashed border-forest justify-center items-center self-center mb-1 overflow-hidden bg-background" onPress={pickProfilePhoto}>
                 {profilePhoto ? (
-                  <Image source={{ uri: profilePhoto }} style={styles.photoImage} contentFit="cover" />
+                  <Image source={{ uri: profilePhoto }} style={{ width: 100, height: 100 }} contentFit="cover" />
                 ) : (
-                  <Text style={styles.cameraIcon}>📷</Text>
+                  <Text className="text-[32px]">📷</Text>
                 )}
               </Pressable>
-              <Text style={styles.photoHint}>Add photo (optional)</Text>
+              <Text className="font-body text-xs text-gray-400 text-center mb-6">Add photo (optional)</Text>
 
               <Input label="Full Name *" value={fullName} onChangeText={setFullName} placeholder="e.g. John Doe" />
 
@@ -386,23 +385,23 @@ export default function JoinScreen() {
                 </View>
               </Pressable>
 
-              <Text style={styles.fieldLabel}>Gender *</Text>
-              <View style={styles.genderRow}>
+              <Text className="font-body-medium text-sm text-gray-900 mb-1">Gender *</Text>
+              <View className="flex-row gap-2 mb-4">
                 {[{ label: 'Male', value: 'M' }, { label: 'Female', value: 'F' }, { label: 'Other', value: 'O' }].map((g) => (
                   <Pressable
                     key={g.value}
-                    style={[styles.genderPill, gender === g.value && styles.genderPillActive]}
+                    className={`flex-1 h-[44px] rounded-full border-[1.5px] justify-center items-center ${gender === g.value ? 'bg-forest border-forest' : 'border-gray-200 bg-surface'}`}
                     onPress={() => setGender(g.value)}
                   >
-                    <Text style={[styles.genderText, gender === g.value && styles.genderTextActive]}>{g.label}</Text>
+                    <Text className={`font-body-medium text-base ${gender === g.value ? 'text-white' : 'text-gray-500'}`}>{g.label}</Text>
                   </Pressable>
                 ))}
               </View>
 
               <Input label="Occupation" value={occupation} onChangeText={setOccupation} placeholder="e.g. Engineer" />
 
-              {error ? <Text style={styles.error}>{error}</Text> : null}
-              <Button onPress={handleProfile} loading={loading} size="lg" style={styles.btn}>
+              {error ? <Text className="font-body text-xs text-danger text-center mt-2">{error}</Text> : null}
+              <Button onPress={handleProfile} loading={loading} size="lg" className="mt-4">
                 Continue →
               </Button>
 
@@ -417,9 +416,9 @@ export default function JoinScreen() {
 
           {/* Step 3: Placement */}
           {step === 3 && (
-            <Animated.View entering={SlideInRight.duration(300)} style={styles.stepContainer}>
-              <Text style={styles.heading}>📍 Where are you from?</Text>
-              <Text style={styles.subtitle}>This determines your ward & LGA</Text>
+            <Animated.View entering={SlideInRight.duration(300)} className="flex-1">
+              <Text className="font-display text-2xl text-gray-900 mb-1 text-center">📍 Where are you from?</Text>
+              <Text className="font-body text-base text-gray-500 text-center mb-6">This determines your ward & LGA</Text>
 
               <Pressable onPress={() => setPickerType('state')}>
                 <View pointerEvents="none">
@@ -441,8 +440,8 @@ export default function JoinScreen() {
 
               <Input label="Residential Address (optional)" value={address} onChangeText={setAddress} placeholder="Your street address" multiline />
 
-              {error ? <Text style={styles.error}>{error}</Text> : null}
-              <Button onPress={handlePlacement} loading={loading} size="lg" style={styles.btn}>
+              {error ? <Text className="font-body text-xs text-danger text-center mt-2">{error}</Text> : null}
+              <Button onPress={handlePlacement} loading={loading} size="lg" className="mt-4">
                 Continue →
               </Button>
 
@@ -463,9 +462,9 @@ export default function JoinScreen() {
 
           {/* Step 4: Voter Card */}
           {step === 4 && (
-            <Animated.View entering={SlideInRight.duration(300)} style={styles.stepContainer}>
-              <Text style={styles.heading}>🗳️ Voter Verification</Text>
-              <Text style={styles.subtitle}>Verify your voter card to unlock full member privileges</Text>
+            <Animated.View entering={SlideInRight.duration(300)} className="flex-1">
+              <Text className="font-display text-2xl text-gray-900 mb-1 text-center">🗳️ Voter Verification</Text>
+              <Text className="font-body text-base text-gray-500 text-center mb-6">Verify your voter card to unlock full member privileges</Text>
 
               <Input
                 label="Voter Identification Number (VIN)"
@@ -478,56 +477,57 @@ export default function JoinScreen() {
 
               <Input label="APC Membership Number (optional)" value={apcNumber} onChangeText={setApcNumber} placeholder="If you have one" />
 
-              <Text style={styles.fieldLabel}>Voter Card Photo</Text>
-              <Pressable style={styles.uploadBox} onPress={pickVoterPhoto}>
+              <Text className="font-body-medium text-sm text-gray-900 mb-1">Voter Card Photo</Text>
+              <Pressable className="h-[140px] rounded-lg border-2 border-dashed border-gray-200 justify-center items-center bg-background mb-4 overflow-hidden" onPress={pickVoterPhoto}>
                 {voterPhoto ? (
-                  <Image source={{ uri: voterPhoto }} style={styles.uploadImage} contentFit="cover" />
+                  <Image source={{ uri: voterPhoto }} className="w-full h-full" contentFit="cover" />
                 ) : (
                   <>
-                    <Text style={styles.uploadIcon}>📄</Text>
-                    <Text style={styles.uploadText}>Tap to upload photo</Text>
+                    <Text className="text-[32px] mb-1">📄</Text>
+                    <Text className="font-body text-sm text-gray-400">Tap to upload photo</Text>
                   </>
                 )}
               </Pressable>
 
-              {error ? <Text style={styles.error}>{error}</Text> : null}
-              <Button onPress={() => handleVoterCard(false)} loading={loading} size="lg" style={styles.btn}>
+              {error ? <Text className="font-body text-xs text-danger text-center mt-2">{error}</Text> : null}
+              <Button onPress={() => handleVoterCard(false)} loading={loading} size="lg" className="mt-4">
                 Submit & Verify
               </Button>
 
-              <View style={styles.divider}>
-                <View style={styles.line} /><Text style={styles.divText}>or</Text><View style={styles.line} />
+              <View className="flex-row items-center my-6">
+                <View className="flex-1 h-px bg-gray-200" /><Text className="font-body text-sm text-gray-400 mx-4">or</Text><View className="flex-1 h-px bg-gray-200" />
               </View>
               <Pressable onPress={() => handleVoterCard(true)}>
-                <Text style={styles.skipLink}>Skip for now →</Text>
+                <Text className="font-body-medium text-base text-forest text-center">Skip for now →</Text>
               </Pressable>
-              <Text style={styles.skipHint}>You can verify later in Profile</Text>
+              <Text className="font-body text-xs text-gray-400 text-center mt-1">You can verify later in Profile</Text>
             </Animated.View>
           )}
 
           {/* Step 5: Success */}
           {step === 5 && (
-            <Animated.View entering={FadeIn.duration(500)} style={styles.successContainer}>
+            <Animated.View entering={FadeIn.duration(500)} className="flex-1 items-center justify-center bg-forest-dark rounded-xl p-8 mt-4">
               <Image
                 source={require('../../../assets/files/07_icon_gold.png')}
-                style={styles.successIcon}
+                style={{ width: 100, height: 100 }}
+                className="mb-6"
                 contentFit="contain"
               />
-              <Text style={styles.successTitle}>You're In! 🎉</Text>
-              <Text style={styles.successSubtitle}>Welcome to City Boy Connect</Text>
+              <Text className="font-display text-3xl text-white mb-1">You're In! 🎉</Text>
+              <Text className="font-body text-base text-gold mb-8">Welcome to City Boy Connect</Text>
 
               {user && <MembershipCard user={user} compact />}
 
               {user?.referral_code && (
-                <View style={styles.referralSection}>
-                  <Text style={styles.referralLabel}>Your Referral Code</Text>
-                  <Text style={styles.referralCode}>{user.referral_code}</Text>
-                  <View style={styles.referralButtons}>
-                    <Pressable style={styles.refBtn} onPress={handleCopyReferral}>
-                      <Text style={styles.refBtnText}>📋 Copy</Text>
+                <View className="items-center mt-6">
+                  <Text className="font-body text-sm text-white/70 mb-1">Your Referral Code</Text>
+                  <Text className="font-display text-xl text-gold mb-4">{user.referral_code}</Text>
+                  <View className="flex-row gap-2">
+                    <Pressable className="bg-gold px-4 py-2 rounded-full" onPress={handleCopyReferral}>
+                      <Text className="font-body-bold text-sm text-forest-dark">📋 Copy</Text>
                     </Pressable>
-                    <Pressable style={styles.refBtn} onPress={handleShareReferral}>
-                      <Text style={styles.refBtnText}>📤 Share</Text>
+                    <Pressable className="bg-gold px-4 py-2 rounded-full" onPress={handleShareReferral}>
+                      <Text className="font-body-bold text-sm text-forest-dark">📤 Share</Text>
                     </Pressable>
                   </View>
                 </View>
@@ -540,99 +540,3 @@ export default function JoinScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-  },
-  backBtn: { ...typography.body, color: colors.primary },
-  topLogo: { width: 120, height: 32 },
-  stepLabel: { ...typography.caption, color: colors.textTertiary },
-  progressWrap: { paddingHorizontal: spacing.lg, marginBottom: spacing.md },
-  scroll: { flexGrow: 1, paddingHorizontal: spacing.lg, paddingBottom: spacing.xxl },
-  stepContainer: { flex: 1 },
-  heading: { ...typography.h2, color: colors.text, marginBottom: spacing.xs, textAlign: 'center' },
-  subtitle: { ...typography.body, color: colors.textSecondary, textAlign: 'center', marginBottom: spacing.lg },
-  iconCircle: {
-    width: 72, height: 72, borderRadius: 36,
-    backgroundColor: colors.primaryLight + '15',
-    justifyContent: 'center', alignItems: 'center',
-    alignSelf: 'center', marginBottom: spacing.lg,
-  },
-  btn: { marginTop: spacing.md },
-  divider: { flexDirection: 'row', alignItems: 'center', marginVertical: spacing.lg },
-  line: { flex: 1, height: 1, backgroundColor: colors.divider },
-  divText: { ...typography.bodySm, color: colors.textTertiary, marginHorizontal: spacing.md },
-  linkText: { ...typography.body, color: colors.textSecondary, textAlign: 'center' },
-  linkBold: { color: colors.primary, fontFamily: 'PlusJakartaSans-SemiBold' },
-  phonePill: {
-    backgroundColor: colors.primaryLight + '15',
-    alignSelf: 'center',
-    paddingHorizontal: spacing.md, paddingVertical: spacing.xs,
-    borderRadius: radius.full, marginBottom: spacing.lg,
-  },
-  phonePillText: { ...typography.bodyMedium, color: colors.primary },
-  error: { ...typography.caption, color: colors.danger, textAlign: 'center', marginTop: spacing.sm },
-  verifying: { ...typography.bodySm, color: colors.textSecondary, textAlign: 'center', marginTop: spacing.sm },
-  resendRow: { alignItems: 'center', marginTop: spacing.lg },
-  countdown: { ...typography.bodySm, color: colors.textTertiary },
-  resendLink: { ...typography.bodyMedium, color: colors.primary },
-  changeLink: { ...typography.body, color: colors.textSecondary, textAlign: 'center', marginTop: spacing.md },
-  // Profile
-  photoCircle: {
-    width: 100, height: 100, borderRadius: 50,
-    borderWidth: 2, borderColor: colors.primary, borderStyle: 'dashed',
-    justifyContent: 'center', alignItems: 'center',
-    alignSelf: 'center', marginBottom: spacing.xs,
-    overflow: 'hidden', backgroundColor: colors.background,
-  },
-  photoImage: { width: 100, height: 100 },
-  cameraIcon: { fontSize: 32 },
-  photoHint: { ...typography.caption, color: colors.textTertiary, textAlign: 'center', marginBottom: spacing.lg },
-  fieldLabel: { ...typography.bodySm, fontFamily: 'PlusJakartaSans-Medium', color: colors.text, marginBottom: spacing.xs },
-  genderRow: { flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md },
-  genderPill: {
-    flex: 1, height: 44, borderRadius: radius.full,
-    borderWidth: 1.5, borderColor: colors.border,
-    justifyContent: 'center', alignItems: 'center',
-    backgroundColor: colors.surface,
-  },
-  genderPillActive: { backgroundColor: colors.primary, borderColor: colors.primary },
-  genderText: { ...typography.bodyMedium, color: colors.textSecondary },
-  genderTextActive: { color: colors.textInverse },
-  // Voter Card
-  uploadBox: {
-    height: 140, borderRadius: radius.lg,
-    borderWidth: 2, borderColor: colors.border, borderStyle: 'dashed',
-    justifyContent: 'center', alignItems: 'center',
-    backgroundColor: colors.background, marginBottom: spacing.md,
-    overflow: 'hidden',
-  },
-  uploadImage: { width: '100%', height: '100%' },
-  uploadIcon: { fontSize: 32, marginBottom: spacing.xs },
-  uploadText: { ...typography.bodySm, color: colors.textTertiary },
-  skipLink: { ...typography.bodyMedium, color: colors.primary, textAlign: 'center' },
-  skipHint: { ...typography.caption, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.xs },
-  // Success
-  successContainer: {
-    flex: 1, alignItems: 'center', justifyContent: 'center',
-    backgroundColor: colors.primaryDark, borderRadius: radius.xl,
-    padding: spacing.xl, marginTop: spacing.md,
-  },
-  successIcon: { width: 100, height: 100, marginBottom: spacing.lg },
-  successTitle: { ...typography.h1, color: colors.textInverse, marginBottom: spacing.xs },
-  successSubtitle: { ...typography.body, color: colors.accent, marginBottom: spacing.xl },
-  referralSection: { alignItems: 'center', marginTop: spacing.lg },
-  referralLabel: { ...typography.bodySm, color: 'rgba(255,255,255,0.7)', marginBottom: spacing.xs },
-  referralCode: { ...typography.h3, color: colors.accent, marginBottom: spacing.md },
-  referralButtons: { flexDirection: 'row', gap: spacing.sm },
-  refBtn: {
-    backgroundColor: colors.accent, paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm, borderRadius: radius.full,
-  },
-  refBtnText: { ...typography.bodySm, color: colors.primaryDark, fontFamily: 'PlusJakartaSans-Bold' },
-});

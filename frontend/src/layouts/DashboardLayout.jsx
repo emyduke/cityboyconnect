@@ -1,4 +1,4 @@
-import './DashboardLayout.css';
+import { cn } from '../lib/cn';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { logout as apiLogout } from '../api/client';
@@ -37,52 +37,62 @@ export default function DashboardLayout({ children }) {
   };
 
   return (
-    <div className="dash-layout">
+    <div className="flex min-h-screen">
       <Toast />
-      <aside className={`dash-sidebar ${sidebarOpen ? 'dash-sidebar--open' : ''}`}>
-        <div className="dash-sidebar__header">
-          <span className="dash-sidebar__brand">City Boy Connect</span>
-          <button className="dash-sidebar__close" onClick={() => setSidebarOpen(false)}>✕</button>
+      <aside className={cn(
+        'w-[260px] bg-forest-dark text-white flex flex-col fixed left-0 top-0 bottom-0 z-[100] transition-transform',
+        'max-md:-translate-x-full',
+        sidebarOpen && 'max-md:translate-x-0',
+      )}>
+        <div className="flex items-center justify-between p-5 border-b border-white/10">
+          <span className="font-display font-extrabold text-[1.1rem] text-gold">City Boy Connect</span>
+          <button className="hidden max-md:block bg-transparent border-none text-white text-xl cursor-pointer" onClick={() => setSidebarOpen(false)}>✕</button>
         </div>
-        <nav className="dash-sidebar__nav">
+        <nav className="flex-1 py-3 overflow-y-auto">
           {navItems.map(item => (
-            <NavLink key={item.to} to={item.to} className={({isActive}) => `dash-sidebar__link ${isActive ? 'dash-sidebar__link--active' : ''}`} onClick={() => setSidebarOpen(false)}>
-              <span className="dash-sidebar__icon">{item.icon}</span>
+            <NavLink key={item.to} to={item.to} className={({isActive}) => cn(
+              'flex items-center gap-2.5 px-5 py-2.5 text-white/70 text-[0.9rem] font-medium transition-all no-underline hover:text-white hover:bg-white/5',
+              isActive && 'text-gold bg-white/[0.08] border-r-[3px] border-gold',
+            )} onClick={() => setSidebarOpen(false)}>
+              <span className="text-[1.1rem] w-6 text-center">{item.icon}</span>
               {item.label}
             </NavLink>
           ))}
           {isAdmin && (
             <>
-              <div className="dash-sidebar__divider" />
-              <span className="dash-sidebar__section-label">Admin</span>
+              <div className="h-px bg-white/10 mx-5 my-3" />
+              <span className="block px-5 pb-1 text-[0.65rem] uppercase tracking-[0.1em] text-white/40">Admin</span>
               {adminItems.map(item => (
-                <NavLink key={item.to} to={item.to} className={({isActive}) => `dash-sidebar__link ${isActive ? 'dash-sidebar__link--active' : ''}`} onClick={() => setSidebarOpen(false)}>
-                  <span className="dash-sidebar__icon">{item.icon}</span>
+                <NavLink key={item.to} to={item.to} className={({isActive}) => cn(
+                  'flex items-center gap-2.5 px-5 py-2.5 text-white/70 text-[0.9rem] font-medium transition-all no-underline hover:text-white hover:bg-white/5',
+                  isActive && 'text-gold bg-white/[0.08] border-r-[3px] border-gold',
+                )} onClick={() => setSidebarOpen(false)}>
+                  <span className="text-[1.1rem] w-6 text-center">{item.icon}</span>
                   {item.label}
                 </NavLink>
               ))}
             </>
           )}
         </nav>
-        <div className="dash-sidebar__footer">
-          <NavLink to="/profile" className="dash-sidebar__profile" onClick={() => setSidebarOpen(false)}>
+        <div className="px-5 py-3 border-t border-white/10 flex flex-col gap-2.5">
+          <NavLink to="/profile" className="flex items-center gap-2.5 no-underline text-white" onClick={() => setSidebarOpen(false)}>
             <Avatar name={user?.full_name || ''} size="sm" />
-            <div className="dash-sidebar__user-info">
-              <span className="dash-sidebar__user-name">{user?.full_name || 'Member'}</span>
-              <span className="dash-sidebar__user-role">{user?.role?.replace('_', ' ') || ''}</span>
+            <div className="flex flex-col">
+              <span className="text-[0.85rem] font-semibold">{user?.full_name || 'Member'}</span>
+              <span className="text-[0.7rem] text-white/50 capitalize">{user?.role?.replace('_', ' ') || ''}</span>
             </div>
           </NavLink>
-          <button onClick={handleLogout} className="dash-sidebar__logout">Logout</button>
+          <button onClick={handleLogout} className="bg-transparent border border-white/20 text-white/70 px-3 py-1.5 rounded text-[0.8rem] cursor-pointer transition-all hover:text-white hover:border-white/40">Logout</button>
         </div>
       </aside>
-      {sidebarOpen && <div className="dash-overlay" onClick={() => setSidebarOpen(false)} />}
-      <main className="dash-main">
-        <header className="dash-topbar">
-          <button className="dash-topbar__menu" onClick={() => setSidebarOpen(true)} aria-label="Open menu">☰</button>
-          <div className="dash-topbar__spacer" />
-          <span className="dash-topbar__greeting">Welcome, {user?.full_name?.split(' ')[0] || 'Member'}</span>
+      {sidebarOpen && <div className="hidden max-md:block fixed inset-0 bg-black/40 z-[99]" onClick={() => setSidebarOpen(false)} />}
+      <main className="flex-1 ml-[260px] max-md:ml-0 flex flex-col min-h-screen bg-gray-50">
+        <header className="flex items-center px-5 py-3 bg-white border-b border-gray-200 h-[60px] sticky top-0 z-50">
+          <button className="hidden max-md:block bg-transparent border-none text-2xl cursor-pointer" onClick={() => setSidebarOpen(true)} aria-label="Open menu">☰</button>
+          <div className="flex-1" />
+          <span className="text-[0.9rem] text-gray-500">Welcome, {user?.full_name?.split(' ')[0] || 'Member'}</span>
         </header>
-        <div className="dash-content">{children}</div>
+        <div className="flex-1 p-5">{children}</div>
       </main>
     </div>
   );

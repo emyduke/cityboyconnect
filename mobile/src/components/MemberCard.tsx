@@ -1,8 +1,7 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import Avatar from './ui/Avatar';
 import Badge from './ui/Badge';
-import { colors, spacing, radius, typography, shadows } from '../theme';
 
 interface MemberCardProps {
   member: {
@@ -21,13 +20,17 @@ export default function MemberCard({ member, onPress }: MemberCardProps) {
     : member.voter_verification_status === 'REJECTED' ? 'danger' : 'warning';
 
   return (
-    <Pressable onPress={onPress} style={[styles.card, shadows.sm]}>
+    <Pressable onPress={onPress} className="bg-surface rounded-md p-4 flex-row items-center mb-2 shadow-sm">
       <Avatar uri={member.profile_photo} name={member.full_name} size="md" />
-      <View style={styles.info}>
-        <Text style={styles.name} numberOfLines={1}>{member.full_name}</Text>
-        <Text style={styles.sub} numberOfLines={1}>{member.state_name || 'No state'}</Text>
+      <View className="flex-1 ml-2">
+        <Text className="text-[15px] font-body-medium leading-[22px] text-gray-900" numberOfLines={1}>
+          {member.full_name}
+        </Text>
+        <Text className="text-xs font-body tracking-wide text-gray-500 mt-0.5" numberOfLines={1}>
+          {member.state_name || 'No state'}
+        </Text>
       </View>
-      <View style={styles.badges}>
+      <View className="items-end gap-1">
         {member.role && member.role !== 'MEMBER' && (
           <Badge label={member.role.replace(/_/g, ' ')} variant="info" />
         )}
@@ -36,18 +39,3 @@ export default function MemberCard({ member, onPress }: MemberCardProps) {
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing.sm,
-  },
-  info: { flex: 1, marginLeft: spacing.sm },
-  name: { ...typography.bodyMedium, color: colors.text },
-  sub: { ...typography.caption, color: colors.textSecondary, marginTop: 2 },
-  badges: { alignItems: 'flex-end', gap: 4 },
-});

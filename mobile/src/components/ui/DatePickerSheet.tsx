@@ -1,7 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { View, Text, Modal, Pressable, ScrollView, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, Modal, Pressable, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { colors, spacing, radius, typography } from '../../theme';
 
 interface DatePickerSheetProps {
   visible: boolean;
@@ -43,7 +42,7 @@ function WheelColumn({ items, selectedIndex, onSelect, renderItem }: {
   }, [items.length, selectedIndex, onSelect]);
 
   return (
-    <View style={wheelStyles.column}>
+    <View className="flex-1 overflow-hidden relative" style={{ height: ITEM_HEIGHT * VISIBLE_ITEMS }}>
       <ScrollView
         ref={scrollRef}
         showsVerticalScrollIndicator={false}
@@ -54,17 +53,26 @@ function WheelColumn({ items, selectedIndex, onSelect, renderItem }: {
         onScrollEndDrag={handleScroll}
       >
         {items.map((item, idx) => (
-          <Pressable key={idx} style={wheelStyles.item} onPress={() => {
-            onSelect(idx);
-            scrollRef.current?.scrollTo({ y: idx * ITEM_HEIGHT, animated: true });
-          }}>
-            <Text style={[wheelStyles.itemText, idx === selectedIndex && wheelStyles.selectedText]}>
+          <Pressable
+            key={idx}
+            className="justify-center items-center"
+            style={{ height: ITEM_HEIGHT }}
+            onPress={() => {
+              onSelect(idx);
+              scrollRef.current?.scrollTo({ y: idx * ITEM_HEIGHT, animated: true });
+            }}
+          >
+            <Text className={idx === selectedIndex ? 'text-[17px] font-display-semibold text-gray-900' : 'text-[15px] font-body leading-[22px] text-gray-400'}>
               {renderItem(item)}
             </Text>
           </Pressable>
         ))}
       </ScrollView>
-      <View pointerEvents="none" style={wheelStyles.highlight} />
+      <View
+        pointerEvents="none"
+        className="absolute left-0 right-0 border-t border-b border-gray-200"
+        style={{ top: ITEM_HEIGHT * 2, height: ITEM_HEIGHT }}
+      />
     </View>
   );
 }
@@ -90,16 +98,23 @@ export default function DatePickerSheet({ visible, value, onSelect, onClose }: D
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable style={dateStyles.backdrop} onPress={onClose}>
-        <View style={[dateStyles.sheet, { paddingBottom: insets.bottom + spacing.md }]}
-          onStartShouldSetResponder={() => true}>
-          <View style={dateStyles.header}>
-            <Pressable onPress={onClose}><Text style={dateStyles.cancel}>Cancel</Text></Pressable>
-            <Text style={dateStyles.title}>Date of Birth</Text>
-            <Pressable onPress={handleDone}><Text style={dateStyles.done}>Done</Text></Pressable>
+      <Pressable className="flex-1 bg-black/50 justify-end" onPress={onClose}>
+        <View
+          className="bg-surface rounded-t-xl px-6"
+          style={{ paddingBottom: insets.bottom + 16 }}
+          onStartShouldSetResponder={() => true}
+        >
+          <View className="flex-row justify-between items-center py-4 border-b border-gray-100">
+            <Pressable onPress={onClose}>
+              <Text className="text-[15px] font-body leading-[22px] text-gray-500">Cancel</Text>
+            </Pressable>
+            <Text className="text-[17px] font-display-semibold text-gray-900">Date of Birth</Text>
+            <Pressable onPress={handleDone}>
+              <Text className="text-[15px] font-body-semibold text-forest">Done</Text>
+            </Pressable>
           </View>
 
-          <View style={dateStyles.wheels}>
+          <View className="flex-row py-4">
             <WheelColumn items={days} selectedIndex={dayIdx} onSelect={setDayIdx} renderItem={(d) => String(d)} />
             <WheelColumn items={MONTHS} selectedIndex={monthIdx} onSelect={setMonthIdx} renderItem={(m) => m} />
             <WheelColumn items={years} selectedIndex={yearIdx} onSelect={setYearIdx} renderItem={(y) => String(y)} />
@@ -109,43 +124,3 @@ export default function DatePickerSheet({ visible, value, onSelect, onClose }: D
     </Modal>
   );
 }
-
-const wheelStyles = StyleSheet.create({
-  column: { flex: 1, height: ITEM_HEIGHT * VISIBLE_ITEMS, overflow: 'hidden', position: 'relative' },
-  item: { height: ITEM_HEIGHT, justifyContent: 'center', alignItems: 'center' },
-  itemText: { ...typography.body, color: colors.textTertiary },
-  selectedText: { ...typography.h4, color: colors.text },
-  highlight: {
-    position: 'absolute',
-    top: ITEM_HEIGHT * 2,
-    left: 0,
-    right: 0,
-    height: ITEM_HEIGHT,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: 'transparent',
-  },
-});
-
-const dateStyles = StyleSheet.create({
-  backdrop: { flex: 1, backgroundColor: colors.overlay, justifyContent: 'flex-end' },
-  sheet: {
-    backgroundColor: colors.surface,
-    borderTopLeftRadius: radius.xl,
-    borderTopRightRadius: radius.xl,
-    paddingHorizontal: spacing.lg,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.divider,
-  },
-  title: { ...typography.h4, color: colors.text },
-  cancel: { ...typography.body, color: colors.textSecondary },
-  done: { ...typography.button, color: colors.primary },
-  wheels: { flexDirection: 'row', paddingVertical: spacing.md },
-});

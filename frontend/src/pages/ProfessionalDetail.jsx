@@ -1,4 +1,3 @@
-import './Opportunities.css';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getOpportunityProfile } from '../api/client';
@@ -32,7 +31,7 @@ export default function ProfessionalDetail() {
   const experience = profile.work_experience || [];
 
   return (
-    <div className="opportunities" style={{ maxWidth: 800 }}>
+    <div className="max-w-[800px] mx-auto">
       <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)', marginBottom: 'var(--space-md)' }}>← Back to Search</button>
       <Card padding="lg">
         <div style={{ display: 'flex', gap: 'var(--space-lg)', alignItems: 'flex-start', flexWrap: 'wrap' }}>
@@ -52,9 +51,9 @@ export default function ProfessionalDetail() {
       {(profile.skills || []).length > 0 && (
         <Card padding="md" style={{ marginTop: 'var(--space-md)' }}>
           <h3>Skills</h3>
-          <div className="opportunity-card__badges">
+          <div className="flex gap-1.5 flex-wrap mt-1">
             {profile.skills.map(s => (
-              <span key={s.id || s} className="opportunity-card__badge">{s.name || s}</span>
+              <span key={s.id || s} className="px-2 py-0.5 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800">{s.name || s}</span>
             ))}
           </div>
         </Card>

@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, Share } from 'react-native';
+import { View, Text, Share } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
 import QRCode from 'react-native-qrcode-svg';
-import { colors, spacing, typography, shadows, radius } from '../../theme';
 import { getMyQR } from '../../api/members';
 import { unwrap } from '../../api/client';
 import { useAuthStore } from '../../store/authStore';
@@ -58,8 +57,8 @@ export default function MyQRCodeScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.safe}>
-        <View style={styles.center}>
+      <SafeAreaView className="flex-1 bg-forest-dark">
+        <View className="flex-1 justify-center items-center p-4">
           <Skeleton variant="card" width={300} height={400} />
         </View>
       </SafeAreaView>
@@ -67,43 +66,43 @@ export default function MyQRCodeScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <View style={styles.center}>
-        <View style={styles.card}>
+    <SafeAreaView className="flex-1 bg-forest-dark">
+      <View className="flex-1 justify-center items-center p-4">
+        <View className="bg-surface rounded-xl p-6 items-center w-full max-w-[340px] shadow-lg">
           <Avatar name={user?.full_name || ''} size="lg" />
-          <Text style={styles.name}>{user?.full_name}</Text>
-          <Text style={styles.subtitle}>{user?.state_name || ''} · City Boy Movement</Text>
+          <Text className="text-xl font-display-bold text-gray-900 mt-2">{user?.full_name}</Text>
+          <Text className="text-sm font-body text-gray-500 mb-4">{user?.state_name || ''} · City Boy Movement</Text>
 
           {error ? (
-            <View style={styles.errorBox}>
-              <Text style={styles.errorText}>{error}</Text>
+            <View className="items-center py-6">
+              <Text className="text-base font-body text-danger text-center mb-4">{error}</Text>
               <Button size="sm" onPress={() => { setError(null); setLoading(true); fetchData(); }}>Retry</Button>
             </View>
           ) : (
             <>
-              <View style={styles.qrFrame}>
-                <QRCode value={data.qr_url} size={200} color={colors.primary} backgroundColor="white" />
+              <View className="p-4 rounded-lg border-[3px] border-forest bg-white mb-4">
+                <QRCode value={data.qr_url} size={200} color="#1a472a" backgroundColor="white" />
               </View>
-              <Text style={styles.instruction}>Scan to join the movement under me</Text>
+              <Text className="text-xs font-body text-gray-500 text-center mb-4">Scan to join the movement under me</Text>
 
-              <View style={styles.stats}>
-                <View style={styles.stat}>
-                  <Text style={styles.statValue}>{data.direct_count ?? 0}</Text>
-                  <Text style={styles.statLabel}>Direct</Text>
+              <View className="flex-row justify-around w-full mb-4">
+                <View className="items-center">
+                  <Text className="text-xl font-display-bold text-forest">{data.direct_count ?? 0}</Text>
+                  <Text className="text-xs font-body text-gray-500">Direct</Text>
                 </View>
-                <View style={styles.stat}>
-                  <Text style={styles.statValue}>{data.network_size ?? 0}</Text>
-                  <Text style={styles.statLabel}>Network</Text>
+                <View className="items-center">
+                  <Text className="text-xl font-display-bold text-forest">{data.network_size ?? 0}</Text>
+                  <Text className="text-xs font-body text-gray-500">Network</Text>
                 </View>
-                <View style={styles.stat}>
-                  <Text style={styles.statValue}>{data.today_count ?? 0}</Text>
-                  <Text style={styles.statLabel}>Today</Text>
+                <View className="items-center">
+                  <Text className="text-xl font-display-bold text-forest">{data.today_count ?? 0}</Text>
+                  <Text className="text-xs font-body text-gray-500">Today</Text>
                 </View>
               </View>
 
-              <View style={styles.actions}>
-                <Button variant="secondary" onPress={copyLink} style={{ flex: 1 }}>Copy Link</Button>
-                <Button onPress={shareQR} style={{ flex: 1 }}>Share</Button>
+              <View className="flex-row gap-2 w-full">
+                <Button variant="secondary" onPress={copyLink} className="flex-1">Copy Link</Button>
+                <Button onPress={shareQR} className="flex-1">Share</Button>
               </View>
             </>
           )}
@@ -112,26 +111,3 @@ export default function MyQRCodeScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.primaryDark },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: spacing.md },
-  card: {
-    backgroundColor: colors.surface, borderRadius: radius.xl, padding: spacing.lg,
-    alignItems: 'center', width: '100%', maxWidth: 340, ...shadows.lg,
-  },
-  name: { ...typography.h3, color: colors.text, marginTop: spacing.sm },
-  subtitle: { ...typography.bodySm, color: colors.textSecondary, marginBottom: spacing.md },
-  qrFrame: {
-    padding: spacing.md, borderRadius: radius.lg, borderWidth: 3,
-    borderColor: colors.primary, backgroundColor: '#fff', marginBottom: spacing.md,
-  },
-  instruction: { ...typography.caption, color: colors.textSecondary, textAlign: 'center', marginBottom: spacing.md },
-  stats: { flexDirection: 'row', justifyContent: 'space-around', width: '100%', marginBottom: spacing.md },
-  stat: { alignItems: 'center' },
-  statValue: { ...typography.h3, color: colors.primary },
-  statLabel: { ...typography.caption, color: colors.textSecondary },
-  actions: { flexDirection: 'row', gap: spacing.sm, width: '100%' },
-  errorBox: { alignItems: 'center', paddingVertical: spacing.lg },
-  errorText: { ...typography.body, color: colors.danger, textAlign: 'center', marginBottom: spacing.md },
-});

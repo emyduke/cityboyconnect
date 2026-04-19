@@ -1,5 +1,4 @@
 import { Component } from 'react';
-import './ErrorBoundary.css';
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -22,24 +21,24 @@ class ErrorBoundary extends Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="error-boundary">
-          <div className="error-boundary__content">
-            <div className="error-boundary__icon">⚠️</div>
-            <h2 className="error-boundary__title">Something went wrong</h2>
-            <p className="error-boundary__message">
+        <div className="flex items-center justify-center min-h-[400px] p-8">
+          <div className="text-center max-w-[400px]">
+            <div className="text-5xl mb-4">⚠️</div>
+            <h2 className="font-display text-gray-900 mb-2">Something went wrong</h2>
+            <p className="text-gray-500 mb-6">
               An unexpected error occurred. Please try again.
             </p>
             {import.meta.env.DEV && this.state.error && (
-              <pre style={{ textAlign: 'left', fontSize: '0.75rem', maxWidth: 500, margin: '1rem auto', padding: '1rem', background: '#f5f5f5', borderRadius: 8, overflow: 'auto', maxHeight: 200 }}>
+              <pre className="text-left text-xs max-w-[500px] mx-auto my-4 p-4 bg-gray-100 rounded-lg overflow-auto max-h-[200px]">
                 {this.state.error.toString()}
                 {'\n'}
                 {this.state.error.stack}
               </pre>
             )}
-            <button className="error-boundary__btn" onClick={this.handleReset}>
+            <button className="px-8 py-3 bg-forest text-white border-none rounded-lg font-semibold cursor-pointer transition-colors hover:bg-forest-light" onClick={this.handleReset}>
               Try Again
             </button>
-            <button className="error-boundary__btn error-boundary__btn--secondary" onClick={() => { window.location.href = '/dashboard'; }}>
+            <button className="px-8 py-3 bg-transparent text-gray-700 border border-gray-300 rounded-lg font-semibold cursor-pointer transition-colors hover:bg-gray-50 ml-2" onClick={() => { window.location.href = '/dashboard'; }}>
               Go to Dashboard
             </button>
           </div>

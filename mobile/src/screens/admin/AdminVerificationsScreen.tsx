@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, RefreshControl, StyleSheet, Pressable, Animated, Modal, Image } from 'react-native';
+import { View, Text, FlatList, RefreshControl, Pressable, Modal, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { colors, spacing, typography, radius, shadows } from '../../theme';
 import { adminApi } from '../../api/admin';
 import { useToastStore } from '../../store/toastStore';
 import Avatar from '../../components/ui/Avatar';
@@ -79,33 +78,33 @@ export default function AdminVerificationsScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.safe} edges={['bottom']}>
-        <View style={styles.container}>
+      <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+        <View className="flex-1 p-4">
           <Skeleton variant="text" width="100%" />
-          <Skeleton variant="card" style={{ marginTop: spacing.sm }} />
-          <Skeleton variant="card" style={{ marginTop: spacing.sm }} />
+          <Skeleton variant="card" className="mt-2" />
+          <Skeleton variant="card" className="mt-2" />
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
-      <View style={styles.container}>
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+      <View className="flex-1 p-4">
         {/* Stats bar */}
         {stats && (
-          <View style={styles.statsBar}>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{stats.pending ?? 0}</Text>
-              <Text style={styles.statLabel}>Pending</Text>
+          <View className="flex-row justify-around bg-surface rounded-lg p-4 mb-4 shadow-sm">
+            <View className="items-center">
+              <Text className="text-xl font-display-bold text-forest">{stats.pending ?? 0}</Text>
+              <Text className="text-xs font-body text-gray-500">Pending</Text>
             </View>
-            <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: colors.success }]}>{stats.approved_today ?? 0}</Text>
-              <Text style={styles.statLabel}>Today ✓</Text>
+            <View className="items-center">
+              <Text className="text-xl font-display-bold text-success">{stats.approved_today ?? 0}</Text>
+              <Text className="text-xs font-body text-gray-500">Today ✓</Text>
             </View>
-            <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: colors.danger }]}>{stats.rejected_today ?? 0}</Text>
-              <Text style={styles.statLabel}>Today ✕</Text>
+            <View className="items-center">
+              <Text className="text-xl font-display-bold text-danger">{stats.rejected_today ?? 0}</Text>
+              <Text className="text-xs font-body text-gray-500">Today ✕</Text>
             </View>
           </View>
         )}
@@ -113,31 +112,31 @@ export default function AdminVerificationsScreen() {
         <FlatList
           data={queue}
           keyExtractor={(item) => String(item.id || item.pk)}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1a472a" />}
           ListEmptyComponent={<EmptyState title="No pending verifications" />}
           renderItem={({ item }) => {
             const pk = item.id || item.pk;
             return (
-              <View style={styles.card}>
-                <View style={styles.cardTop}>
+              <View className="bg-surface rounded-lg p-4 mb-2 shadow-sm">
+                <View className="flex-row items-center gap-2 mb-2">
                   <Avatar name={item.full_name || ''} size="sm" />
-                  <View style={styles.cardInfo}>
-                    <Text style={styles.cardName}>{item.full_name}</Text>
-                    <Text style={styles.cardMeta}>{item.phone_number} · {item.state_name || ''}</Text>
+                  <View className="flex-1">
+                    <Text className="text-base font-body-medium text-gray-900">{item.full_name}</Text>
+                    <Text className="text-xs font-body text-gray-500">{item.phone_number} · {item.state_name || ''}</Text>
                   </View>
                 </View>
                 {item.voter_card_image && (
-                  <Image source={{ uri: item.voter_card_image }} style={styles.voterCardImage} resizeMode="contain" />
+                  <Image source={{ uri: item.voter_card_image }} className="w-full h-[150px] rounded bg-background mb-2" resizeMode="contain" />
                 )}
                 {!item.voter_card_image && (
-                  <Text style={styles.noCardText}>No voter card image</Text>
+                  <Text className="text-xs font-body text-gray-400 italic mb-2">No voter card image</Text>
                 )}
-                <View style={styles.cardActions}>
+                <View className="flex-row gap-2">
                   <Button
                     size="sm"
                     onPress={() => handleApprove(pk)}
                     loading={actionLoading === pk}
-                    style={{ flex: 1 }}
+                    className="flex-1"
                   >
                     ✓ Approve
                   </Button>
@@ -145,7 +144,7 @@ export default function AdminVerificationsScreen() {
                     size="sm"
                     variant="danger"
                     onPress={() => { setRejectTarget(pk); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); }}
-                    style={{ flex: 1 }}
+                    className="flex-1"
                   >
                     ✕ Reject
                   </Button>
@@ -153,24 +152,24 @@ export default function AdminVerificationsScreen() {
               </View>
             );
           }}
-          contentContainerStyle={{ paddingBottom: spacing.xxl }}
+          contentContainerClassName="pb-12"
         />
       </View>
 
       {/* Reject modal */}
       <Modal visible={rejectTarget !== null} transparent animationType="slide" onRequestClose={() => setRejectTarget(null)}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Reject Verification</Text>
+        <View className="flex-1 justify-end bg-black/50">
+          <View className="bg-surface rounded-t-2xl p-6">
+            <Text className="text-xl font-display-bold text-gray-900 mb-4">Reject Verification</Text>
             {REJECTION_REASONS.map((reason) => (
-              <Pressable key={reason} style={[styles.reasonRow, rejectReason === reason && styles.reasonRowActive]} onPress={() => setRejectReason(reason)}>
-                <View style={[styles.radio, rejectReason === reason && styles.radioActive]} />
-                <Text style={styles.reasonText}>{reason}</Text>
+              <Pressable key={reason} className="flex-row items-center py-2 gap-2" onPress={() => setRejectReason(reason)}>
+                <View className={`w-5 h-5 rounded-full border-2 ${rejectReason === reason ? 'border-forest bg-forest' : 'border-gray-200'}`} />
+                <Text className="text-base font-body text-gray-900">{reason}</Text>
               </Pressable>
             ))}
-            <View style={styles.modalActions}>
-              <Button variant="secondary" onPress={() => { setRejectTarget(null); setRejectReason(''); }} style={{ flex: 1 }}>Cancel</Button>
-              <Button variant="danger" onPress={handleReject} disabled={!rejectReason} loading={actionLoading === rejectTarget} style={{ flex: 1 }}>Reject</Button>
+            <View className="flex-row gap-2 mt-4">
+              <Button variant="secondary" onPress={() => { setRejectTarget(null); setRejectReason(''); }} className="flex-1">Cancel</Button>
+              <Button variant="danger" onPress={handleReject} disabled={!rejectReason} loading={actionLoading === rejectTarget} className="flex-1">Reject</Button>
             </View>
           </View>
         </View>
@@ -179,28 +178,3 @@ export default function AdminVerificationsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  container: { flex: 1, padding: spacing.md },
-  statsBar: { flexDirection: 'row', justifyContent: 'space-around', backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.md, marginBottom: spacing.md, ...shadows.sm },
-  statItem: { alignItems: 'center' },
-  statValue: { ...typography.h3, color: colors.primary },
-  statLabel: { ...typography.caption, color: colors.textSecondary },
-  card: { backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.md, marginBottom: spacing.sm, ...shadows.sm },
-  cardTop: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm },
-  cardInfo: { flex: 1 },
-  cardName: { ...typography.bodyMedium, color: colors.text },
-  cardMeta: { ...typography.caption, color: colors.textSecondary },
-  voterCardImage: { width: '100%', height: 150, borderRadius: radius.sm, backgroundColor: colors.background, marginBottom: spacing.sm },
-  noCardText: { ...typography.caption, color: colors.textTertiary, fontStyle: 'italic', marginBottom: spacing.sm },
-  cardActions: { flexDirection: 'row', gap: spacing.sm },
-  modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: colors.overlay },
-  modalContent: { backgroundColor: colors.surface, borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, padding: spacing.lg },
-  modalTitle: { ...typography.h3, color: colors.text, marginBottom: spacing.md },
-  reasonRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: spacing.sm, gap: spacing.sm },
-  reasonRowActive: {},
-  radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: colors.border },
-  radioActive: { borderColor: colors.primary, backgroundColor: colors.primary },
-  reasonText: { ...typography.body, color: colors.text },
-  modalActions: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.md },
-});

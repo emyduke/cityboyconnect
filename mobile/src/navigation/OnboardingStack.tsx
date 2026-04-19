@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Animated, { SlideInRight, SlideOutLeft, SlideInLeft, SlideOutRight } from 'react-native-reanimated';
@@ -23,9 +23,9 @@ export default function OnboardingStack() {
   };
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1">
       {page === 0 && (
-        <Animated.View style={styles.page} entering={SlideInRight.duration(350)} exiting={SlideOutLeft.duration(250)}>
+        <Animated.View className="absolute inset-0" entering={SlideInRight.duration(350)} exiting={SlideOutLeft.duration(250)}>
           <WelcomeScreen
             onGetStarted={() => setPage(1)}
             onLogin={() => finish('Login')}
@@ -35,7 +35,7 @@ export default function OnboardingStack() {
         </Animated.View>
       )}
       {page === 1 && (
-        <Animated.View style={styles.page} entering={SlideInRight.duration(350)} exiting={SlideOutLeft.duration(250)}>
+        <Animated.View className="absolute inset-0" entering={SlideInRight.duration(350)} exiting={SlideOutLeft.duration(250)}>
           <OnboardingSlide2Screen
             onNext={() => setPage(2)}
             onSkip={() => finish('Join')}
@@ -45,7 +45,7 @@ export default function OnboardingStack() {
         </Animated.View>
       )}
       {page === 2 && (
-        <Animated.View style={styles.page} entering={SlideInRight.duration(350)} exiting={SlideOutLeft.duration(250)}>
+        <Animated.View className="absolute inset-0" entering={SlideInRight.duration(350)} exiting={SlideOutLeft.duration(250)}>
           <OnboardingSlide3Screen
             onJoin={() => finish('Join')}
             onLogin={() => finish('Login')}
@@ -57,8 +57,3 @@ export default function OnboardingStack() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  page: { ...StyleSheet.absoluteFillObject },
-});
